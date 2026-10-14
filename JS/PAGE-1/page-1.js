@@ -1,30 +1,28 @@
 /* =====================================================
    U9 ADMIN
-   File: JS/PAGE-1/page-1.js
 
-   PAGE 1: User Management
+   File:
+   JS/PAGE-1/page-1.js
 
-   Data source:
-   admin-users-list Edge Function
+   PAGE 1:
+   User Management
 
    Features:
    1. Load users
-   2. Pagination
-   3. Refresh
-   4. Format Coins / Balance
-   5. Order count display
+   2. Refresh
+   3. Format Coins / Balance
+   4. Registration date
+   5. Order count
+   6. Loading / Empty / Error states
 
 ===================================================== */
+
 
 (function () {
 
     "use strict";
 
 
-    const PAGE_SIZE = 20;
-
-    let currentPage = 1;
-    let totalUsers = 0;
     let loading = false;
 
 
@@ -62,26 +60,7 @@
             );
 
 
-        elements.prev =
-            document.getElementById(
-                "U9-admin-users-prev"
-            );
-
-
-        elements.next =
-            document.getElementById(
-                "U9-admin-users-next"
-            );
-
-
-        elements.pageInfo =
-            document.getElementById(
-                "U9-admin-users-page-info"
-            );
-
-
     }
-
 
 
 
@@ -93,7 +72,7 @@
 
     function setMessage(
         text,
-        error=false
+        error = false
     ){
 
         if(!elements.message)
@@ -123,17 +102,22 @@
     function formatAmount(value){
 
 
-        const num =
+        const number =
             Number(value ?? 0);
 
 
 
-        if(!Number.isFinite(num))
+        if(
+            !Number.isFinite(number)
+        ){
+
             return "0.00";
 
+        }
 
 
-        return num.toLocaleString(
+
+        return number.toLocaleString(
             "en-US",
             {
                 minimumFractionDigits:2,
@@ -141,8 +125,8 @@
             }
         );
 
-    }
 
+    }
 
 
 
@@ -152,6 +136,7 @@
 
         if(!value)
             return "—";
+
 
 
         const date =
@@ -192,7 +177,9 @@
 
 
 
-        return `${month}/${day}/${year}`;
+        return (
+            `${month}/${day}/${year}`
+        );
 
     }
 
@@ -217,13 +204,15 @@
 
 
         td.textContent =
-            value === null ||
-            value === undefined ||
-            value === ""
-                ?
-                "—"
-                :
-                String(value);
+            (
+                value === null ||
+                value === undefined ||
+                value === ""
+            )
+            ?
+            "—"
+            :
+            String(value);
 
 
 
@@ -234,7 +223,10 @@
 
 
 
-    function renderMessage(text){
+
+
+
+    function renderTableMessage(text){
 
 
         elements.tbody.replaceChildren();
@@ -255,7 +247,10 @@
 
         td.colSpan = 6;
 
-        td.textContent=text;
+
+        td.textContent =
+            text;
+
 
 
         tr.appendChild(td);
@@ -270,6 +265,8 @@
 
 
 
+
+
     function renderUsers(users){
 
 
@@ -279,10 +276,10 @@
 
         if(
             !users ||
-            users.length===0
+            users.length === 0
         ){
 
-            renderMessage(
+            renderTableMessage(
                 "暂无用户数据"
             );
 
@@ -295,6 +292,7 @@
 
         const fragment =
             document.createDocumentFragment();
+
 
 
 
@@ -375,49 +373,6 @@
             fragment
         );
 
-    }
-
-
-
-
-
-
-
-
-    /* =====================================================
-       PAGINATION
-    ===================================================== */
-
-
-    function updatePagination(){
-
-
-        const pages =
-            Math.max(
-                1,
-                Math.ceil(
-                    totalUsers /
-                    PAGE_SIZE
-                )
-            );
-
-
-
-        elements.pageInfo.textContent =
-            `第 ${currentPage} / ${pages} 页，共 ${totalUsers} 位用户`;
-
-
-
-        elements.prev.disabled =
-            currentPage <= 1 ||
-            loading;
-
-
-
-        elements.next.disabled =
-            currentPage >= pages ||
-            loading;
-
 
     }
 
@@ -441,13 +396,12 @@
             return;
 
 
-        loading=true;
+
+        loading = true;
 
 
-        updatePagination();
 
-
-        renderMessage(
+        renderTableMessage(
             "正在加载用户数据..."
         );
 
@@ -463,30 +417,27 @@
                 await fetch(
                     API_URL,
                     {
+
                         method:"POST",
 
+
                         headers:{
+
                             "Content-Type":
                                 "application/json"
+
                         },
+
 
                         credentials:
                             "include",
 
+
                         body:
-                            JSON.stringify({
-
-                                page:
-                                    currentPage,
-
-                                page_size:
-                                    PAGE_SIZE
-
-                            })
+                            JSON.stringify({})
 
                     }
                 );
-
 
 
 
@@ -501,6 +452,7 @@
             if(!response.ok){
 
                 throw new Error(
+                    result.message ||
                     result.error ||
                     "加载失败"
                 );
@@ -510,11 +462,18 @@
 
 
 
+            if(
+                !result.success
+            ){
+
+                throw new Error(
+                    result.message ||
+                    "加载失败"
+                );
+
+            }
 
 
-            totalUsers =
-                result.total ||
-                0;
 
 
 
@@ -529,7 +488,6 @@
             );
 
 
-
         }
         catch(error){
 
@@ -541,18 +499,15 @@
 
 
 
-            totalUsers=0;
-
-
-
-            renderMessage(
+            renderTableMessage(
                 "加载失败"
             );
 
 
 
             setMessage(
-                error.message,
+                error.message ||
+                "用户数据加载失败。",
                 true
             );
 
@@ -561,10 +516,15 @@
         finally{
 
 
-            loading=false;
+            loading = false;
 
 
-            updatePagination();
+            if(elements.refresh){
+
+                elements.refresh.disabled =
+                    false;
+
+            }
 
         }
 
@@ -596,7 +556,7 @@
         ){
 
             console.error(
-                "PAGE1 HTML missing"
+                "[U9 Admin PAGE1] HTML missing"
             );
 
             return;
@@ -609,62 +569,13 @@
         elements.refresh.onclick =
             function(){
 
-                currentPage=1;
+                if(loading)
+                    return;
+
 
                 loadUsers();
 
             };
-
-
-
-
-        elements.prev.onclick =
-            function(){
-
-                if(
-                    currentPage>1
-                ){
-
-                    currentPage--;
-
-                    loadUsers();
-
-                }
-
-            };
-
-
-
-
-
-        elements.next.onclick =
-            function(){
-
-
-                const pages =
-                    Math.max(
-                        1,
-                        Math.ceil(
-                            totalUsers /
-                            PAGE_SIZE
-                        )
-                    );
-
-
-
-                if(
-                    currentPage < pages
-                ){
-
-                    currentPage++;
-
-                    loadUsers();
-
-                }
-
-
-            };
-
 
 
 
@@ -678,8 +589,45 @@
 
 
 
+
+
+    /* =====================================================
+       PUBLIC API
+    ===================================================== */
+
+
+    window.U9AdminUsers = {
+
+
+        refresh:function(){
+
+            loadUsers();
+
+        },
+
+
+        load:function(){
+
+            loadUsers();
+
+        }
+
+
+    };
+
+
+
+
+
+
+
+    /* =====================================================
+       BOOT
+    ===================================================== */
+
+
     if(
-        document.readyState==="loading"
+        document.readyState === "loading"
     ){
 
         document.addEventListener(
@@ -690,10 +638,13 @@
             }
         );
 
+
     }
     else{
 
+
         init();
+
 
     }
 
