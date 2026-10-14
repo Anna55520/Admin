@@ -10,6 +10,7 @@
    - Open modal
    - Close modal
    - Show username in header
+   - Refresh button
    - Lock background scroll
 
 ===================================================== */
@@ -21,6 +22,8 @@
 
 
 const elements = {};
+
+let currentUser = null;
 
 
 
@@ -40,15 +43,24 @@ function getElements(){
         );
 
 
+
     elements.close =
         document.getElementById(
             "U9-admin-edit-modal-close"
         );
 
 
+
     elements.title =
         document.getElementById(
             "U9-admin-edit-modal-title"
+        );
+
+
+
+    elements.refresh =
+        document.getElementById(
+            "U9-admin-edit-modal-refresh"
         );
 
 
@@ -69,13 +81,22 @@ function openEditModal(user){
 
     if(!elements.modal){
 
+
         console.error(
             "[U9 Admin] Edit modal missing."
         );
 
+
         return;
 
+
     }
+
+
+
+    currentUser =
+        user || {};
+
 
 
 
@@ -83,6 +104,7 @@ function openEditModal(user){
         user.username ||
         user.email ||
         "User";
+
 
 
 
@@ -94,12 +116,17 @@ function openEditModal(user){
 
 
 
+
     if(elements.title){
+
 
         elements.title.textContent =
             username;
 
+
     }
+
+
 
 
 
@@ -110,13 +137,15 @@ function openEditModal(user){
 
 
 
-    // Disable background scrolling
+
 
     document.body.style.overflow =
         "hidden";
 
 
+
 }
+
 
 
 
@@ -137,19 +166,71 @@ function closeEditModal(){
 
 
 
+
+
     elements.modal.classList.remove(
         "active"
     );
 
 
 
-    // Restore background scrolling
+
 
     document.body.style.overflow =
         "";
 
 
+
+
+
+    currentUser = null;
+
+
+
 }
+
+
+
+
+
+
+
+
+
+/* ===============================
+   REFRESH MODAL
+================================ */
+
+
+function refreshEditModal(){
+
+
+
+    if(!currentUser){
+
+
+        console.warn(
+            "[U9 Admin] No user selected."
+        );
+
+
+        return;
+
+
+    }
+
+
+
+    console.log(
+        "Refresh edit modal:",
+        currentUser
+    );
+
+
+
+}
+
+
 
 
 
@@ -169,15 +250,24 @@ function init(){
 
 
 
+
+
     if(!elements.modal){
+
 
         console.error(
             "[U9 Admin] Edit modal HTML not found."
         );
 
+
         return;
 
+
     }
+
+
+
+
 
 
 
@@ -200,12 +290,40 @@ function init(){
 
 
 
+
+
+
+
+    if(elements.refresh){
+
+
+        elements.refresh.onclick =
+            function(){
+
+
+                refreshEditModal();
+
+
+            };
+
+
+    }
+
+
+
+
+
+
+
     console.log(
         "[U9 Admin] Edit modal initialized."
     );
 
 
 }
+
+
+
 
 
 
@@ -225,8 +343,11 @@ window.openEditModal =
 
 
 
+
 window.closeEditModal =
     closeEditModal;
+
+
 
 
 
