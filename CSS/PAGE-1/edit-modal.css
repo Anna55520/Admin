@@ -1,3 +1,18 @@
+/* =====================================================
+   U9 ADMIN
+
+   File:
+   CSS/PAGE-1/edit-modal.css
+
+   Edit User Modal
+
+===================================================== */
+
+
+/* ===============================
+   MODAL OVERLAY
+================================ */
+
 #U9-admin-edit-modal {
 
     display:none;
@@ -17,6 +32,7 @@
 }
 
 
+/* OPEN STATE */
 
 #U9-admin-edit-modal.active {
 
@@ -26,11 +42,18 @@
 
 
 
+
+/* ===============================
+   MODAL BOX
+================================ */
+
+
 .U9-admin-edit-modal-box {
 
-    width:80%;
 
-    height:80%;
+    width:420px;
+
+    max-width:90%;
 
     background:#ffffff;
 
@@ -38,96 +61,181 @@
 
     overflow:hidden;
 
+    box-shadow:0 20px 50px rgba(0,0,0,0.25);
+
 }
 
 
 
-.U9-admin-edit-modal-header {height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;background: #515151;color:#ffffff;}
+
+
+/* ===============================
+   HEADER
+================================ */
+
+
+.U9-admin-edit-modal-header {
+
+
+    height:56px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:0 18px;
+
+    border-bottom:1px solid #e5e7eb;
+
+}
+
+
 
 
 
 .U9-admin-edit-modal-header h3 {
 
 
-    flex:1;
-
     margin:0;
-
-    text-align:center;
-
-    color:#ffffff;
 
     font-size:16px;
 
     font-weight:600;
 
-    word-break:break-word;
-
-    overflow-wrap:anywhere;
+    color:#111111;
 
 }
 
+
+
+
+
+/* CLOSE BUTTON */
 
 
 #U9-admin-edit-modal-close {
 
 
-    width:40px;
+    width:32px;
 
-    height:40px;
-
-    border:none;
-
-    background:none;
-
-    color:#ffffff;
-
-    font-size:28px;
-
-    cursor:pointer;
-
-}
-
-
-
-#U9-admin-edit-modal-refresh {
-
-
-    width:40px;
-
-    height:40px;
+    height:32px;
 
     border:none;
 
     background:none;
 
+    font-size:24px;
+
+    line-height:1;
+
     cursor:pointer;
 
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
+    color:#333333;
 
 }
 
 
 
-#U9-admin-edit-modal-refresh img {
 
 
-    width:22px;
+#U9-admin-edit-modal-close:hover {
 
-    height:22px;
 
-    filter:brightness(0) invert(1);
+    color:#000000;
 
 }
 
 
 
-.U9-admin-edit-modal-body {
 
-    height:calc(100% - 56px);
+
+
+/* ===============================
+   BODY
+================================ */
+
+
+.U9-admin-edit-form {
+
+
+    padding:20px;
+
+}
+
+
+
+
+.U9-admin-edit-field {
+
+
+    margin-bottom:15px;
+
+}
+
+
+
+.U9-admin-edit-field label {
+
+
+    display:block;
+
+    margin-bottom:6px;
+
+    font-size:13px;
+
+    color:#555555;
+
+}
+
+
+
+.U9-admin-edit-field input {
+
+
+    width:100%;
+
+    height:38px;
+
+    padding:0 10px;
+
+    border:1px solid #d1d5db;
+
+    border-radius:6px;
+
+    box-sizing:border-box;
+
+}
+
+
+
+.U9-admin-edit-field input:focus {
+
+
+    outline:none;
+
+    border-color:#2563eb;
+
+}
+
+
+
+
+/* ===============================
+   MOBILE
+================================ */
+
+
+@media(max-width:600px){
+
+
+    .U9-admin-edit-modal-box {
+
+
+        width:calc(100% - 30px);
+
+    }
+
 
 }
