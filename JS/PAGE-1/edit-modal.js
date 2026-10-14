@@ -1,52 +1,3 @@
-(function(){
-
-"use strict";
-
-
-let modal;
-let closeButton;
-let title;
-
-
-
-function init(){
-
-
-    modal =
-        document.getElementById(
-            "U9-admin-edit-modal"
-        );
-
-
-    closeButton =
-        document.getElementById(
-            "U9-admin-edit-modal-close"
-        );
-
-
-    title =
-        document.getElementById(
-            "U9-admin-edit-modal-title"
-        );
-
-
-
-    if(closeButton){
-
-        closeButton.onclick =
-            function(){
-
-                closeEditModal();
-
-            };
-
-    }
-
-
-}
-
-
-
 function openEditModal(user){
 
 
@@ -78,7 +29,15 @@ function openEditModal(user){
     );
 
 
+
+    // 禁止背景页面滚动
+    document.body.style.overflow =
+        "hidden";
+
+
 }
+
+
 
 
 
@@ -90,37 +49,10 @@ function closeEditModal(){
     );
 
 
-}
 
+    // 恢复页面滚动
+    document.body.style.overflow =
+        "";
 
-
-window.openEditModal =
-    openEditModal;
-
-
-window.closeEditModal =
-    closeEditModal;
-
-
-
-if(
-    document.readyState==="loading"
-){
-
-    document.addEventListener(
-        "DOMContentLoaded",
-        init,
-        {
-            once:true
-        }
-    );
 
 }
-else{
-
-    init();
-
-}
-
-
-})();
