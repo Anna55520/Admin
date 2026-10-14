@@ -7,7 +7,7 @@
    Functions:
    - Admin login
    - Logout
-   - Login button handler
+   - Session refresh
 
 ===================================================== */
 
@@ -19,13 +19,11 @@
 
 
 const ADMIN_LOGIN_URL =
-    "https://tvtakmswbzawaweytimx.supabase.co/functions/v1/admin-login";
+"https://tvtakmswbzawaweytimx.supabase.co/functions/v1/admin-login";
 
 
 
 const elements = {};
-
-
 
 
 
@@ -45,65 +43,7 @@ function getElements(){
         );
 
 
-    elements.username =
-        document.getElementById(
-            "U9-admin-login-username"
-        );
-
-
-    elements.password =
-        document.getElementById(
-            "U9-admin-login-password"
-        );
-
-
-    elements.message =
-        document.getElementById(
-            "U9-admin-login-message"
-        );
-
-
 }
-
-
-
-
-
-
-
-
-
-/* ===============================
-   MESSAGE
-================================ */
-
-
-function showMessage(
-    message,
-    type = ""
-){
-
-
-    if(!elements.message){
-
-        return;
-
-    }
-
-
-
-    elements.message.textContent =
-        message;
-
-
-
-    elements.message.className =
-        type;
-
-
-}
-
-
 
 
 
@@ -126,46 +66,50 @@ async function adminLogin(
 
 
         const response =
-            await fetch(
-                ADMIN_LOGIN_URL,
-                {
+        await fetch(
+            ADMIN_LOGIN_URL,
+            {
 
-                    method:"POST",
+                method:"POST",
 
-                    credentials:"include",
+                credentials:"include",
 
-                    headers:{
+                headers:{
 
-                        "Content-Type":
-                            "application/json"
+                    "Content-Type":
+                    "application/json"
 
-                    },
+                },
 
 
-                    body:JSON.stringify({
+                body:
+                JSON.stringify({
 
-                        username,
-                        password
+                    username:
+                    username.trim(),
 
-                    })
+                    password
 
-                }
-            );
+                })
+
+            }
+        );
+
 
 
 
 
 
         const result =
-            await response.json()
-            .catch(
-                function(){
+        await response
+        .json()
+        .catch(
+            function(){
 
-                    return {};
+                return {};
 
-                }
-            );
-
+            }
+        );
 
 
 
@@ -188,12 +132,40 @@ async function adminLogin(
 
 
 
-        /*
-            Server creates:
-            HttpOnly admin_session cookie
 
-            Verify session after login
+        console.log(
+            "[U9 Admin] Login success:",
+            result.admin
+        );
+
+
+
+
+
+
+
+        /*
+            Wait for cookie storage.
+
+            Then refresh admin state.
         */
+
+
+        await new Promise(
+            function(resolve){
+
+                setTimeout(
+                    resolve,
+                    300
+                );
+
+            }
+        );
+
+
+
+
+
 
 
         if(
@@ -201,7 +173,15 @@ async function adminLogin(
         ){
 
 
+            const auth =
             await window.U9AdminRefreshAuthState();
+
+
+
+            console.log(
+                "[U9 Admin] Session refresh:",
+                auth
+            );
 
 
         }
@@ -211,15 +191,13 @@ async function adminLogin(
 
 
 
-        return {
 
+        return {
 
             success:true,
 
-
             admin:
-                result.admin
-
+            result.admin
 
         };
 
@@ -227,9 +205,9 @@ async function adminLogin(
 
 
 
+
     }
     catch(error){
-
 
 
         console.error(
@@ -241,19 +219,82 @@ async function adminLogin(
 
         return {
 
-
             success:false,
 
-
             error:
-                error.message
-
+            error.message
 
         };
 
 
     }
 
+
+}
+
+
+
+
+
+
+
+
+
+/* ===============================
+   CHECK SESSION
+================================ */
+
+
+async function checkAdminSession(){
+
+
+    try{
+
+
+        if(
+            window.U9AdminCheckSession
+        ){
+
+
+            return await
+            window.U9AdminCheckSession();
+
+
+        }
+
+
+
+        return {
+
+            authenticated:false,
+
+            admin:null
+
+        };
+
+
+
+    }
+    catch(error){
+
+
+        console.error(
+            "[U9 Admin Session Check]",
+            error
+        );
+
+
+
+        return {
+
+            authenticated:false,
+
+            admin:null
+
+        };
+
+
+    }
 
 
 }
@@ -275,15 +316,23 @@ async function adminLogout(){
 
 
 
-    /*
-        HttpOnly cookie cannot
-        be removed by JS.
+    await fetch(
+        "https://tvtakmswbzawaweytimx.supabase.co/functions/v1/admin-logout",
+        {
 
-        Server logout function should
-        clear it later.
+            method:"POST",
 
-        Here only refresh state.
-    */
+            credentials:"include"
+
+        }
+    )
+    .catch(
+        function(){}
+    );
+
+
+
+
 
 
 
@@ -299,6 +348,9 @@ async function adminLogout(){
 
 
 
+
+
+
 }
 
 
@@ -310,7 +362,7 @@ async function adminLogout(){
 
 
 /* ===============================
-   LOGIN BUTTON
+   BUTTON
 ================================ */
 
 
@@ -320,16 +372,9 @@ function initLoginButton(){
 
     if(!elements.button){
 
-
-        console.warn(
-            "[U9 Admin] Login button missing."
-        );
-
-
         return;
 
     }
-
 
 
 
@@ -349,19 +394,24 @@ function initLoginButton(){
 
 
 
+        /*
+            临时测试账号入口
+
+            后面可以替换成弹窗输入
+        */
+
+
         const username =
-            elements.username
-            ? elements.username.value.trim()
-            : "";
+        prompt(
+            "Admin username"
+        );
 
 
 
         const password =
-            elements.password
-            ? elements.password.value
-            : "";
-
-
+        prompt(
+            "Admin password"
+        );
 
 
 
@@ -372,33 +422,9 @@ function initLoginButton(){
             !password
         ){
 
-
-            showMessage(
-                "Please enter username and password.",
-                "error"
-            );
-
-
             return;
 
         }
-
-
-
-
-
-
-
-        elements.button.disabled =
-            true;
-
-
-
-        showMessage(
-            "Logging in..."
-        );
-
-
 
 
 
@@ -406,36 +432,20 @@ function initLoginButton(){
 
 
         const result =
-            await adminLogin(
-                username,
-                password
-            );
+        await adminLogin(
+            username,
+            password
+        );
 
 
 
 
 
+        if(!result.success){
 
 
-
-        elements.button.disabled =
-            false;
-
-
-
-
-
-
-
-        if(
-            !result.success
-        ){
-
-
-            showMessage(
-                result.error ||
-                "Login failed.",
-                "error"
+            alert(
+                result.error
             );
 
 
@@ -449,20 +459,13 @@ function initLoginButton(){
 
 
 
-        showMessage(
-            "Login successful.",
-            "success"
+        alert(
+            "Login successful."
         );
 
 
 
-
-
-
-        console.log(
-            "[U9 Admin] Login success:",
-            result.admin
-        );
+        location.reload();
 
 
 
@@ -486,12 +489,17 @@ function initLoginButton(){
 
 
 window.U9AdminLogin =
-    adminLogin;
+adminLogin;
 
 
 
 window.U9AdminLogout =
-    adminLogout;
+adminLogout;
+
+
+
+window.U9AdminCheckSession =
+checkAdminSession;
 
 
 
@@ -509,13 +517,10 @@ window.U9AdminLogout =
 function initialize(){
 
 
-
     getElements();
 
 
-
     initLoginButton();
-
 
 
 
@@ -524,8 +529,8 @@ function initialize(){
     );
 
 
-
 }
+
 
 
 
