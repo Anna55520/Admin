@@ -28,10 +28,9 @@
 
 .U9-admin-edit-modal-box {
 
+    width:80%;
 
-    width:80vw;
-
-    height:80vh;
+    height:80%;
 
     background:#ffffff;
 
@@ -39,13 +38,7 @@
 
     overflow:hidden;
 
-    display:flex;
-
-    flex-direction:column;
-
 }
-
-
 
 
 
@@ -54,17 +47,17 @@
 
     height:56px;
 
-    flex-shrink:0;
-
     display:flex;
 
     align-items:center;
 
     justify-content:space-between;
 
-    padding:0 20px;
+    padding:0 18px;
 
-    border-bottom:1px solid #e5e7eb;
+    background:#000000;
+
+    color:#ffffff;
 
 }
 
@@ -73,65 +66,85 @@
 .U9-admin-edit-modal-header h3 {
 
 
+    flex:1;
+
     margin:0;
 
-    font-size:18px;
+    text-align:center;
+
+    color:#ffffff;
+
+    font-size:16px;
 
     font-weight:600;
 
-    color:#111111;
+    word-break:break-word;
+
+    overflow-wrap:anywhere;
 
 }
-
-
 
 
 
 #U9-admin-edit-modal-close {
 
 
-    width:32px;
+    width:40px;
 
-    height:32px;
+    height:40px;
 
     border:none;
 
     background:none;
 
-    font-size:26px;
+    color:#ffffff;
+
+    font-size:28px;
 
     cursor:pointer;
 
-    color:#111111;
+}
+
+
+
+#U9-admin-edit-modal-refresh {
+
+
+    width:40px;
+
+    height:40px;
+
+    border:none;
+
+    background:none;
+
+    cursor:pointer;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
 
 }
 
 
 
+#U9-admin-edit-modal-refresh img {
 
 
-#U9-admin-edit-modal-body {
+    width:22px;
 
+    height:22px;
 
-    flex:1;
+    filter:brightness(0) invert(1);
 
 }
 
 
 
+.U9-admin-edit-modal-body {
 
-
-@media(max-width:600px){
-
-
-    .U9-admin-edit-modal-box {
-
-
-        width:90vw;
-
-        height:80vh;
-
-    }
-
+    height:calc(100% - 56px);
 
 }
