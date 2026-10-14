@@ -1,281 +1,696 @@
-
 /* =====================================================
    U9 ADMIN
-   File: index.js
+
+   File:
+   index.js
 
    Functions:
-   1. Switch between PAGE1 and PAGE6
-   2. Update active bottom button
+   1. Switch admin pages
+   2. Update active navigation button
    3. Open PAGE1 by default
    4. Check admin session through admin-me
    5. Expose admin authentication state
 
    Security:
-   - Uses the public anon/publishable key
-   - Never uses the service-role key in browser code
+   - Uses public anon key only
+   - Never uses service-role key
 ===================================================== */
 
-(function () {
-    "use strict";
 
-    const SUPABASE_URL =
-        "https://tvtakmswbzawaweytimx.supabase.co";
+(function(){
 
-    const ADMIN_ME_URL =
-        `${SUPABASE_URL}/functions/v1/admin-me`;
+"use strict";
 
-    let adminSessionCheckPromise = null;
 
-    /**
-     * Get the public Supabase key.
-     * Reuses the key exposed by the existing Supabase client
-     * or admin-login.js configuration.
-     */
-    function getPublicKey() {
-        const client = window.supabaseClient;
 
-        const key =
-            window.U9_SUPABASE_PUBLIC_KEY ||
-            window.SUPABASE_ANON_KEY ||
-            window.SUPABASE_PUBLISHABLE_KEY ||
-            (client && client.supabaseKey) ||
-            "";
+const SUPABASE_URL =
+"https://tvtakmswbzawaweytimx.supabase.co";
 
-        return typeof key === "string" ? key.trim() : "";
-    }
 
-    /**
-     * Check the current administrator session using admin-me.
-     *
-     * Returns:
-     * {
-     *   authenticated: boolean,
-     *   admin: { id, username } | null
-     * }
-     */
-    async function checkAdminSession() {
-        if (adminSessionCheckPromise) {
-            return adminSessionCheckPromise;
-        }
 
-        adminSessionCheckPromise = (async function () {
-            try {
-                const publicKey = getPublicKey();
+const ADMIN_ME_URL =
+`${SUPABASE_URL}/functions/v1/admin-me`;
 
-                if (!publicKey) {
-                    console.error(
-                        "[U9 Admin] Supabase public key is missing."
-                    );
 
-                    return {
-                        authenticated: false,
-                        admin: null
-                    };
-                }
 
-                const response = await fetch(ADMIN_ME_URL, {
-                    method: "GET",
-                    credentials: "include",
-                    cache: "no-store",
-                    headers: {
-                        "apikey": publicKey,
-                        "Authorization": `Bearer ${publicKey}`
-                    }
-                });
+let adminSessionCheckPromise = null;
 
-                if (response.status === 401) {
-                    return {
-                        authenticated: false,
-                        admin: null
-                    };
-                }
 
-                const result = await response.json().catch(
-                    function () {
-                        return {};
-                    }
-                );
 
-                if (
-                    !response.ok ||
-                    result.authenticated !== true ||
-                    !result.admin
-                ) {
-                    console.warn(
-                        "[U9 Admin] admin-me did not confirm a session.",
-                        response.status
-                    );
 
-                    return {
-                        authenticated: false,
-                        admin: null
-                    };
-                }
 
-                return {
-                    authenticated: true,
-                    admin: result.admin
-                };
 
-            } catch (error) {
-                console.error(
-                    "[U9 Admin] Failed to check admin session:",
-                    error
-                );
 
-                return {
-                    authenticated: false,
-                    admin: null
-                };
-            } finally {
-                adminSessionCheckPromise = null;
-            }
-        })();
+/* ===============================
+   GET PUBLIC KEY
+================================ */
+
+
+function getPublicKey(){
+
+
+    const client =
+        window.supabaseClient;
+
+
+
+    const key =
+
+        window.U9_SUPABASE_PUBLIC_KEY ||
+
+        window.SUPABASE_ANON_KEY ||
+
+        window.SUPABASE_PUBLISHABLE_KEY ||
+
+        (client && client.supabaseKey) ||
+
+        "";
+
+
+
+    return typeof key === "string"
+        ? key.trim()
+        : "";
+
+
+}
+
+
+
+
+
+
+
+/* ===============================
+   CHECK ADMIN SESSION
+================================ */
+
+
+async function checkAdminSession(){
+
+
+    if(adminSessionCheckPromise){
 
         return adminSessionCheckPromise;
+
     }
 
-    /**
-     * Public method for other scripts to check the session.
-     */
-    window.U9AdminCheckSession = checkAdminSession;
 
-    /**
-     * Public admin state.
-     * Updated after each successful session check.
-     */
-    window.U9AdminAuth = {
-        authenticated: false,
-        admin: null
-    };
 
-    /**
-     * Refresh the public authentication state.
-     */
-    async function refreshAdminAuthState() {
-        const result = await checkAdminSession();
+    adminSessionCheckPromise =
+    (async function(){
 
-        window.U9AdminAuth.authenticated =
-            result.authenticated;
 
-        window.U9AdminAuth.admin =
-            result.admin;
+        try{
 
-        window.dispatchEvent(
-            new CustomEvent("u9-admin-auth-changed", {
-                detail: {
-                    authenticated: result.authenticated,
-                    admin: result.admin
+
+            const publicKey =
+                getPublicKey();
+
+
+
+
+            if(!publicKey){
+
+
+                console.error(
+                    "[U9 Admin] Supabase public key is missing."
+                );
+
+
+                return {
+
+                    authenticated:false,
+
+                    admin:null
+
+                };
+
+
+            }
+
+
+
+
+
+            const response =
+            await fetch(
+                ADMIN_ME_URL,
+                {
+
+                    method:"GET",
+
+                    credentials:"include",
+
+                    cache:"no-store",
+
+                    headers:{
+
+                        "apikey":
+                            publicKey,
+
+                        "Authorization":
+                            `Bearer ${publicKey}`
+
+                    }
+
                 }
-            })
-        );
+            );
 
-        return result;
-    }
 
-    window.U9AdminRefreshAuthState = refreshAdminAuthState;
 
-    /**
-     * Initialize page navigation.
-     */
-    function initAdminNavigation() {
-        const nav = document.getElementById(
+
+
+
+            if(response.status===401){
+
+
+                return {
+
+                    authenticated:false,
+
+                    admin:null
+
+                };
+
+
+            }
+
+
+
+
+
+
+            const result =
+            await response.json()
+            .catch(
+                function(){
+
+                    return {};
+
+                }
+            );
+
+
+
+
+
+
+
+            if(
+                !response.ok ||
+                result.authenticated !== true ||
+                !result.admin
+            ){
+
+
+                console.warn(
+                    "[U9 Admin] admin-me did not confirm session.",
+                    response.status
+                );
+
+
+
+                return {
+
+                    authenticated:false,
+
+                    admin:null
+
+                };
+
+
+            }
+
+
+
+
+
+
+            return {
+
+
+                authenticated:true,
+
+                admin:
+                    result.admin
+
+
+            };
+
+
+
+
+
+        }
+        catch(error){
+
+
+
+            console.error(
+                "[U9 Admin] Session check failed:",
+                error
+            );
+
+
+
+            return {
+
+                authenticated:false,
+
+                admin:null
+
+            };
+
+
+
+        }
+        finally{
+
+
+            adminSessionCheckPromise=null;
+
+
+        }
+
+
+
+    })();
+
+
+
+    return adminSessionCheckPromise;
+
+
+}
+
+
+
+
+
+
+
+
+window.U9AdminCheckSession =
+    checkAdminSession;
+
+
+
+
+
+
+
+/* ===============================
+   AUTH STATE
+================================ */
+
+
+window.U9AdminAuth = {
+
+
+    authenticated:false,
+
+
+    admin:null
+
+
+};
+
+
+
+
+
+
+async function refreshAdminAuthState(){
+
+
+    const result =
+        await checkAdminSession();
+
+
+
+
+    window.U9AdminAuth.authenticated =
+        result.authenticated;
+
+
+
+    window.U9AdminAuth.admin =
+        result.admin;
+
+
+
+
+
+
+    window.dispatchEvent(
+
+        new CustomEvent(
+            "u9-admin-auth-changed",
+            {
+
+                detail:result
+
+            }
+
+        )
+
+    );
+
+
+
+
+    return result;
+
+
+}
+
+
+
+
+window.U9AdminRefreshAuthState =
+    refreshAdminAuthState;
+
+
+
+
+
+
+
+
+
+/* ===============================
+   PAGE NAVIGATION
+================================ */
+
+
+function initAdminNavigation(){
+
+
+    const nav =
+        document.getElementById(
             "U9-admin-bottom-nav"
         );
 
-        const main = document.getElementById(
+
+
+    const main =
+        document.getElementById(
             "U9-admin-main"
         );
 
-        if (!nav || !main) {
-            console.error(
-                "[U9 Admin] Navigation or main container not found."
+
+
+
+    if(!nav || !main){
+
+
+        console.error(
+            "[U9 Admin] Navigation missing."
+        );
+
+
+        return;
+
+
+    }
+
+
+
+
+
+
+    const buttons =
+        Array.from(
+            nav.querySelectorAll(
+                "button[data-target]"
+            )
+        );
+
+
+
+
+    const pages =
+        Array.from(
+            main.querySelectorAll(
+                ".U9-admin-page"
+            )
+        );
+
+
+
+
+
+
+
+    function switchPage(pageId){
+
+
+        const target =
+            document.getElementById(
+                pageId
             );
+
+
+
+        if(
+            !target ||
+            !main.contains(target)
+        ){
+
+
+            console.warn(
+                "[U9 Admin] Page not found:",
+                pageId
+            );
+
+
             return;
+
+
         }
 
-        const buttons = Array.from(
-            nav.querySelectorAll("button[data-target]")
-        );
 
-        const pages = Array.from(
-            main.querySelectorAll(".U9-admin-page")
-        );
 
-        /**
-         * Switch to a specified page.
-         * Example: switchPage("U9-admin-page-1")
-         */
-        function switchPage(pageId) {
-            const targetPage = document.getElementById(pageId);
 
-            if (!targetPage || !main.contains(targetPage)) {
-                console.warn(
-                    "[U9 Admin] Page not found:",
-                    pageId
+
+
+
+        pages.forEach(
+            function(page){
+
+
+                const active =
+                    page===target;
+
+
+
+                page.classList.toggle(
+                    "active",
+                    active
                 );
-                return;
+
+
+
+                page.hidden =
+                    !active;
+
+
             }
+        );
 
-            pages.forEach(function (page) {
-                const isActive = page === targetPage;
 
-                page.classList.toggle("active", isActive);
-                page.hidden = !isActive;
-            });
 
-            buttons.forEach(function (button) {
-                const isActive =
+
+
+
+
+        buttons.forEach(
+            function(button){
+
+
+                const active =
                     button.dataset.target === pageId;
 
-                button.classList.toggle("active", isActive);
+
+
+                button.classList.toggle(
+                    "active",
+                    active
+                );
+
+
+
                 button.setAttribute(
                     "aria-pressed",
-                    String(isActive)
+                    String(active)
                 );
-            });
-        }
 
-        nav.addEventListener("click", function (event) {
-            const button = event.target.closest(
-                "button[data-target]"
-            );
 
-            if (!button || !nav.contains(button)) {
+            }
+        );
+
+
+
+    }
+
+
+
+
+
+
+
+
+    nav.addEventListener(
+        "click",
+        function(event){
+
+
+            const button =
+                event.target.closest(
+                    "button[data-target]"
+                );
+
+
+
+            if(
+                !button ||
+                !nav.contains(button)
+            ){
+
                 return;
+
             }
 
-            switchPage(button.dataset.target);
-        });
 
-        // Default page: PAGE1
-        switchPage("U9-admin-page-1");
 
-        // Expose the switching function for other scripts.
-        window.U9AdminSwitchPage = switchPage;
+            switchPage(
+                button.dataset.target
+            );
+
+
+
+        }
+    );
+
+
+
+
+
+
+
+    switchPage(
+        "U9-admin-page-1"
+    );
+
+
+
+    window.U9AdminSwitchPage =
+        switchPage;
+
+
+
+}
+
+
+
+
+
+
+
+
+
+/* ===============================
+   INITIALIZE
+================================ */
+
+
+async function initialize(){
+
+
+    initAdminNavigation();
+
+
+
+
+    function startSessionCheck(){
+
+
+        refreshAdminAuthState();
+
+
+
     }
 
-    /**
-     * Initialize after the HTML has loaded.
-     */
-    async function initialize() {
-        initAdminNavigation();
 
-        // Check admin-me when the page starts.
-        await refreshAdminAuthState();
 
-        console.log(
-            "[U9 Admin] Navigation and session check initialized."
+
+    if(
+        window.U9_SUPABASE_PUBLIC_KEY ||
+        window.supabaseClient
+    ){
+
+
+        startSessionCheck();
+
+
+
+    }
+    else{
+
+
+        window.addEventListener(
+            "U9AdminSupabaseReady",
+            startSessionCheck,
+            {
+                once:true
+            }
         );
+
+
     }
 
-    if (document.readyState === "loading") {
-        document.addEventListener(
-            "DOMContentLoaded",
-            initialize,
-            { once: true }
-        );
-    } else {
-        initialize();
-    }
+
+
+
+
+
+    console.log(
+        "[U9 Admin] Navigation initialized."
+    );
+
+
+
+}
+
+
+
+
+
+
+if(
+    document.readyState==="loading"
+){
+
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        initialize,
+        {
+            once:true
+        }
+    );
+
+
+}
+else{
+
+
+    initialize();
+
+
+}
+
+
+
 })();
