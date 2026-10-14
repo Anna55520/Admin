@@ -25,11 +25,15 @@ const elements={};
 
 
 
+
+
 /* ==============================
    ELEMENTS
 ============================== */
 
+
 function getElements(){
+
 
     elements.tbody =
         document.getElementById(
@@ -48,7 +52,10 @@ function getElements(){
             "U9-admin-users-refresh"
         );
 
+
 }
+
+
 
 
 
@@ -63,12 +70,15 @@ function setMessage(
     error=false
 ){
 
+
     if(!elements.message)
         return;
 
 
+
     elements.message.textContent =
         text || "";
+
 
 
     elements.message.classList.toggle(
@@ -76,7 +86,10 @@ function setMessage(
         error
     );
 
+
 }
+
+
 
 
 
@@ -89,12 +102,15 @@ function setMessage(
 
 function formatAmount(value){
 
+
     const num =
         Number(value ?? 0);
 
 
+
     if(!Number.isFinite(num))
         return "0.00";
+
 
 
     return num.toLocaleString(
@@ -105,7 +121,9 @@ function formatAmount(value){
         }
     );
 
+
 }
+
 
 
 
@@ -113,16 +131,20 @@ function formatAmount(value){
 
 function formatUsername(value){
 
+
     if(!value)
         return "—";
+
 
 
     const text =
         String(value);
 
 
+
     if(text.length <= 6)
         return text;
+
 
 
     return (
@@ -133,7 +155,9 @@ function formatUsername(value){
         text.slice(-3)
     );
 
+
 }
+
 
 
 
@@ -141,12 +165,15 @@ function formatUsername(value){
 
 function formatDate(value){
 
+
     if(!value)
         return "—";
 
 
+
     const date =
         new Date(value);
+
 
 
     if(
@@ -157,13 +184,17 @@ function formatDate(value){
         return "—";
 
 
+
     return `${String(
         date.getMonth()+1
     ).padStart(2,"0")}/${String(
         date.getDate()
     ).padStart(2,"0")}/${date.getFullYear()}`;
 
+
 }
+
+
 
 
 
@@ -176,10 +207,12 @@ function formatDate(value){
 
 function createCell(value){
 
+
     const td =
         document.createElement(
             "td"
         );
+
 
 
     td.textContent =
@@ -187,9 +220,115 @@ function createCell(value){
         "—";
 
 
+
     return td;
 
+
 }
+
+
+
+
+
+
+
+function createActionCell(user){
+
+
+    const td =
+        document.createElement(
+            "td"
+        );
+
+
+    td.className =
+        "action-column";
+
+
+
+    const button =
+        document.createElement(
+            "button"
+        );
+
+
+
+    button.type =
+        "button";
+
+
+
+    button.className =
+        "U9-admin-edit-button";
+
+
+
+    const img =
+        document.createElement(
+            "img"
+        );
+
+
+
+    img.src =
+        "SVG/BUTTON/one.svg";
+
+
+
+    img.alt =
+        "Edit";
+
+
+
+    button.appendChild(
+        img
+    );
+
+
+
+    button.onclick =
+        function(){
+
+
+            if(
+                typeof openEditModal ===
+                "function"
+            ){
+
+                openEditModal(
+                    user
+                );
+
+            }
+            else{
+
+
+                console.warn(
+                    "Edit modal is not loaded"
+                );
+
+
+            }
+
+
+        };
+
+
+
+    td.appendChild(
+        button
+    );
+
+
+
+    return td;
+
+
+}
+
+
+
+
 
 
 
@@ -197,7 +336,9 @@ function createCell(value){
 function renderMessage(text){
 
 
+
     elements.tbody.replaceChildren();
+
 
 
     const tr =
@@ -206,22 +347,39 @@ function renderMessage(text){
         );
 
 
+
     const td =
         document.createElement(
             "td"
         );
 
 
-    td.colSpan=6;
 
-    td.textContent=text;
+    td.colSpan = 7;
 
 
-    tr.appendChild(td);
 
-    elements.tbody.appendChild(tr);
+    td.textContent =
+        text;
+
+
+
+    tr.appendChild(
+        td
+    );
+
+
+
+    elements.tbody.appendChild(
+        tr
+    );
+
 
 }
+
+
+
+
 
 
 
@@ -230,7 +388,9 @@ function renderMessage(text){
 function renderUsers(users){
 
 
+
     elements.tbody.replaceChildren();
+
 
 
 
@@ -239,13 +399,18 @@ function renderUsers(users){
         users.length===0
     ){
 
+
         renderMessage(
-            "暂无用户数据"
+            "No user data available"
         );
+
 
         return;
 
+
     }
+
+
 
 
 
@@ -256,8 +421,11 @@ function renderUsers(users){
 
 
 
+
+
     users.forEach(
         user=>{
+
 
 
             const tr =
@@ -267,13 +435,29 @@ function renderUsers(users){
 
 
 
-            tr.appendChild(
+
+
+            const usernameCell =
                 createCell(
                     formatUsername(
                         user.username
                     )
-                )
+                );
+
+
+
+            usernameCell.className =
+                "username-column";
+
+
+
+            tr.appendChild(
+                usernameCell
             );
+
+
+
+
 
 
 
@@ -282,6 +466,10 @@ function renderUsers(users){
                     user.account
                 )
             );
+
+
+
+
 
 
 
@@ -295,6 +483,10 @@ function renderUsers(users){
 
 
 
+
+
+
+
             tr.appendChild(
                 createCell(
                     formatAmount(
@@ -302,6 +494,11 @@ function renderUsers(users){
                     )
                 )
             );
+
+
+
+
+
 
 
 
@@ -315,6 +512,11 @@ function renderUsers(users){
 
 
 
+
+
+
+
+
             tr.appendChild(
                 createCell(
                     user.order_count ?? 0
@@ -323,13 +525,34 @@ function renderUsers(users){
 
 
 
+
+
+
+
+
+            tr.appendChild(
+                createActionCell(
+                    user
+                )
+            );
+
+
+
+
+
+
+
+
             fragment.appendChild(
                 tr
             );
 
 
+
         }
     );
+
+
 
 
 
@@ -338,7 +561,10 @@ function renderUsers(users){
     );
 
 
+
 }
+
+
 
 
 
@@ -351,15 +577,21 @@ function renderUsers(users){
 ============================== */
 
 
+
 async function loadUsers(){
 
 
+
     renderMessage(
-        "正在加载用户数据..."
+        "Loading user data..."
     );
 
 
+
+
+
     try{
+
 
 
         const response =
@@ -380,19 +612,35 @@ async function loadUsers(){
 
 
 
+
+
+
+
         const result =
             await response.json();
 
 
 
+
+
+
+
         if(!response.ok){
+
+
 
             throw new Error(
                 result.message ||
-                "加载失败"
+                "Load failed"
             );
 
+
         }
+
+
+
+
+
 
 
 
@@ -402,14 +650,21 @@ async function loadUsers(){
 
 
 
+
+
+
+
         setMessage(
-            "用户数据加载完成。"
+            "User data loaded."
         );
+
+
 
 
 
     }
     catch(error){
+
 
 
         console.error(
@@ -419,9 +674,13 @@ async function loadUsers(){
 
 
 
+
+
         renderMessage(
-            "加载失败"
+            "Load failed"
         );
+
+
 
 
 
@@ -430,11 +689,13 @@ async function loadUsers(){
             true
         );
 
+
     }
 
 
 
 }
+
 
 
 
@@ -448,10 +709,16 @@ async function loadUsers(){
 ============================== */
 
 
+
 function init(){
 
 
+
     getElements();
+
+
+
+
 
 
 
@@ -460,29 +727,51 @@ function init(){
         !elements.refresh
     ){
 
+
+
         console.error(
             "PAGE1 HTML missing"
         );
 
+
+
         return;
 
+
+
     }
+
+
+
+
+
 
 
 
     elements.refresh.onclick =
         function(){
 
+
             loadUsers();
 
+
         };
+
+
+
+
+
 
 
 
     loadUsers();
 
 
+
 }
+
+
+
 
 
 
@@ -492,6 +781,8 @@ if(
     document.readyState==="loading"
 ){
 
+
+
     document.addEventListener(
         "DOMContentLoaded",
         init,
@@ -500,12 +791,19 @@ if(
         }
     );
 
+
+
 }
 else{
 
+
     init();
 
+
 }
+
+
+
 
 
 
