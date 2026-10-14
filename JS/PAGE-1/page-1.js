@@ -7,11 +7,6 @@
    PAGE1:
    User Management
 
-   Functions:
-   - Load users
-   - Render user table
-   - Open edit modal
-
    No Pagination
 
 ===================================================== */
@@ -22,10 +17,8 @@
 "use strict";
 
 
-
 const API_URL =
 "https://tvtakmswbzawaweytimx.supabase.co/functions/v1/admin-users-list";
-
 
 
 const elements = {};
@@ -34,10 +27,9 @@ const elements = {};
 
 
 
-
-/* ===============================
+/* ==============================
    ELEMENTS
-================================ */
+============================== */
 
 
 function getElements(){
@@ -49,12 +41,10 @@ function getElements(){
         );
 
 
-
     elements.message =
         document.getElementById(
             "U9-admin-users-message"
         );
-
 
 
     elements.refresh =
@@ -69,12 +59,9 @@ function getElements(){
 
 
 
-
-
-
-/* ===============================
+/* ==============================
    MESSAGE
-================================ */
+============================== */
 
 
 function setMessage(
@@ -106,28 +93,25 @@ function setMessage(
 
 
 
-
-
-
-/* ===============================
+/* ==============================
    FORMAT
-================================ */
+============================== */
 
 
 function formatAmount(value){
 
 
-    const number =
+    const num =
         Number(value ?? 0);
 
 
 
-    if(!Number.isFinite(number))
+    if(!Number.isFinite(num))
         return "0.00";
 
 
 
-    return number.toLocaleString(
+    return num.toLocaleString(
         "en-US",
         {
             minimumFractionDigits:2,
@@ -137,6 +121,7 @@ function formatAmount(value){
 
 
 }
+
 
 
 
@@ -156,21 +141,35 @@ function formatUsername(value){
 
 
 
-    if(text.length <= 8)
+    /*
+        Maximum display length
+
+        Example:
+
+        123123@gmail.com
+
+        =>
+        123...com
+
+    */
+
+
+    if(text.length <= 6)
         return text;
 
 
 
     return (
-        text.slice(0,4)
+        text.slice(0,3)
         +
         "..."
         +
-        text.slice(-4)
+        text.slice(-3)
     );
 
 
 }
+
 
 
 
@@ -199,21 +198,11 @@ function formatDate(value){
 
 
 
-    return (
-        String(
-            date.getMonth()+1
-        ).padStart(2,"0")
-        +
-        "/"
-        +
-        String(
-            date.getDate()
-        ).padStart(2,"0")
-        +
-        "/"
-        +
-        date.getFullYear()
-    );
+    return `${String(
+        date.getMonth()+1
+    ).padStart(2,"0")}/${String(
+        date.getDate()
+    ).padStart(2,"0")}/${date.getFullYear()}`;
 
 
 }
@@ -224,11 +213,9 @@ function formatDate(value){
 
 
 
-
-
-/* ===============================
+/* ==============================
    TABLE CELL
-================================ */
+============================== */
 
 
 function createCell(value){
@@ -258,10 +245,9 @@ function createCell(value){
 
 
 
-
-/* ===============================
+/* ==============================
    ACTION BUTTON
-================================ */
+============================== */
 
 
 function createActionCell(user){
@@ -271,7 +257,6 @@ function createActionCell(user){
         document.createElement(
             "td"
         );
-
 
 
     td.className =
@@ -316,12 +301,9 @@ function createActionCell(user){
 
 
 
-
-
     button.appendChild(
         img
     );
-
 
 
 
@@ -346,7 +328,7 @@ function createActionCell(user){
             else{
 
 
-                console.error(
+                console.warn(
                     "[U9 Admin] Edit modal JS not loaded."
                 );
 
@@ -355,8 +337,6 @@ function createActionCell(user){
 
 
         };
-
-
 
 
 
@@ -374,15 +354,9 @@ function createActionCell(user){
 
 
 
-
-
-
-
-
-
-/* ===============================
-   RENDER MESSAGE
-================================ */
+/* ==============================
+   EMPTY MESSAGE
+============================== */
 
 
 function renderMessage(text){
@@ -391,13 +365,10 @@ function renderMessage(text){
     elements.tbody.replaceChildren();
 
 
-
     const tr =
         document.createElement(
             "tr"
         );
-
-
 
     const td =
         document.createElement(
@@ -405,20 +376,14 @@ function renderMessage(text){
         );
 
 
-
-    td.colSpan =
-        7;
-
+    td.colSpan = 7;
 
 
     td.textContent =
         text;
 
 
-
-    tr.appendChild(
-        td
-    );
+    tr.appendChild(td);
 
 
 
@@ -429,30 +394,19 @@ function renderMessage(text){
 
 }
 
-
-
-
-
-
-
-
-
-/* ===============================
+/* ==============================
    RENDER USERS
-================================ */
+============================== */
 
 
 function renderUsers(users){
 
-
     elements.tbody.replaceChildren();
-
-
 
 
     if(
         !users ||
-        users.length===0
+        users.length === 0
     ){
 
 
@@ -463,37 +417,22 @@ function renderUsers(users){
 
         return;
 
-
     }
-
-
-
-
 
 
     const fragment =
         document.createDocumentFragment();
 
 
-
-
-
-
     users.forEach(
-        function(user){
-
-
+        user=>{
 
             const tr =
                 document.createElement(
                     "tr"
                 );
 
-
-
-
-
-            const username =
+            const usernameCell =
                 createCell(
                     formatUsername(
                         user.username
@@ -501,18 +440,14 @@ function renderUsers(users){
                 );
 
 
-            username.className =
+            usernameCell.className =
                 "username-column";
 
 
 
             tr.appendChild(
-                username
+                usernameCell
             );
-
-
-
-
 
 
             tr.appendChild(
@@ -520,10 +455,6 @@ function renderUsers(users){
                     user.account
                 )
             );
-
-
-
-
 
 
             tr.appendChild(
@@ -535,10 +466,6 @@ function renderUsers(users){
             );
 
 
-
-
-
-
             tr.appendChild(
                 createCell(
                     formatAmount(
@@ -546,10 +473,6 @@ function renderUsers(users){
                     )
                 )
             );
-
-
-
-
 
 
             tr.appendChild(
@@ -561,19 +484,11 @@ function renderUsers(users){
             );
 
 
-
-
-
-
             tr.appendChild(
                 createCell(
                     user.order_count ?? 0
                 )
             );
-
-
-
-
 
 
             tr.appendChild(
@@ -582,58 +497,33 @@ function renderUsers(users){
                 )
             );
 
-
-
-
-
-
             fragment.appendChild(
                 tr
             );
 
 
-
         }
     );
-
-
-
-
-
 
     elements.tbody.appendChild(
         fragment
     );
 
-
 }
 
 
 
-
-
-
-
-
-
-/* ===============================
+/* ==============================
    LOAD USERS
-================================ */
+============================== */
 
 
 async function loadUsers(){
-
-
     renderMessage(
         "Loading user data..."
     );
 
-
-
-
     try{
-
-
         const response =
             await fetch(
                 API_URL,
@@ -651,16 +541,8 @@ async function loadUsers(){
             );
 
 
-
-
-
-
         const result =
             await response.json();
-
-
-
-
 
 
         if(!response.ok){
@@ -675,14 +557,10 @@ async function loadUsers(){
         }
 
 
-
-
-
-
-
         renderUsers(
             result.users || []
         );
+
 
 
 
@@ -723,24 +601,14 @@ async function loadUsers(){
 }
 
 
-
-
-
-
-
-
-
-/* ===============================
+/* ==============================
    INIT
-================================ */
+============================== */
 
 
 function init(){
 
-
     getElements();
-
-
 
 
     if(
@@ -750,52 +618,28 @@ function init(){
 
 
         console.error(
-            "[U9 Admin PAGE1] HTML missing."
+            "PAGE1 HTML missing"
         );
-
 
         return;
 
 
     }
 
-
-
-
-
-
-
     elements.refresh.onclick =
         function(){
 
-
             loadUsers();
-
 
         };
 
-
-
-
-
-
     loadUsers();
 
-
 }
-
-
-
-
-
-
-
-
 
 if(
     document.readyState === "loading"
 ){
-
 
     document.addEventListener(
         "DOMContentLoaded",
@@ -805,16 +649,11 @@ if(
         }
     );
 
-
 }
 else{
 
-
     init();
 
-
 }
-
-
 
 })();
