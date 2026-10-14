@@ -1,3 +1,15 @@
+/* =====================================================
+   U9 ADMIN
+
+   File:
+   CSS/PAGE-1/edit-modal.css
+
+   Edit User Modal
+
+===================================================== */
+
+
+
 #U9-admin-edit-modal {
 
     display:none;
@@ -26,6 +38,10 @@
 
 
 
+
+
+
+
 .U9-admin-edit-modal-box {
 
     width:80%;
@@ -42,7 +58,37 @@
 
 
 
-.U9-admin-edit-modal-header {height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;background: #515151;color:#ffffff;}
+
+
+
+
+
+/* ===============================
+   HEADER
+================================ */
+
+
+.U9-admin-edit-modal-header {
+
+
+    height:56px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:0 18px;
+
+    background:#515151;
+
+    color:#ffffff;
+
+
+}
+
+
 
 
 
@@ -65,7 +111,12 @@
 
     overflow-wrap:anywhere;
 
+
 }
+
+
+
+
 
 
 
@@ -86,7 +137,12 @@
 
     cursor:pointer;
 
+
 }
+
+
+
+
 
 
 
@@ -109,7 +165,10 @@
 
     justify-content:center;
 
+
 }
+
+
 
 
 
@@ -122,18 +181,43 @@
 
     filter:brightness(0) invert(1);
 
+
 }
 
 
 
+
+
+
+
+
+/* ===============================
+   BODY
+================================ */
+
+
 .U9-admin-edit-modal-body {
+
 
     height:calc(100% - 56px);
 
 }
 
+
+
+
+
+
+
+
+
 /* ===============================
    USER STATUS BAR
+
+   Desktop:
+
+   icon text | icon text | icon text | icon text
+
 ================================ */
 
 
@@ -159,6 +243,8 @@
 
 
 
+
+
 .U9-admin-edit-status-item {
 
 
@@ -166,14 +252,20 @@
 
     align-items:center;
 
+    justify-content:center;
+
     gap:10px;
 
     font-size:15px;
 
     font-weight:600;
 
+    white-space:nowrap;
+
 
 }
+
+
 
 
 
@@ -193,6 +285,8 @@
 
 
 
+
+
 #U9-edit-order-status {
 
 
@@ -205,6 +299,9 @@
 
 
 
+
+
+#U9-edit-order-count,
 #U9-edit-user-coins,
 #U9-edit-user-balance {
 
@@ -212,6 +309,185 @@
     min-width:60px;
 
     text-align:center;
+
+
+}
+
+
+
+
+
+
+
+
+
+/* =====================================================
+   MOBILE
+
+   Layout:
+
+   「Status」「Order Count」
+
+   「Coins」「Balance」
+
+===================================================== */
+
+
+@media(max-width:480px){
+
+
+
+    .U9-admin-edit-modal-box {
+
+
+        width:92%;
+
+        height:85%;
+
+
+    }
+
+
+
+
+
+
+    .U9-admin-edit-modal-header {
+
+
+        height:52px;
+
+        padding:0 10px;
+
+
+    }
+
+
+
+
+
+
+    .U9-admin-edit-modal-header h3 {
+
+
+        font-size:15px;
+
+
+    }
+
+
+
+
+
+
+
+    #U9-admin-edit-modal-close {
+
+
+        width:36px;
+
+        height:36px;
+
+        font-size:26px;
+
+
+    }
+
+
+
+
+
+
+
+    #U9-admin-edit-modal-refresh {
+
+
+        width:36px;
+
+        height:36px;
+
+
+    }
+
+
+
+
+
+
+
+
+    .U9-admin-edit-modal-body {
+
+
+        height:calc(100% - 52px);
+
+
+    }
+
+
+
+
+
+
+
+    .U9-admin-edit-status-bar {
+
+
+        height:auto;
+
+        padding:20px 10px;
+
+        display:grid;
+
+        grid-template-columns:repeat(2,1fr);
+
+        row-gap:24px;
+
+        column-gap:10px;
+
+
+    }
+
+
+
+
+
+
+
+
+    .U9-admin-edit-status-item {
+
+
+        width:100%;
+
+        justify-content:center;
+
+        font-size:14px;
+
+
+    }
+
+
+
+
+
+
+
+
+    .U9-admin-edit-status-item img {
+
+
+        width:22px;
+
+        height:22px;
+
+
+    }
+
+
+
+
+
 
 
 }
