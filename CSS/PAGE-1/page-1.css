@@ -4,35 +4,45 @@
    File:
    CSS/PAGE-1/page-1.css
 
-   PAGE1:
+   PAGE 1:
    User Management
 
    Features:
-   - User table
-   - Horizontal scroll
-   - Fixed Username column
-   - Fixed Action column
+   - User table display
    - Refresh button
    - Login button
+   - Status message
+   - Sticky Username column
+   - Sticky Action column
+   - Responsive layout
+
+   No pagination
 
 ===================================================== */
 
 
 
-/* ===============================
+
+
+/* =====================================================
    PAGE CONTAINER
-================================ */
+===================================================== */
 
 
 #U9-admin-page-1 {
 
+
     width:100%;
+
 
     min-height:100%;
 
+
     padding:24px;
 
+
     color:#111111;
+
 
 }
 
@@ -40,51 +50,72 @@
 
 
 
-/* ===============================
+
+/* =====================================================
    MAIN CONTAINER
-================================ */
+===================================================== */
 
 
 #U9-admin-users {
 
+
     width:100%;
+
 
     min-width:0;
 
+
 }
 
 
 
 
 
-/* ===============================
+
+
+
+/* =====================================================
    HEADER
-================================ */
+===================================================== */
 
 
-.U9-admin-users-header {
+#U9-admin-users .U9-admin-users-header {
+
 
     display:flex;
 
+
     align-items:center;
+
 
     justify-content:space-between;
 
+
     gap:16px;
+
 
     margin-bottom:20px;
 
+
 }
 
 
 
-.U9-admin-users-header h2 {
+
+#U9-admin-users .U9-admin-users-header h2 {
+
 
     margin:0;
 
+
     font-size:24px;
 
+
     font-weight:600;
+
+
+    color:#111111;
+
 
 }
 
@@ -92,57 +123,73 @@
 
 
 
-/* ===============================
+
+
+/* =====================================================
    HEADER ACTIONS
-================================ */
+===================================================== */
 
 
 .U9-admin-header-actions {
 
+
     display:flex;
+
 
     align-items:center;
 
+
     gap:10px;
 
-}
-
-
-
-
-
-#U9-admin-users-refresh,
-#U9-admin-login-button {
-
-
-    padding:9px 18px;
-
-    border-radius:8px;
-
-    font-size:13px;
-
-    cursor:pointer;
-
-    transition:.2s;
-
 
 }
 
 
 
+
+
+
+
+
+/* =====================================================
+   REFRESH BUTTON
+===================================================== */
 
 
 #U9-admin-users-refresh {
 
 
-    background:#ffffff;
+    flex-shrink:0;
+
+
+    padding:9px 18px;
+
 
     border:1px solid #d1d5db;
+
+
+    border-radius:8px;
+
+
+    background:#ffffff;
+
 
     color:#111111;
 
 
+    font-size:13px;
+
+
+    cursor:pointer;
+
+
+    transition:
+        background-color .2s ease,
+        border-color .2s ease;
+
+
 }
+
 
 
 
@@ -159,17 +206,64 @@
 
 
 
+#U9-admin-users-refresh:disabled {
+
+
+    opacity:.5;
+
+
+    cursor:not-allowed;
+
+
+}
+
+
+
+
+
+
+
+
+
+/* =====================================================
+   LOGIN BUTTON
+===================================================== */
+
+
 #U9-admin-login-button {
+
+
+    flex-shrink:0;
+
+
+    padding:9px 18px;
+
+
+    border:1px solid #111111;
+
+
+    border-radius:8px;
 
 
     background:#111111;
 
-    border:1px solid #111111;
 
     color:#ffffff;
 
 
+    font-size:13px;
+
+
+    cursor:pointer;
+
+
+    transition:
+        opacity .2s ease;
+
+
 }
+
+
 
 
 
@@ -185,11 +279,28 @@
 
 
 
+#U9-admin-login-button:disabled {
 
 
-/* ===============================
+    opacity:.5;
+
+
+    cursor:not-allowed;
+
+
+}
+
+
+
+
+
+
+
+
+
+/* =====================================================
    MESSAGE
-================================ */
+===================================================== */
 
 
 #U9-admin-users-message {
@@ -197,14 +308,19 @@
 
     min-height:20px;
 
+
     margin-bottom:12px;
 
+
     font-size:13px;
+
 
     color:#666666;
 
 
 }
+
+
 
 
 
@@ -222,21 +338,27 @@
 
 
 
-/* ===============================
-   TABLE WRAPPER
-================================ */
 
 
-.U9-admin-users-table-wrap {
+/* =====================================================
+   TABLE CONTAINER
+===================================================== */
+
+
+#U9-admin-users .U9-admin-users-table-wrap {
 
 
     width:100%;
 
+
     overflow-x:auto;
+
 
     background:#ffffff;
 
+
     border:1px solid #e5e7eb;
+
 
     border-radius:10px;
 
@@ -250,21 +372,26 @@
 
 
 
-/* ===============================
+
+/* =====================================================
    TABLE
-================================ */
+===================================================== */
 
 
-.U9-admin-users-table {
+#U9-admin-users .U9-admin-users-table {
 
 
     width:100%;
 
-    min-width:900px;
+
+    min-width:950px;
+
 
     border-collapse:collapse;
 
+
     text-align:center;
+
 
     font-size:13px;
 
@@ -275,18 +402,40 @@
 
 
 
-.U9-admin-users-table th {
+
+
+
+
+#U9-admin-users .U9-admin-users-table thead {
+
+
+    background:#f9fafb;
+
+
+}
+
+
+
+
+
+
+
+
+
+#U9-admin-users .U9-admin-users-table th {
 
 
     padding:15px 14px;
 
-    background:#f9fafb;
 
     color:#333333;
 
+
     font-weight:600;
 
+
     white-space:nowrap;
+
 
     border-bottom:1px solid #e5e7eb;
 
@@ -297,14 +446,21 @@
 
 
 
-.U9-admin-users-table td {
+
+
+
+
+#U9-admin-users .U9-admin-users-table td {
 
 
     padding:14px;
 
+
     color:#444444;
 
+
     white-space:nowrap;
+
 
     border-bottom:1px solid #f0f0f0;
 
@@ -317,12 +473,14 @@
 
 
 
-/* ===============================
-   ROW COLOR
-================================ */
 
 
-.U9-admin-users-table tbody tr:nth-child(odd) {
+/* =====================================================
+   ROW COLORS
+===================================================== */
+
+
+#U9-admin-users .U9-admin-users-table tbody tr:nth-child(odd){
 
 
     background:#ffffff;
@@ -332,7 +490,9 @@
 
 
 
-.U9-admin-users-table tbody tr:nth-child(even) {
+
+
+#U9-admin-users .U9-admin-users-table tbody tr:nth-child(even){
 
 
     background:#f3f4f6;
@@ -342,7 +502,9 @@
 
 
 
-.U9-admin-users-table tbody tr:hover {
+
+
+#U9-admin-users .U9-admin-users-table tbody tr:hover{
 
 
     background:#e5e7eb;
@@ -354,21 +516,25 @@
 
 
 
-/* ===============================
-   FIX USERNAME COLUMN
-================================ */
 
 
-.username-column {
+
+
+/* =====================================================
+   STICKY USERNAME
+===================================================== */
+
+
+#U9-admin-users .username-column{
 
 
     position:sticky;
+
 
     left:0;
 
-    z-index:3;
 
-    background:inherit;
+    z-index:3;
 
 
 }
@@ -377,10 +543,11 @@
 
 
 
-.U9-admin-users-table thead .username-column {
+#U9-admin-users .U9-admin-users-table thead .username-column{
 
 
     z-index:5;
+
 
     background:#f9fafb;
 
@@ -394,21 +561,21 @@
 
 
 
-/* ===============================
-   FIX ACTION COLUMN
-================================ */
+/* =====================================================
+   STICKY ACTION
+===================================================== */
 
 
-.action-column {
+#U9-admin-users .action-column{
 
 
     position:sticky;
 
+
     right:0;
 
-    z-index:3;
 
-    background:inherit;
+    z-index:3;
 
 
 }
@@ -417,10 +584,11 @@
 
 
 
-.U9-admin-users-table thead .action-column {
+#U9-admin-users .U9-admin-users-table thead .action-column{
 
 
     z-index:5;
+
 
     background:#f9fafb;
 
@@ -434,56 +602,87 @@
 
 
 
-/* ===============================
+
+/*
+   Keep sticky cells readable
+*/
+
+
+#U9-admin-users .U9-admin-users-table tbody .username-column,
+#U9-admin-users .U9-admin-users-table tbody .action-column{
+
+
+    background:inherit;
+
+
+}
+
+
+
+
+
+
+
+
+/* =====================================================
    EDIT BUTTON
-================================ */
+===================================================== */
 
 
 .U9-admin-edit-button {
 
 
-    width:34px;
+    width:32px;
 
-    height:34px;
 
-    padding:0;
+    height:32px;
 
-    border:none;
-
-    background:none;
-
-    cursor:pointer;
 
     display:flex;
 
+
     align-items:center;
+
 
     justify-content:center;
 
 
+    margin:auto;
+
+
+    padding:6px;
+
+
+    border:1px solid #d1d5db;
+
+
+    border-radius:6px;
+
+
+    background:#ffffff;
+
+
+    cursor:pointer;
+
+
+    transition:
+        background-color .2s ease,
+        border-color .2s ease;
+
+
 }
 
 
 
 
-.U9-admin-edit-button img {
+
+.U9-admin-edit-button img{
 
 
-    width:20px;
-
-    height:20px;
+    width:16px;
 
 
-}
-
-
-
-
-
-.U9-admin-edit-button:hover {
-
-
-    opacity:.65;
+    height:16px;
 
 
 }
@@ -492,23 +691,42 @@
 
 
 
+.U9-admin-edit-button:hover{
 
 
-/* ===============================
-   EMPTY / LOADING
-================================ */
+    background:#f3f4f6;
 
 
-.U9-admin-users-table td[colspan] {
+    border-color:#9ca3af;
 
 
-    padding:30px;
+}
 
-    text-align:center;
+
+
+
+
+
+
+
+
+/* =====================================================
+   LOADING / EMPTY
+===================================================== */
+
+
+#U9-admin-users .U9-admin-users-table td[colspan="7"]{
+
+
+    padding:30px 14px;
+
 
     color:#888888;
 
 
+    text-align:center;
+
+
 }
 
 
@@ -517,15 +735,18 @@
 
 
 
-/* ===============================
+
+
+/* =====================================================
    FOCUS
-================================ */
+===================================================== */
 
 
-#U9-admin-users button:focus-visible {
+#U9-admin-users button:focus-visible{
 
 
     outline:2px solid #2563eb;
+
 
     outline-offset:2px;
 
@@ -538,66 +759,111 @@
 
 
 
-/* ===============================
+
+
+/* =====================================================
    MOBILE
-================================ */
+===================================================== */
 
 
 @media(max-width:600px){
 
 
 
-#U9-admin-page-1 {
+    #U9-admin-page-1{
 
 
-    padding:16px 12px;
+        padding:16px 12px;
+
+
+    }
+
+
+
+
+
+
+    #U9-admin-users .U9-admin-users-header{
+
+
+        align-items:flex-start;
+
+
+        flex-direction:column;
+
+
+    }
+
+
+
+
+
+
+    #U9-admin-users .U9-admin-users-header h2{
+
+
+        font-size:20px;
+
+
+    }
+
+
+
+
+
+
+    .U9-admin-header-actions{
+
+
+        width:100%;
+
+
+    }
+
+
+
+
+
+
+    #U9-admin-users-refresh,
+    #U9-admin-login-button{
+
+
+        flex:1;
+
+
+    }
+
 
 
 }
 
 
 
-.U9-admin-users-header {
-
-
-    flex-direction:column;
-
-    align-items:flex-start;
-
-
-}
 
 
 
-.U9-admin-users-header h2 {
-
-
-    font-size:20px;
-
-
-}
 
 
 
-.U9-admin-header-actions {
+/* =====================================================
+   REDUCED MOTION
+===================================================== */
 
 
-    width:100%;
-
-
-}
+@media(prefers-reduced-motion:reduce){
 
 
 
-#U9-admin-users-refresh,
-#U9-admin-login-button {
+    #U9-admin-users-refresh,
+    #U9-admin-login-button,
+    .U9-admin-edit-button{
 
 
-    flex:1;
+        transition:none;
 
 
-}
-
+    }
 
 
 }
