@@ -7,7 +7,7 @@
    Functions:
    - Admin login
    - Logout
-   - Session refresh
+   - Login button handler
 
 ===================================================== */
 
@@ -23,8 +23,9 @@ const ADMIN_LOGIN_URL =
 
 
 
-
 const elements = {};
+
+
 
 
 
@@ -44,7 +45,66 @@ function getElements(){
         );
 
 
+    elements.username =
+        document.getElementById(
+            "U9-admin-login-username"
+        );
+
+
+    elements.password =
+        document.getElementById(
+            "U9-admin-login-password"
+        );
+
+
+    elements.message =
+        document.getElementById(
+            "U9-admin-login-message"
+        );
+
+
 }
+
+
+
+
+
+
+
+
+
+/* ===============================
+   MESSAGE
+================================ */
+
+
+function showMessage(
+    message,
+    type = ""
+){
+
+
+    if(!elements.message){
+
+        return;
+
+    }
+
+
+
+    elements.message.textContent =
+        message;
+
+
+
+    elements.message.className =
+        type;
+
+
+}
+
+
+
 
 
 
@@ -95,11 +155,18 @@ async function adminLogin(
 
 
 
+
         const result =
             await response.json()
-                .catch(
-                    ()=>({})
-                );
+            .catch(
+                function(){
+
+                    return {};
+
+                }
+            );
+
+
 
 
 
@@ -119,10 +186,13 @@ async function adminLogin(
 
 
 
-        /*
-            Cookie is created by server.
 
-            Now verify session.
+
+        /*
+            Server creates:
+            HttpOnly admin_session cookie
+
+            Verify session after login
         */
 
 
@@ -139,10 +209,13 @@ async function adminLogin(
 
 
 
+
+
         return {
 
 
             success:true,
+
 
             admin:
                 result.admin
@@ -152,8 +225,11 @@ async function adminLogin(
 
 
 
+
+
     }
     catch(error){
+
 
 
         console.error(
@@ -162,10 +238,12 @@ async function adminLogin(
         );
 
 
+
         return {
 
 
             success:false,
+
 
             error:
                 error.message
@@ -187,75 +265,6 @@ async function adminLogin(
 
 
 
-/* ===============================
-   CHECK SESSION
-================================ */
-
-
-async function checkAdminSession(){
-
-
-    try{
-
-
-        if(
-            window.U9AdminCheckSession
-        ){
-
-
-            return await
-                window.U9AdminCheckSession();
-
-
-
-        }
-
-
-
-        return {
-
-
-            authenticated:false,
-
-            admin:null
-
-
-        };
-
-
-
-    }
-    catch(error){
-
-
-        console.error(
-            "[U9 Admin Session Check]",
-            error
-        );
-
-
-        return {
-
-
-            authenticated:false,
-
-            admin:null
-
-
-        };
-
-
-    }
-
-
-
-}
-
-
-
-
-
-
 
 /* ===============================
    LOGOUT
@@ -265,8 +274,16 @@ async function checkAdminSession(){
 async function adminLogout(){
 
 
-    document.cookie =
-        "admin_session=; Path=/; Max-Age=0";
+
+    /*
+        HttpOnly cookie cannot
+        be removed by JS.
+
+        Server logout function should
+        clear it later.
+
+        Here only refresh state.
+    */
 
 
 
@@ -290,15 +307,24 @@ async function adminLogout(){
 
 
 
+
+
 /* ===============================
-   BUTTON
+   LOGIN BUTTON
 ================================ */
 
 
 function initLoginButton(){
 
 
+
     if(!elements.button){
+
+
+        console.warn(
+            "[U9 Admin] Login button missing."
+        );
+
 
         return;
 
@@ -306,22 +332,147 @@ function initLoginButton(){
 
 
 
+
+
+
+
     elements.button.onclick =
-        async function(){
+    async function(){
 
 
 
-            console.log(
-                "[U9 Admin] Login button clicked."
+        console.log(
+            "[U9 Admin] Login button clicked."
+        );
+
+
+
+
+
+        const username =
+            elements.username
+            ? elements.username.value.trim()
+            : "";
+
+
+
+        const password =
+            elements.password
+            ? elements.password.value
+            : "";
+
+
+
+
+
+
+
+        if(
+            !username ||
+            !password
+        ){
+
+
+            showMessage(
+                "Please enter username and password.",
+                "error"
+            );
+
+
+            return;
+
+        }
+
+
+
+
+
+
+
+        elements.button.disabled =
+            true;
+
+
+
+        showMessage(
+            "Logging in..."
+        );
+
+
+
+
+
+
+
+
+        const result =
+            await adminLogin(
+                username,
+                password
             );
 
 
 
-        };
+
+
+
+
+
+        elements.button.disabled =
+            false;
+
+
+
+
+
+
+
+        if(
+            !result.success
+        ){
+
+
+            showMessage(
+                result.error ||
+                "Login failed.",
+                "error"
+            );
+
+
+            return;
+
+        }
+
+
+
+
+
+
+
+        showMessage(
+            "Login successful.",
+            "success"
+        );
+
+
+
+
+
+
+        console.log(
+            "[U9 Admin] Login success:",
+            result.admin
+        );
+
+
+
+    };
 
 
 
 }
+
+
 
 
 
@@ -338,12 +489,11 @@ window.U9AdminLogin =
     adminLogin;
 
 
+
 window.U9AdminLogout =
     adminLogout;
 
 
-window.U9AdminCheckSession =
-    checkAdminSession;
 
 
 
@@ -359,10 +509,13 @@ window.U9AdminCheckSession =
 function initialize(){
 
 
+
     getElements();
 
 
+
     initLoginButton();
+
 
 
 
@@ -371,7 +524,10 @@ function initialize(){
     );
 
 
+
 }
+
+
 
 
 
