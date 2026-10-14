@@ -21,7 +21,7 @@ const API_URL =
 "https://tvtakmswbzawaweytimx.supabase.co/functions/v1/admin-users-list";
 
 
-const elements={};
+const elements = {};
 
 
 
@@ -59,7 +59,6 @@ function getElements(){
 
 
 
-
 /* ==============================
    MESSAGE
 ============================== */
@@ -88,7 +87,6 @@ function setMessage(
 
 
 }
-
 
 
 
@@ -129,6 +127,7 @@ function formatAmount(value){
 
 
 
+
 function formatUsername(value){
 
 
@@ -140,6 +139,19 @@ function formatUsername(value){
     const text =
         String(value);
 
+
+
+    /*
+        Maximum display length
+
+        Example:
+
+        123123@gmail.com
+
+        =>
+        123...com
+
+    */
 
 
     if(text.length <= 6)
@@ -157,6 +169,7 @@ function formatUsername(value){
 
 
 }
+
 
 
 
@@ -201,7 +214,7 @@ function formatDate(value){
 
 
 /* ==============================
-   TABLE
+   TABLE CELL
 ============================== */
 
 
@@ -216,8 +229,7 @@ function createCell(value){
 
 
     td.textContent =
-        value ??
-        "—";
+        value ?? "—";
 
 
 
@@ -232,6 +244,12 @@ function createCell(value){
 
 
 
+
+/* ==============================
+   ACTION BUTTON
+============================== */
+
+
 function createActionCell(user){
 
 
@@ -243,6 +261,7 @@ function createActionCell(user){
 
     td.className =
         "action-column";
+
 
 
 
@@ -260,6 +279,8 @@ function createActionCell(user){
 
     button.className =
         "U9-admin-edit-button";
+
+
 
 
 
@@ -286,25 +307,29 @@ function createActionCell(user){
 
 
 
+
+
     button.onclick =
         function(){
 
 
             if(
-                typeof openEditModal ===
+                typeof window.openEditModal ===
                 "function"
             ){
 
-                openEditModal(
+
+                window.openEditModal(
                     user
                 );
+
 
             }
             else{
 
 
                 console.warn(
-                    "Edit modal is not loaded"
+                    "[U9 Admin] Edit modal JS not loaded."
                 );
 
 
@@ -312,6 +337,7 @@ function createActionCell(user){
 
 
         };
+
 
 
 
@@ -328,17 +354,15 @@ function createActionCell(user){
 
 
 
-
-
-
+/* ==============================
+   EMPTY MESSAGE
+============================== */
 
 
 function renderMessage(text){
 
 
-
     elements.tbody.replaceChildren();
-
 
 
     const tr =
@@ -346,27 +370,20 @@ function renderMessage(text){
             "tr"
         );
 
-
-
     const td =
         document.createElement(
             "td"
         );
 
 
-
     td.colSpan = 7;
-
 
 
     td.textContent =
         text;
 
 
-
-    tr.appendChild(
-        td
-    );
+    tr.appendChild(td);
 
 
 
@@ -377,26 +394,19 @@ function renderMessage(text){
 
 }
 
-
-
-
-
-
-
+/* ==============================
+   RENDER USERS
+============================== */
 
 
 function renderUsers(users){
 
-
-
     elements.tbody.replaceChildren();
-
-
 
 
     if(
         !users ||
-        users.length===0
+        users.length === 0
     ){
 
 
@@ -407,35 +417,20 @@ function renderUsers(users){
 
         return;
 
-
     }
-
-
-
-
-
 
 
     const fragment =
         document.createDocumentFragment();
 
 
-
-
-
     users.forEach(
         user=>{
-
-
 
             const tr =
                 document.createElement(
                     "tr"
                 );
-
-
-
-
 
             const usernameCell =
                 createCell(
@@ -443,7 +438,6 @@ function renderUsers(users){
                         user.username
                     )
                 );
-
 
 
             usernameCell.className =
@@ -456,21 +450,11 @@ function renderUsers(users){
             );
 
 
-
-
-
-
-
             tr.appendChild(
                 createCell(
                     user.account
                 )
             );
-
-
-
-
-
 
 
             tr.appendChild(
@@ -482,11 +466,6 @@ function renderUsers(users){
             );
 
 
-
-
-
-
-
             tr.appendChild(
                 createCell(
                     formatAmount(
@@ -494,12 +473,6 @@ function renderUsers(users){
                     )
                 )
             );
-
-
-
-
-
-
 
 
             tr.appendChild(
@@ -511,23 +484,11 @@ function renderUsers(users){
             );
 
 
-
-
-
-
-
-
             tr.appendChild(
                 createCell(
                     user.order_count ?? 0
                 )
             );
-
-
-
-
-
-
 
 
             tr.appendChild(
@@ -536,39 +497,19 @@ function renderUsers(users){
                 )
             );
 
-
-
-
-
-
-
-
             fragment.appendChild(
                 tr
             );
 
 
-
         }
     );
-
-
-
-
 
     elements.tbody.appendChild(
         fragment
     );
 
-
-
 }
-
-
-
-
-
-
 
 
 
@@ -577,23 +518,12 @@ function renderUsers(users){
 ============================== */
 
 
-
 async function loadUsers(){
-
-
-
     renderMessage(
         "Loading user data..."
     );
 
-
-
-
-
     try{
-
-
-
         const response =
             await fetch(
                 API_URL,
@@ -611,22 +541,11 @@ async function loadUsers(){
             );
 
 
-
-
-
-
-
         const result =
             await response.json();
 
 
-
-
-
-
-
         if(!response.ok){
-
 
 
             throw new Error(
@@ -638,16 +557,9 @@ async function loadUsers(){
         }
 
 
-
-
-
-
-
-
         renderUsers(
             result.users || []
         );
-
 
 
 
@@ -660,11 +572,8 @@ async function loadUsers(){
 
 
 
-
-
     }
     catch(error){
-
 
 
         console.error(
@@ -674,13 +583,9 @@ async function loadUsers(){
 
 
 
-
-
         renderMessage(
             "Load failed"
         );
-
-
 
 
 
@@ -693,15 +598,7 @@ async function loadUsers(){
     }
 
 
-
 }
-
-
-
-
-
-
-
 
 
 /* ==============================
@@ -709,17 +606,9 @@ async function loadUsers(){
 ============================== */
 
 
-
 function init(){
 
-
-
     getElements();
-
-
-
-
-
 
 
     if(
@@ -728,60 +617,29 @@ function init(){
     ){
 
 
-
         console.error(
             "PAGE1 HTML missing"
         );
 
-
-
         return;
-
 
 
     }
 
-
-
-
-
-
-
-
     elements.refresh.onclick =
         function(){
 
-
             loadUsers();
-
 
         };
 
-
-
-
-
-
-
-
     loadUsers();
-
-
 
 }
 
-
-
-
-
-
-
-
 if(
-    document.readyState==="loading"
+    document.readyState === "loading"
 ){
-
-
 
     document.addEventListener(
         "DOMContentLoaded",
@@ -791,20 +649,11 @@ if(
         }
     );
 
-
-
 }
 else{
 
-
     init();
 
-
 }
-
-
-
-
-
 
 })();
