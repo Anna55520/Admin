@@ -1,72 +1,53 @@
-/* =====================================================
-   U9 ADMIN
-
-   File:
-   JS/PAGE-1/edit-modal.js
-
-   Edit Modal
-
-   Functions:
-   - Open modal
-   - Close modal
-
-===================================================== */
-
-
 (function(){
 
 "use strict";
 
 
-
-const elements = {};
-
-
-
-
-/* ===============================
-   ELEMENTS
-================================ */
+let modal;
+let closeButton;
+let title;
 
 
-function getElements(){
+
+function init(){
 
 
-    elements.modal =
+    modal =
         document.getElementById(
             "U9-admin-edit-modal"
         );
 
 
-    elements.close =
+    closeButton =
         document.getElementById(
             "U9-admin-edit-modal-close"
         );
 
 
-    elements.username =
+    title =
         document.getElementById(
-            "U9-admin-edit-username"
+            "U9-admin-edit-modal-title"
         );
+
+
+
+    if(closeButton){
+
+        closeButton.onclick =
+            function(){
+
+                closeEditModal();
+
+            };
+
+    }
+
 
 }
 
 
 
-
-
-
-/* ===============================
-   OPEN
-================================ */
-
-
 function openEditModal(user){
-
-
-    if(!elements.modal)
-        return;
-
 
 
     const username =
@@ -83,22 +64,6 @@ function openEditModal(user){
 
 
 
-    if(elements.username){
-
-        elements.username.value =
-            username;
-
-    }
-
-
-
-    const title =
-        elements.modal.querySelector(
-            ".U9-admin-edit-modal-header h3"
-        );
-
-
-
     if(title){
 
         title.textContent =
@@ -108,93 +73,25 @@ function openEditModal(user){
 
 
 
-    elements.modal.classList.add(
+    modal.classList.add(
         "active"
     );
 
 
 }
 
-
-
-
-
-
-/* ===============================
-   CLOSE
-================================ */
 
 
 function closeEditModal(){
 
 
-    if(!elements.modal)
-        return;
-
-
-
-    elements.modal.classList.remove(
+    modal.classList.remove(
         "active"
     );
 
 
 }
 
-
-
-
-
-
-/* ===============================
-   INIT
-================================ */
-
-
-function init(){
-
-
-    getElements();
-
-
-
-    if(!elements.modal){
-
-        console.error(
-            "[U9 Admin] Edit modal missing."
-        );
-
-        return;
-
-    }
-
-
-
-    if(elements.close){
-
-        elements.close.onclick =
-            function(){
-
-                closeEditModal();
-
-            };
-
-    }
-
-
-
-    console.log(
-        "[U9 Admin] Edit modal initialized."
-    );
-
-
-}
-
-
-
-
-/* ===============================
-   GLOBAL
-================================ */
 
 
 window.openEditModal =
@@ -206,13 +103,9 @@ window.closeEditModal =
 
 
 
-
-
-
 if(
     document.readyState==="loading"
 ){
-
 
     document.addEventListener(
         "DOMContentLoaded",
@@ -222,16 +115,12 @@ if(
         }
     );
 
-
 }
 else{
 
-
     init();
 
-
 }
-
 
 
 })();
