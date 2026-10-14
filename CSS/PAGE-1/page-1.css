@@ -28,18 +28,22 @@
 }
 
 
+
 /* ---------- Main Container ---------- */
 
 #U9-admin-users {
 
     width: 100%;
     min-width: 0;
+
 }
+
 
 
 /* =====================================================
    HEADER
 ===================================================== */
+
 
 #U9-admin-users .U9-admin-users-header {
 
@@ -52,7 +56,9 @@
     gap: 16px;
 
     margin-bottom: 20px;
+
 }
+
 
 
 #U9-admin-users .U9-admin-users-header h2 {
@@ -64,10 +70,13 @@
     font-weight: 600;
 
     color: #111111;
+
 }
 
 
+
 /* ---------- Header Buttons Container ---------- */
+
 
 .U9-admin-header-actions {
 
@@ -76,42 +85,38 @@
     align-items: center;
 
     gap: 10px;
+
 }
+
 
 
 /* =====================================================
    Refresh Button
 ===================================================== */
 
-#U9-admin-users-refresh {
 
+#U9-admin-users-refresh {
 
     flex-shrink: 0;
 
-
     padding: 9px 18px;
-
 
     border: 1px solid #d1d5db;
 
-
     border-radius: 8px;
-
 
     background: #ffffff;
 
-
     color: #111111;
-
 
     font-size: 13px;
 
-
     cursor: pointer;
 
-
     transition:
+
         background-color 0.2s ease,
+
         border-color 0.2s ease;
 
 }
@@ -120,7 +125,6 @@
 
 #U9-admin-users-refresh:hover {
 
-
     background: #f3f4f6;
 
 }
@@ -128,7 +132,6 @@
 
 
 #U9-admin-users-refresh:disabled {
-
 
     opacity: 0.5;
 
@@ -142,35 +145,29 @@
    Login Button
 ===================================================== */
 
-#U9-admin-login-button {
 
+#U9-admin-login-button {
 
     flex-shrink: 0;
 
-
     padding: 9px 18px;
-
 
     border: 1px solid #111111;
 
-
     border-radius: 8px;
-
 
     background: #111111;
 
-
     color: #ffffff;
-
 
     font-size: 13px;
 
-
     cursor: pointer;
 
-
     transition:
+
         background-color 0.2s ease,
+
         opacity 0.2s ease;
 
 }
@@ -179,7 +176,6 @@
 
 #U9-admin-login-button:hover {
 
-
     opacity: 0.85;
 
 }
@@ -187,7 +183,6 @@
 
 
 #U9-admin-login-button:disabled {
-
 
     opacity: 0.5;
 
@@ -201,17 +196,14 @@
    Status Message
 ===================================================== */
 
-#U9-admin-users-message {
 
+#U9-admin-users-message {
 
     min-height: 20px;
 
-
     margin-bottom: 12px;
 
-
     font-size: 13px;
-
 
     color: #666666;
 
@@ -220,7 +212,6 @@
 
 
 #U9-admin-users-message.error {
-
 
     color: #b91c1c;
 
@@ -232,20 +223,16 @@
    TABLE CONTAINER
 ===================================================== */
 
-#U9-admin-users .U9-admin-users-table-wrap {
 
+#U9-admin-users .U9-admin-users-table-wrap {
 
     width: 100%;
 
-
     overflow-x: auto;
-
 
     background: #ffffff;
 
-
     border: 1px solid #e5e7eb;
-
 
     border-radius: 10px;
 
@@ -260,18 +247,13 @@
 
 #U9-admin-users .U9-admin-users-table {
 
-
     width: 100%;
-
 
     min-width: 850px;
 
-
     border-collapse: collapse;
 
-
     text-align: center;
-
 
     font-size: 13px;
 
@@ -281,7 +263,6 @@
 
 #U9-admin-users .U9-admin-users-table thead {
 
-
     background: #f9fafb;
 
 }
@@ -290,18 +271,13 @@
 
 #U9-admin-users .U9-admin-users-table th {
 
-
     padding: 15px 14px;
-
 
     color: #333333;
 
-
     font-weight: 600;
 
-
     white-space: nowrap;
-
 
     border-bottom: 1px solid #e5e7eb;
 
@@ -311,15 +287,11 @@
 
 #U9-admin-users .U9-admin-users-table td {
 
-
     padding: 14px;
-
 
     color: #444444;
 
-
     white-space: nowrap;
-
 
     border-bottom: 1px solid #f0f0f0;
 
@@ -327,10 +299,22 @@
 
 
 
-#U9-admin-users .U9-admin-users-table tbody tr:last-child td {
+/* =====================================================
+   TABLE ROW COLOR
+===================================================== */
 
 
-    border-bottom: none;
+#U9-admin-users .U9-admin-users-table tbody tr:nth-child(odd) {
+
+    background: #ffffff;
+
+}
+
+
+
+#U9-admin-users .U9-admin-users-table tbody tr:nth-child(even) {
+
+    background: #f3f4f6;
 
 }
 
@@ -338,8 +322,15 @@
 
 #U9-admin-users .U9-admin-users-table tbody tr:hover {
 
+    background: #e5e7eb;
 
-    background: #fafafa;
+}
+
+
+
+#U9-admin-users .U9-admin-users-table tbody tr:last-child td {
+
+    border-bottom: none;
 
 }
 
@@ -352,12 +343,9 @@
 
 #U9-admin-users .U9-admin-users-table td[colspan="6"] {
 
-
     padding: 30px 14px;
 
-
     color: #888888;
-
 
     text-align: center;
 
@@ -372,9 +360,7 @@
 
 #U9-admin-users button:focus-visible {
 
-
     outline: 2px solid #2563eb;
-
 
     outline-offset: 2px;
 
@@ -392,7 +378,6 @@
 
     #U9-admin-page-1 {
 
-
         padding:16px 12px;
 
     }
@@ -401,9 +386,7 @@
 
     #U9-admin-users .U9-admin-users-header {
 
-
         align-items:flex-start;
-
 
         flex-direction:column;
 
@@ -413,7 +396,6 @@
 
     #U9-admin-users .U9-admin-users-header h2 {
 
-
         font-size:20px;
 
     }
@@ -421,7 +403,6 @@
 
 
     .U9-admin-header-actions {
-
 
         width:100%;
 
@@ -431,7 +412,6 @@
 
     #U9-admin-users-refresh,
     #U9-admin-login-button {
-
 
         flex:1;
 
@@ -452,7 +432,6 @@
 
     #U9-admin-users-refresh,
     #U9-admin-login-button {
-
 
         transition:none;
 
