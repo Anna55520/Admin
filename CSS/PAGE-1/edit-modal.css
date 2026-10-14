@@ -42,24 +42,7 @@
 
 
 
-.U9-admin-edit-modal-header {
-
-
-    height:56px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:space-between;
-
-    padding:0 18px;
-
-    background:#000000;
-
-    color:#ffffff;
-
-}
+.U9-admin-edit-modal-header {height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;background: #515151;color:#ffffff;}
 
 
 
