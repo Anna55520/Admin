@@ -1,13 +1,16 @@
 
-/* =========================================================
-   U9 ADMIN - INDEX CSS
-   负责：
-   1. 六个页面的显示与隐藏
-   2. 底部导航栏布局
-   3. 底部按钮默认、选中、悬停状态
-   ========================================================= */
+/* =====================================================
+   U9 ADMIN
+   File: index.css
 
-/* ---------- 全局基础设置 ---------- */
+   Functions:
+   1. Six-page display and switching styles
+   2. Fixed bottom navigation
+   3. Six navigation button styles
+   4. Active button style
+   ===================================================== */
+
+/* ---------- Basic Reset ---------- */
 
 * {
     box-sizing: border-box;
@@ -24,90 +27,78 @@ body {
 body {
     min-height: 100vh;
     overflow-x: hidden;
+    background: #f5f7fb;
+    font-family: Arial, sans-serif;
 }
 
-/* ---------- 页面主容器 ---------- */
+/* ---------- Main Container ---------- */
 
 #U9-admin-main {
     width: 100%;
     min-height: 100vh;
-    padding-bottom: 90px;
+    padding-bottom: 80px;
 }
 
-/* ---------- 六个页面的显示与隐藏 ---------- */
+/* ---------- Six Pages ---------- */
 
 #U9-admin-main .U9-admin-page {
     display: none;
     width: 100%;
-    min-height: calc(100vh - 90px);
+    min-height: calc(100vh - 80px);
 }
 
-/* 当前选中的页面 */
+/* Active Page */
 
 #U9-admin-main .U9-admin-page.active {
     display: block;
 }
 
-/* 兼容使用 ID 的页面结构 */
-
-#U9-admin-page-1,
-#U9-admin-page-2,
-#U9-admin-page-3,
-#U9-admin-page-4,
-#U9-admin-page-5,
-#U9-admin-page-6 {
-    width: 100%;
-    min-height: calc(100vh - 90px);
-}
-
-/* ---------- 底部导航栏 ---------- */
+/* ---------- Fixed Bottom Navigation ---------- */
 
 #U9-admin-bottom-nav {
     position: fixed;
-    z-index: 9999;
     right: 0;
     bottom: 0;
     left: 0;
+    z-index: 9999;
 
     display: flex;
     align-items: stretch;
     justify-content: space-around;
 
     width: 100%;
-    min-height: 72px;
-    padding: 6px 8px;
+    height: 70px;
+    padding: 5px 4px;
 
     background: #ffffff;
-    border-top: 1px solid #e8e8e8;
-    box-shadow: 0 -3px 12px rgba(0, 0, 0, 0.06);
-
-    /* 避免导航栏按钮被压缩 */
-    flex-shrink: 0;
+    border-top: 1px solid #e5e7eb;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
 }
 
-/* ---------- 底部导航按钮 ---------- */
+/* ---------- Navigation Buttons ---------- */
 
-#U9-admin-bottom-nav .U9-admin-nav-button {
+#U9-admin-bottom-nav button {
     position: relative;
 
     display: flex;
-    flex: 1 1 0;
+    flex: 1;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 4px;
 
     min-width: 0;
-    min-height: 58px;
-    padding: 5px 2px;
+    height: 100%;
+    padding: 4px 2px;
 
-    color: #888888;
-    background: transparent;
     border: none;
-    border-radius: 10px;
+    border-radius: 8px;
+
+    background: transparent;
+    color: #888888;
 
     font-family: inherit;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 500;
     line-height: 1.2;
 
@@ -115,120 +106,110 @@ body {
     -webkit-tap-highlight-color: transparent;
 
     transition:
-        color 0.2s ease,
         background-color 0.2s ease,
-        transform 0.15s ease;
+        color 0.2s ease;
 }
 
-/* 按钮中的 SVG 图标 */
+/* ---------- SVG Icons ---------- */
 
-#U9-admin-bottom-nav .U9-admin-nav-button img,
-#U9-admin-bottom-nav .U9-admin-nav-button svg {
+#U9-admin-bottom-nav button img {
     display: block;
+
     width: 24px;
     height: 24px;
+
     flex-shrink: 0;
     object-fit: contain;
 }
 
-/* 按钮文字 */
+/* ---------- Button Labels ---------- */
 
-#U9-admin-bottom-nav .U9-admin-nav-button span {
+#U9-admin-bottom-nav button span {
     display: block;
+
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-/* ---------- 鼠标悬停 ---------- */
+/* ---------- Hover ---------- */
 
 @media (hover: hover) {
-    #U9-admin-bottom-nav .U9-admin-nav-button:hover {
+    #U9-admin-bottom-nav button:hover {
+        background: #f3f4f6;
         color: #333333;
-        background: #f5f6f8;
     }
 }
 
-/* ---------- 按压反馈 ---------- */
+/* ---------- Press ---------- */
 
-#U9-admin-bottom-nav .U9-admin-nav-button:active {
-    transform: scale(0.96);
+#U9-admin-bottom-nav button:active {
+    background: #eaf0ff;
 }
 
-/* ---------- 当前选中的底部按钮 ---------- */
+/* ---------- Keyboard Focus ---------- */
 
-#U9-admin-bottom-nav .U9-admin-nav-button.active {
-    color: #2563eb;
-    background: #eff5ff;
-    font-weight: 600;
-}
-
-/* 选中按钮顶部标记 */
-
-#U9-admin-bottom-nav .U9-admin-nav-button.active::before {
-    position: absolute;
-    top: 0;
-    left: 50%;
-
-    width: 22px;
-    height: 3px;
-
-    content: "";
-    background: #2563eb;
-    border-radius: 0 0 4px 4px;
-
-    transform: translateX(-50%);
-}
-
-/* 键盘焦点 */
-
-#U9-admin-bottom-nav .U9-admin-nav-button:focus-visible {
+#U9-admin-bottom-nav button:focus-visible {
     outline: 2px solid #2563eb;
     outline-offset: -2px;
 }
 
-/* ---------- 手机端适配 ---------- */
+/* ---------- Mobile ---------- */
 
 @media (max-width: 480px) {
     #U9-admin-main {
-        padding-bottom: 82px;
+        padding-bottom: 76px;
     }
 
-    #U9-admin-main .U9-admin-page,
-    #U9-admin-page-1,
-    #U9-admin-page-2,
-    #U9-admin-page-3,
-    #U9-admin-page-4,
-    #U9-admin-page-5,
-    #U9-admin-page-6 {
-        min-height: calc(100vh - 82px);
+    #U9-admin-main .U9-admin-page {
+        min-height: calc(100vh - 76px);
     }
 
     #U9-admin-bottom-nav {
-        min-height: 66px;
-        padding: 5px 3px;
+        height: 66px;
+        padding: 4px 2px;
     }
 
-    #U9-admin-bottom-nav .U9-admin-nav-button {
-        min-height: 54px;
+    #U9-admin-bottom-nav button {
         gap: 3px;
-        padding: 4px 1px;
-        border-radius: 8px;
+        padding: 3px 1px;
+        border-radius: 6px;
         font-size: 10px;
     }
 
-    #U9-admin-bottom-nav .U9-admin-nav-button img,
-    #U9-admin-bottom-nav .U9-admin-nav-button svg {
+    #U9-admin-bottom-nav button img {
         width: 22px;
         height: 22px;
     }
 }
 
-/* ---------- 减少动态效果的系统偏好 ---------- */
+/* ---------- Reduced Motion ---------- */
 
 @media (prefers-reduced-motion: reduce) {
-    #U9-admin-bottom-nav .U9-admin-nav-button {
+    #U9-admin-bottom-nav button {
         transition: none;
     }
+}
+
+/* ---------- Active Button ---------- */
+
+#U9-admin-bottom-nav button.active {
+    background: #eff6ff;
+    color: #000000;
+    font-weight: 600;
+}
+
+/* Active Button Bottom Indicator */
+
+#U9-admin-bottom-nav button.active::before {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 90px;
+    height: 1px;
+    content: "";
+    background: #000000;
+    border-radius: 4px 4px 0 0;
+    transform: translateX(-50%);
 }
