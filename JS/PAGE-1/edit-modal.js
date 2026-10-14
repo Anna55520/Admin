@@ -10,6 +10,9 @@
    - Open modal
    - Close modal
    - Show username in header
+   - Show order status
+   - Show coins
+   - Show balance
    - Refresh button
    - Lock background scroll
 
@@ -64,7 +67,152 @@ function getElements(){
         );
 
 
+
+
+
+    /*
+        User Status
+    */
+
+
+    elements.orderStatus =
+        document.getElementById(
+            "U9-edit-order-status"
+        );
+
+
+
+    elements.coins =
+        document.getElementById(
+            "U9-edit-user-coins"
+        );
+
+
+
+    elements.balance =
+        document.getElementById(
+            "U9-edit-user-balance"
+        );
+
+
+
 }
+
+
+
+
+
+
+
+
+
+/* ===============================
+   FORMAT
+================================ */
+
+
+function formatAmount(value){
+
+
+    const num =
+        Number(value ?? 0);
+
+
+
+    if(!Number.isFinite(num)){
+
+        return "0.00";
+
+    }
+
+
+
+    return num.toFixed(2);
+
+
+}
+
+
+
+
+
+
+
+
+
+/* ===============================
+   LOAD USER DATA
+================================ */
+
+
+function renderUserData(user){
+
+
+    if(!user)
+        return;
+
+
+
+
+    /*
+        Order Status
+
+        Temporary display
+
+        Later connect:
+        u9-orders.status
+    */
+
+
+    if(elements.orderStatus){
+
+
+        elements.orderStatus.textContent =
+            "Matching";
+
+
+    }
+
+
+
+
+
+
+
+    if(elements.coins){
+
+
+        elements.coins.textContent =
+            formatAmount(
+                user.coins
+            );
+
+
+    }
+
+
+
+
+
+
+
+    if(elements.balance){
+
+
+        elements.balance.textContent =
+            formatAmount(
+                user.balance
+            );
+
+
+    }
+
+
+
+}
+
+
+
 
 
 
@@ -100,10 +248,12 @@ function openEditModal(user){
 
 
 
+
     const username =
         user.username ||
         user.email ||
         "User";
+
 
 
 
@@ -117,6 +267,8 @@ function openEditModal(user){
 
 
 
+
+
     if(elements.title){
 
 
@@ -125,6 +277,15 @@ function openEditModal(user){
 
 
     }
+
+
+
+
+
+    renderUserData(
+        currentUser
+    );
+
 
 
 
@@ -145,6 +306,7 @@ function openEditModal(user){
 
 
 }
+
 
 
 
@@ -221,8 +383,15 @@ function refreshEditModal(){
 
 
 
+
     console.log(
         "Refresh edit modal:",
+        currentUser
+    );
+
+
+
+    renderUserData(
         currentUser
     );
 
