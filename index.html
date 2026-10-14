@@ -34,12 +34,22 @@
 
                 <div class="U9-admin-users-header">
                     <h2>用户管理</h2>
-                    <button
-                        type="button"
-                        id="U9-admin-users-refresh">
-                        刷新
-                    </button>
+
+                    <div class="U9-admin-header-actions">
+                        <button
+                            type="button"
+                            id="U9-admin-users-refresh">
+                            刷新
+                        </button>
+
+                        <button
+                            type="button"
+                            id="U9-admin-login-button">
+                            Login
+                        </button>
+                    </div>
                 </div>
+
 
                 <div
                     id="U9-admin-users-message"
@@ -188,6 +198,8 @@
     <script src="index.js" defer></script>
 
     <script src="JS/Supabase/supabase-client.js"></script>
+
+    <script src="JS/LOGIN/admin-login.js" defer></script>
 
     <!-- Independent PAGE JS -->
     <script src="JS/PAGE-1/page-1.js" defer></script>
