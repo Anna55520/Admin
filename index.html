@@ -1,190 +1,544 @@
-
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#f5f7fb">
 
-    <title>Admin</title>
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta 
+        name="viewport" 
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta 
+        name="theme-color" 
+        content="#f5f7fb"
+    >
+
+    <title>
+        Admin
+    </title>
+
 
     <!-- Shared Admin CSS -->
-    <link rel="stylesheet" href="index.css">
+
+    <link 
+        rel="stylesheet" 
+        href="index.css"
+    >
+
 
     <!-- PAGE CSS -->
-    <link rel="stylesheet" href="CSS/PAGE-1/page-1.css">
-    <link rel="stylesheet" href="CSS/PAGE-2/page-2.css">
-    <link rel="stylesheet" href="CSS/PAGE-3/page-3.css">
-    <link rel="stylesheet" href="CSS/PAGE-4/page-4.css">
-    <link rel="stylesheet" href="CSS/PAGE-5/page-5.css">
-    <link rel="stylesheet" href="CSS/PAGE-6/page-6.css">
+
+    <link 
+        rel="stylesheet" 
+        href="CSS/PAGE-1/page-1.css"
+    >
+
+    <link 
+        rel="stylesheet" 
+        href="CSS/PAGE-2/page-2.css"
+    >
+
+    <link 
+        rel="stylesheet" 
+        href="CSS/PAGE-3/page-3.css"
+    >
+
+    <link 
+        rel="stylesheet" 
+        href="CSS/PAGE-4/page-4.css"
+    >
+
+    <link 
+        rel="stylesheet" 
+        href="CSS/PAGE-5/page-5.css"
+    >
+
+    <link 
+        rel="stylesheet" 
+        href="CSS/PAGE-6/page-6.css"
+    >
+
+
 </head>
+
+
 
 <body>
 
-    <!-- Main Pages -->
-    <main id="U9-admin-main">
-
-        <!-- PAGE1 -->
-        <section
-            id="U9-admin-page-1"
-            class="U9-admin-page active">
-
-            <div id="U9-admin-users">
-
-                <div class="U9-admin-users-header">
-                    <h2>用户管理</h2>
-
-                    <div class="U9-admin-header-actions">
-                        <button
-                            type="button"
-                            id="U9-admin-users-refresh">
-                            刷新
-                        </button>
-
-                        <button
-                            type="button"
-                            id="U9-admin-login-button">
-                            Login
-                        </button>
-                    </div>
-                </div>
 
 
-                <div
-                    id="U9-admin-users-message"
-                    role="status"
-                    aria-live="polite">
-                </div>
-
-                <div class="U9-admin-users-table-wrap">
-                    <table class="U9-admin-users-table">
-                        <thead>
-                            <tr>
-                                <th>用户名</th>
-                                <th>平台账号</th>
-                                <th>Coins</th>
-                                <th>Balance</th>
-                                <th>注册时间</th>
-                                <th>订单数</th>
-                            </tr>
-                        </thead>
-
-                        <tbody id="U9-admin-users-tbody">
-                            <tr>
-                                <td colspan="6">
-                                    正在加载用户数据...
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
-
-        </section>
+<main id="U9-admin-main">
 
 
-        <!-- PAGE2 -->
-        <section
-            id="U9-admin-page-2"
-            class="U9-admin-page">
-        </section>
 
-        <!-- PAGE3 -->
-        <section
-            id="U9-admin-page-3"
-            class="U9-admin-page">
-        </section>
+<!-- ===============================
+     PAGE1 USER MANAGEMENT
+================================ -->
 
-        <!-- PAGE4 -->
-        <section
-            id="U9-admin-page-4"
-            class="U9-admin-page">
-        </section>
 
-        <!-- PAGE5 -->
-        <section
-            id="U9-admin-page-5"
-            class="U9-admin-page">
-        </section>
+<section
+    id="U9-admin-page-1"
+    class="U9-admin-page active"
+>
 
-        <!-- PAGE6 -->
-        <section
-            id="U9-admin-page-6"
-            class="U9-admin-page">
-        </section>
 
-    </main>
+<div id="U9-admin-users">
 
-    <!-- Fixed Bottom Navigation -->
-    <nav id="U9-admin-bottom-nav" aria-label="Admin navigation">
 
-        <!-- PAGE1 Button -->
+
+<div class="U9-admin-users-header">
+
+
+    <h2>
+        User Management
+    </h2>
+
+
+    <div class="U9-admin-header-actions">
+
+
         <button
             type="button"
-            class="active"
-            data-target="U9-admin-page-1">
-            <img src="SVG/BUTTON/avatar.svg" alt="">
-            <span>PAGE1</span>
+            id="U9-admin-users-refresh"
+        >
+            Refresh
         </button>
 
-        <!-- PAGE2 Button -->
+
+
         <button
             type="button"
-            data-target="U9-admin-page-2">
-            <img src="SVG/BUTTON/one.svg" alt="">
-            <span>PAGE2</span>
+            id="U9-admin-login-button"
+        >
+            Login
         </button>
 
-        <!-- PAGE3 Button -->
-        <button
-            type="button"
-            data-target="U9-admin-page-3">
-            <img src="SVG/BUTTON/one.svg" alt="">
-            <span>PAGE3</span>
-        </button>
 
-        <!-- PAGE4 Button -->
-        <button
-            type="button"
-            data-target="U9-admin-page-4">
-            <img src="SVG/BUTTON/one.svg" alt="">
-            <span>PAGE4</span>
-        </button>
+    </div>
 
-        <!-- PAGE5 Button -->
-        <button
-            type="button"
-            data-target="U9-admin-page-5">
-            <img src="SVG/BUTTON/one.svg" alt="">
-            <span>PAGE5</span>
-        </button>
 
-        <!-- PAGE6 Button -->
-        <button
-            type="button"
-            data-target="U9-admin-page-6">
-            <img src="SVG/BUTTON/one.svg" alt="">
-            <span>PAGE6</span>
-        </button>
+</div>
 
-    </nav>
 
-    <!-- Main Navigation JS -->
-    <script src="index.js" defer></script>
 
-    <script src="JS/Supabase/supabase-client.js"></script>
 
-    <script src="JS/LOGIN/admin-login.js" defer></script>
 
-    <!-- Independent PAGE JS -->
-    <script src="JS/PAGE-1/page-1.js" defer></script>
-    <script src="JS/PAGE-2/page-2.js" defer></script>
-    <script src="JS/PAGE-3/page-3.js" defer></script>
-    <script src="JS/PAGE-4/page-4.js" defer></script>
-    <script src="JS/PAGE-5/page-5.js" defer></script>
-    <script src="JS/PAGE-6/page-6.js" defer></script>
+<div
+    id="U9-admin-users-message"
+    role="status"
+    aria-live="polite"
+>
+</div>
+
+
+
+
+
+<div class="U9-admin-users-table-wrap">
+
+
+
+<table class="U9-admin-users-table">
+
+
+
+<thead>
+
+
+<tr>
+
+
+<th class="username-column">
+    Username
+</th>
+
+
+<th>
+    Account
+</th>
+
+
+<th>
+    Coins
+</th>
+
+
+<th>
+    Balance
+</th>
+
+
+<th>
+    Registered
+</th>
+
+
+<th>
+    Orders
+</th>
+
+
+<th class="action-column">
+    Action
+</th>
+
+
+
+</tr>
+
+
+</thead>
+
+
+
+
+<tbody id="U9-admin-users-tbody">
+
+
+<tr>
+
+<td colspan="7">
+
+Loading user data...
+
+</td>
+
+
+</tr>
+
+
+</tbody>
+
+
+
+</table>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+</section>
+
+
+
+
+
+
+
+<!-- ===============================
+     PAGE2
+================================ -->
+
+
+<section
+    id="U9-admin-page-2"
+    class="U9-admin-page"
+>
+
+</section>
+
+
+
+
+
+<!-- ===============================
+     PAGE3
+================================ -->
+
+
+<section
+    id="U9-admin-page-3"
+    class="U9-admin-page"
+>
+
+</section>
+
+
+
+
+
+
+<!-- ===============================
+     PAGE4
+================================ -->
+
+
+<section
+    id="U9-admin-page-4"
+    class="U9-admin-page"
+>
+
+</section>
+
+
+
+
+
+
+<!-- ===============================
+     PAGE5
+================================ -->
+
+
+<section
+    id="U9-admin-page-5"
+    class="U9-admin-page"
+>
+
+</section>
+
+
+
+
+
+
+<!-- ===============================
+     PAGE6
+================================ -->
+
+
+<section
+    id="U9-admin-page-6"
+    class="U9-admin-page"
+>
+
+</section>
+
+
+
+
+
+</main>
+
+
+
+
+
+
+
+
+<!-- ===============================
+     ADMIN NAVIGATION
+================================ -->
+
+
+<nav
+    id="U9-admin-bottom-nav"
+    aria-label="Admin navigation"
+>
+
+
+
+
+<button
+    type="button"
+    class="active"
+    data-target="U9-admin-page-1"
+>
+
+
+<img 
+    src="SVG/BUTTON/avatar.svg"
+    alt=""
+>
+
+
+<span>
+PAGE1
+</span>
+
+
+</button>
+
+
+
+
+
+<button
+    type="button"
+    data-target="U9-admin-page-2"
+>
+
+
+<img 
+    src="SVG/BUTTON/one.svg"
+    alt=""
+>
+
+
+<span>
+PAGE2
+</span>
+
+
+</button>
+
+
+
+
+
+<button
+    type="button"
+    data-target="U9-admin-page-3"
+>
+
+
+<img 
+    src="SVG/BUTTON/one.svg"
+    alt=""
+>
+
+
+<span>
+PAGE3
+</span>
+
+
+</button>
+
+
+
+
+
+
+<button
+    type="button"
+    data-target="U9-admin-page-4"
+>
+
+
+<img 
+    src="SVG/BUTTON/one.svg"
+    alt=""
+>
+
+
+<span>
+PAGE4
+</span>
+
+
+</button>
+
+
+
+
+
+
+
+<button
+    type="button"
+    data-target="U9-admin-page-5"
+>
+
+
+<img 
+    src="SVG/BUTTON/one.svg"
+    alt=""
+>
+
+
+<span>
+PAGE5
+</span>
+
+
+</button>
+
+
+
+
+
+
+
+<button
+    type="button"
+    data-target="U9-admin-page-6"
+>
+
+
+<img 
+    src="SVG/BUTTON/one.svg"
+    alt=""
+>
+
+
+<span>
+PAGE6
+</span>
+
+
+</button>
+
+
+
+
+
+</nav>
+
+
+
+
+
+
+
+<!-- ===============================
+     JS
+================================ -->
+
+
+<script src="index.js" defer></script>
+
+
+
+<script src="JS/Supabase/supabase-client.js"></script>
+
+
+
+<script src="JS/LOGIN/admin-login.js" defer></script>
+
+
+
+
+
+<!-- PAGE JS -->
+
+
+<script src="JS/PAGE-1/page-1.js" defer></script>
+
+
+<script src="JS/PAGE-2/page-2.js" defer></script>
+
+
+<script src="JS/PAGE-3/page-3.js" defer></script>
+
+
+<script src="JS/PAGE-4/page-4.js" defer></script>
+
+
+<script src="JS/PAGE-5/page-5.js" defer></script>
+
+
+<script src="JS/PAGE-6/page-6.js" defer></script>
+
+
+
+
+<!-- Future Modal -->
+
+<script src="JS/PAGE-1/edit-modal.js" defer></script>
+
+
 
 </body>
+
+
 </html>
