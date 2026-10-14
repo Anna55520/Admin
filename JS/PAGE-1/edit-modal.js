@@ -11,6 +11,7 @@
    - Close modal
    - Show username in header
    - Show order status
+   - Show order count
    - Show coins
    - Show balance
    - Refresh button
@@ -78,6 +79,13 @@ function getElements(){
     elements.orderStatus =
         document.getElementById(
             "U9-edit-order-status"
+        );
+
+
+
+    elements.orderCount =
+        document.getElementById(
+            "U9-edit-order-count"
         );
 
 
@@ -154,13 +162,15 @@ function renderUserData(user){
 
 
 
+
+
     /*
         Order Status
 
-        Temporary display
+        Temporary
 
         Later connect:
-        u9-orders.status
+        latest_order_status
     */
 
 
@@ -178,6 +188,32 @@ function renderUserData(user){
 
 
 
+    /*
+        Order Count
+    */
+
+
+    if(elements.orderCount){
+
+
+        elements.orderCount.textContent =
+            Number(
+                user.order_count || 0
+            );
+
+
+    }
+
+
+
+
+
+
+
+    /*
+        Coins
+    */
+
 
     if(elements.coins){
 
@@ -194,6 +230,11 @@ function renderUserData(user){
 
 
 
+
+
+    /*
+        Balance
+    */
 
 
     if(elements.balance){
@@ -277,6 +318,7 @@ function openEditModal(user){
 
 
     }
+
 
 
 
