@@ -7,6 +7,11 @@
    PAGE1:
    User Management
 
+   Functions:
+   - Load users
+   - Render user table
+   - Open edit modal
+
    No Pagination
 
 ===================================================== */
@@ -17,24 +22,32 @@
 "use strict";
 
 
+
 const API_URL =
 "https://tvtakmswbzawaweytimx.supabase.co/functions/v1/admin-users-list";
 
 
-const elements={};
+
+const elements = {};
 
 
 
-/* ==============================
+
+
+
+/* ===============================
    ELEMENTS
-============================== */
+================================ */
+
 
 function getElements(){
+
 
     elements.tbody =
         document.getElementById(
             "U9-admin-users-tbody"
         );
+
 
 
     elements.message =
@@ -43,19 +56,25 @@ function getElements(){
         );
 
 
+
     elements.refresh =
         document.getElementById(
             "U9-admin-users-refresh"
         );
+
 
 }
 
 
 
 
-/* ==============================
+
+
+
+
+/* ===============================
    MESSAGE
-============================== */
+================================ */
 
 
 function setMessage(
@@ -63,12 +82,15 @@ function setMessage(
     error=false
 ){
 
+
     if(!elements.message)
         return;
 
 
+
     elements.message.textContent =
         text || "";
+
 
 
     elements.message.classList.toggle(
@@ -76,28 +98,36 @@ function setMessage(
         error
     );
 
+
 }
 
 
 
 
 
-/* ==============================
+
+
+
+
+/* ===============================
    FORMAT
-============================== */
+================================ */
 
 
 function formatAmount(value){
 
-    const num =
+
+    const number =
         Number(value ?? 0);
 
 
-    if(!Number.isFinite(num))
+
+    if(!Number.isFinite(number))
         return "0.00";
 
 
-    return num.toLocaleString(
+
+    return number.toLocaleString(
         "en-US",
         {
             minimumFractionDigits:2,
@@ -105,7 +135,43 @@ function formatAmount(value){
         }
     );
 
+
 }
+
+
+
+
+
+
+function formatUsername(value){
+
+
+    if(!value)
+        return "—";
+
+
+
+    const text =
+        String(value);
+
+
+
+    if(text.length <= 8)
+        return text;
+
+
+
+    return (
+        text.slice(0,4)
+        +
+        "..."
+        +
+        text.slice(-4)
+    );
+
+
+}
+
 
 
 
@@ -113,12 +179,15 @@ function formatAmount(value){
 
 function formatDate(value){
 
+
     if(!value)
         return "—";
 
 
+
     const date =
         new Date(value);
+
 
 
     if(
@@ -129,11 +198,23 @@ function formatDate(value){
         return "—";
 
 
-    return `${String(
-        date.getMonth()+1
-    ).padStart(2,"0")}/${String(
-        date.getDate()
-    ).padStart(2,"0")}/${date.getFullYear()}`;
+
+    return (
+        String(
+            date.getMonth()+1
+        ).padStart(2,"0")
+        +
+        "/"
+        +
+        String(
+            date.getDate()
+        ).padStart(2,"0")
+        +
+        "/"
+        +
+        date.getFullYear()
+    );
+
 
 }
 
@@ -141,12 +222,17 @@ function formatDate(value){
 
 
 
-/* ==============================
-   TABLE
-============================== */
+
+
+
+
+/* ===============================
+   TABLE CELL
+================================ */
 
 
 function createCell(value){
+
 
     const td =
         document.createElement(
@@ -154,16 +240,149 @@ function createCell(value){
         );
 
 
+
     td.textContent =
-        value ??
-        "—";
+        value ?? "—";
+
 
 
     return td;
 
+
 }
 
 
+
+
+
+
+
+
+
+/* ===============================
+   ACTION BUTTON
+================================ */
+
+
+function createActionCell(user){
+
+
+    const td =
+        document.createElement(
+            "td"
+        );
+
+
+
+    td.className =
+        "action-column";
+
+
+
+
+    const button =
+        document.createElement(
+            "button"
+        );
+
+
+
+    button.type =
+        "button";
+
+
+
+    button.className =
+        "U9-admin-edit-button";
+
+
+
+
+
+    const img =
+        document.createElement(
+            "img"
+        );
+
+
+
+    img.src =
+        "SVG/BUTTON/one.svg";
+
+
+
+    img.alt =
+        "Edit";
+
+
+
+
+
+    button.appendChild(
+        img
+    );
+
+
+
+
+
+
+    button.onclick =
+        function(){
+
+
+            if(
+                typeof window.openEditModal ===
+                "function"
+            ){
+
+
+                window.openEditModal(
+                    user
+                );
+
+
+            }
+            else{
+
+
+                console.error(
+                    "[U9 Admin] Edit modal JS not loaded."
+                );
+
+
+            }
+
+
+        };
+
+
+
+
+
+
+    td.appendChild(
+        button
+    );
+
+
+
+    return td;
+
+
+}
+
+
+
+
+
+
+
+
+
+/* ===============================
+   RENDER MESSAGE
+================================ */
 
 
 function renderMessage(text){
@@ -172,10 +391,12 @@ function renderMessage(text){
     elements.tbody.replaceChildren();
 
 
+
     const tr =
         document.createElement(
             "tr"
         );
+
 
 
     const td =
@@ -184,19 +405,41 @@ function renderMessage(text){
         );
 
 
-    td.colSpan=6;
 
-    td.textContent=text;
+    td.colSpan =
+        7;
 
 
-    tr.appendChild(td);
 
-    elements.tbody.appendChild(tr);
+    td.textContent =
+        text;
+
+
+
+    tr.appendChild(
+        td
+    );
+
+
+
+    elements.tbody.appendChild(
+        tr
+    );
+
 
 }
 
 
 
+
+
+
+
+
+
+/* ===============================
+   RENDER USERS
+================================ */
 
 
 function renderUsers(users){
@@ -206,17 +449,24 @@ function renderUsers(users){
 
 
 
+
     if(
         !users ||
         users.length===0
     ){
 
+
         renderMessage(
-            "暂无用户数据"
+            "No user data available"
         );
 
+
         return;
+
+
     }
+
+
 
 
 
@@ -226,8 +476,12 @@ function renderUsers(users){
 
 
 
+
+
+
     users.forEach(
-        user=>{
+        function(user){
+
 
 
             const tr =
@@ -236,11 +490,29 @@ function renderUsers(users){
                 );
 
 
-            tr.appendChild(
+
+
+
+            const username =
                 createCell(
-                    user.username
-                )
+                    formatUsername(
+                        user.username
+                    )
+                );
+
+
+            username.className =
+                "username-column";
+
+
+
+            tr.appendChild(
+                username
             );
+
+
+
+
 
 
             tr.appendChild(
@@ -248,6 +520,10 @@ function renderUsers(users){
                     user.account
                 )
             );
+
+
+
+
 
 
             tr.appendChild(
@@ -259,6 +535,10 @@ function renderUsers(users){
             );
 
 
+
+
+
+
             tr.appendChild(
                 createCell(
                     formatAmount(
@@ -266,6 +546,10 @@ function renderUsers(users){
                     )
                 )
             );
+
+
+
+
 
 
             tr.appendChild(
@@ -277,6 +561,10 @@ function renderUsers(users){
             );
 
 
+
+
+
+
             tr.appendChild(
                 createCell(
                     user.order_count ?? 0
@@ -284,10 +572,32 @@ function renderUsers(users){
             );
 
 
-            fragment.appendChild(tr);
+
+
+
+
+            tr.appendChild(
+                createActionCell(
+                    user
+                )
+            );
+
+
+
+
+
+
+            fragment.appendChild(
+                tr
+            );
+
+
 
         }
     );
+
+
+
 
 
 
@@ -304,17 +614,21 @@ function renderUsers(users){
 
 
 
-/* ==============================
+
+
+/* ===============================
    LOAD USERS
-============================== */
+================================ */
 
 
 async function loadUsers(){
 
 
     renderMessage(
-        "正在加载用户数据..."
+        "Loading user data..."
     );
+
+
 
 
     try{
@@ -338,19 +652,31 @@ async function loadUsers(){
 
 
 
+
+
+
         const result =
             await response.json();
 
 
 
+
+
+
         if(!response.ok){
+
 
             throw new Error(
                 result.message ||
-                "加载失败"
+                "Load failed"
             );
 
+
         }
+
+
+
+
 
 
 
@@ -360,8 +686,10 @@ async function loadUsers(){
 
 
 
+
+
         setMessage(
-            "用户数据加载完成。"
+            "User data loaded."
         );
 
 
@@ -376,9 +704,11 @@ async function loadUsers(){
         );
 
 
+
         renderMessage(
-            "加载失败"
+            "Load failed"
         );
+
 
 
         setMessage(
@@ -386,8 +716,8 @@ async function loadUsers(){
             true
         );
 
-    }
 
+    }
 
 
 }
@@ -399,9 +729,10 @@ async function loadUsers(){
 
 
 
-/* ==============================
+
+/* ===============================
    INIT
-============================== */
+================================ */
 
 
 function init(){
@@ -411,27 +742,40 @@ function init(){
 
 
 
+
     if(
         !elements.tbody ||
         !elements.refresh
     ){
 
+
         console.error(
-            "PAGE1 HTML missing"
+            "[U9 Admin PAGE1] HTML missing."
         );
+
 
         return;
 
+
     }
+
+
+
+
 
 
 
     elements.refresh.onclick =
         function(){
 
+
             loadUsers();
 
+
         };
+
+
+
 
 
 
@@ -444,9 +788,14 @@ function init(){
 
 
 
+
+
+
+
 if(
-    document.readyState==="loading"
+    document.readyState === "loading"
 ){
+
 
     document.addEventListener(
         "DOMContentLoaded",
@@ -456,10 +805,13 @@ if(
         }
     );
 
+
 }
 else{
 
+
     init();
+
 
 }
 
