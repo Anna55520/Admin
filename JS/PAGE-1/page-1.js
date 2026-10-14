@@ -530,11 +530,10 @@ async function loadUsers(){
                 {
                     method:"GET",
 
-                    credentials:"include",
-
                     headers:{
-                        "Content-Type":
-                        "application/json"
+                        "Content-Type":"application/json",
+                        "Authorization":
+                        `Bearer ${localStorage.getItem("U9_ADMIN_TOKEN") || ""}`
                     }
 
                 }
