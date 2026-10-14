@@ -4,43 +4,41 @@
 
    PAGE 1: User Management
 
-   Data:
-   admin-users-list Edge Function
+   Data source:
+   Supabase Edge Function
+   admin-users-list
 
-   Features:
-   1. Load users
-   2. Pagination
-   3. Refresh
-   4. Coins format
-   5. Balance format
-   6. Order count
+   Display:
+   - Username
+   - Account
+   - Coins
+   - Balance
+   - Created Date
+   - Order Count
 
-===================================================== */
-
+   ===================================================== */
 
 (function () {
 
     "use strict";
 
 
-    const PAGE_SIZE = 20;
-
-
-    const API_URL =
-        "https://tvtakmswbzawaweytimx.supabase.co/functions/v1/admin-users-list";
-
-
-
-    let currentPage = 1;
-
-    let totalUsers = 0;
-
+    let initialized = false;
     let loading = false;
-
 
 
     const elements = {};
 
+
+    /* =====================================================
+       SUPABASE
+    ===================================================== */
+
+    function getSupabase() {
+
+        return window.supabaseClient || null;
+
+    }
 
 
 
@@ -48,8 +46,7 @@
        ELEMENTS
     ===================================================== */
 
-
-    function getElements(){
+    function getElements() {
 
 
         elements.tbody =
@@ -70,28 +67,7 @@
             );
 
 
-        elements.prev =
-            document.getElementById(
-                "U9-admin-users-prev"
-            );
-
-
-        elements.next =
-            document.getElementById(
-                "U9-admin-users-next"
-            );
-
-
-        elements.pageInfo =
-            document.getElementById(
-                "U9-admin-users-page-info"
-            );
-
-
     }
-
-
-
 
 
 
@@ -99,14 +75,10 @@
        MESSAGE
     ===================================================== */
 
+    function setMessage(message, error = false) {
 
-    function setMessage(
-        message,
-        isError=false
-    ){
 
-        if(!elements.message)
-            return;
+        if (!elements.message) return;
 
 
         elements.message.textContent =
@@ -115,13 +87,10 @@
 
         elements.message.classList.toggle(
             "error",
-            isError
+            error
         );
 
     }
-
-
-
 
 
 
@@ -130,30 +99,24 @@
        FORMAT
     ===================================================== */
 
-
-    function formatAmount(value){
-
-
-        const number =
-            Number(value ?? 0);
+    function formatAmount(value) {
 
 
+        const number = Number(value ?? 0);
 
-        if(
-            !Number.isFinite(number)
-        ){
+
+        if (!Number.isFinite(number)) {
 
             return "0.00";
 
         }
 
 
-
         return number.toLocaleString(
             "en-US",
             {
-                minimumFractionDigits:2,
-                maximumFractionDigits:2
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
             }
         );
 
@@ -161,47 +124,37 @@
 
 
 
+    function formatDate(value) {
 
 
-
-    function formatDate(value){
-
-
-        if(!value)
-            return "—";
-
-
-        const date =
-            new Date(value);
-
-
-
-        if(
-            Number.isNaN(
-                date.getTime()
-            )
-        ){
+        if (!value) {
 
             return "—";
 
         }
 
 
+        const date =
+            new Date(value);
+
+
+        if (Number.isNaN(date.getTime())) {
+
+            return "—";
+
+        }
+
 
         const month =
             String(
-                date.getMonth()+1
-            )
-            .padStart(2,"0");
-
+                date.getMonth() + 1
+            ).padStart(2, "0");
 
 
         const day =
             String(
                 date.getDate()
-            )
-            .padStart(2,"0");
-
+            ).padStart(2, "0");
 
 
         const year =
@@ -216,33 +169,23 @@
 
 
 
-
-
-
     /* =====================================================
        TABLE
     ===================================================== */
 
-
-    function createCell(value){
+    function createCell(value) {
 
 
         const td =
-            document.createElement(
-                "td"
-            );
-
+            document.createElement("td");
 
 
         td.textContent =
             value === null ||
             value === undefined ||
             value === ""
-                ?
-                "—"
-                :
-                String(value);
-
+                ? "—"
+                : String(value);
 
 
         return td;
@@ -253,38 +196,36 @@
 
 
 
-
-    function renderMessage(message){
-
-
-        elements.tbody.replaceChildren();
+    function renderLoading() {
 
 
+        elements.tbody.innerHTML = `
 
-        const tr =
-            document.createElement(
-                "tr"
-            );
+            <tr>
+                <td colspan="6">
+                    正在加载用户数据...
+                </td>
+            </tr>
 
+        `;
 
-        const td =
-            document.createElement(
-                "td"
-            );
-
-
-        td.colSpan = 6;
-
-        td.textContent =
-            message;
+    }
 
 
 
-        tr.appendChild(td);
+
+    function renderEmpty() {
 
 
-        elements.tbody.appendChild(tr);
+        elements.tbody.innerHTML = `
 
+            <tr>
+                <td colspan="6">
+                    暂无用户数据
+                </td>
+            </tr>
+
+        `;
 
     }
 
@@ -292,23 +233,16 @@
 
 
 
-
-
-    function renderUsers(users){
+    function renderUsers(users) {
 
 
         elements.tbody.replaceChildren();
 
 
 
-        if(
-            !users ||
-            users.length===0
-        ){
+        if (!users || users.length === 0) {
 
-            renderMessage(
-                "暂无用户数据"
-            );
+            renderEmpty();
 
             return;
 
@@ -321,77 +255,69 @@
 
 
 
-
-        users.forEach(
-            function(user){
-
-
-                const tr =
-                    document.createElement(
-                        "tr"
-                    );
+        users.forEach(function(user){
 
 
 
-                tr.appendChild(
-                    createCell(
-                        user.username
+            const tr =
+                document.createElement("tr");
+
+
+
+            tr.appendChild(
+                createCell(
+                    user.username
+                )
+            );
+
+
+            tr.appendChild(
+                createCell(
+                    user.account
+                )
+            );
+
+
+            tr.appendChild(
+                createCell(
+                    formatAmount(
+                        user.coins
                     )
-                );
+                )
+            );
 
 
-
-                tr.appendChild(
-                    createCell(
-                        user.account
+            tr.appendChild(
+                createCell(
+                    formatAmount(
+                        user.balance
                     )
-                );
+                )
+            );
 
 
-
-                tr.appendChild(
-                    createCell(
-                        formatAmount(
-                            user.coins
-                        )
+            tr.appendChild(
+                createCell(
+                    formatDate(
+                        user.created_at
                     )
-                );
+                )
+            );
+
+
+            tr.appendChild(
+                createCell(
+                    user.order_count ?? 0
+                )
+            );
 
 
 
-                tr.appendChild(
-                    createCell(
-                        formatAmount(
-                            user.balance
-                        )
-                    )
-                );
+            fragment.appendChild(tr);
 
 
 
-                tr.appendChild(
-                    createCell(
-                        formatDate(
-                            user.created_at
-                        )
-                    )
-                );
-
-
-
-                tr.appendChild(
-                    createCell(
-                        user.order_count ?? 0
-                    )
-                );
-
-
-
-                fragment.appendChild(tr);
-
-
-            }
-        );
+        });
 
 
 
@@ -405,151 +331,93 @@
 
 
 
-
-
-
-
-
-    /* =====================================================
-       PAGINATION
-    ===================================================== */
-
-
-    function updatePagination(){
-
-
-        const totalPages =
-            Math.max(
-                1,
-                Math.ceil(
-                    totalUsers /
-                    PAGE_SIZE
-                )
-            );
-
-
-
-        elements.pageInfo.textContent =
-            `第 ${currentPage} / ${totalPages} 页，共 ${totalUsers} 位用户`;
-
-
-
-        elements.prev.disabled =
-            loading ||
-            currentPage <= 1;
-
-
-
-        elements.next.disabled =
-            loading ||
-            currentPage >= totalPages;
-
-
-    }
-
-
-
-
-
-
-
-
-
     /* =====================================================
        LOAD USERS
     ===================================================== */
 
-
     async function loadUsers(){
 
 
-        if(loading)
-            return;
-
+        if (loading) return;
 
 
         loading = true;
 
 
-        updatePagination();
-
-
-
-        renderMessage(
-            "正在加载用户数据..."
-        );
-
-
         setMessage("");
 
+        renderLoading();
 
 
 
-        try{
+        try {
 
 
-            const url =
-                `${API_URL}?page=${currentPage}&page_size=${PAGE_SIZE}`;
-
-
-
-
-            const response =
-                await fetch(
-                    url,
-                    {
-                        method:"GET",
-
-                        credentials:"include"
-                    }
-                );
+            const supabase =
+                getSupabase();
 
 
 
-
-
-            const result =
-                await response.json();
-
-
-
-
-
-            if(
-                !response.ok
-            ){
+            if (!supabase) {
 
                 throw new Error(
-                    result.error ||
-                    "加载失败"
+                    "Supabase client not ready"
                 );
 
             }
 
 
 
+            const {
+                data,
+                error
+            } =
+            await supabase.functions.invoke(
+                "admin-users-list"
+            );
+
+
+
+            if (error) {
+
+                throw error;
+
+            }
+
+
+
+            console.log(
+                "[U9 Admin] Users:",
+                data
+            );
 
 
 
             /*
-              期待返回:
+              支持两种返回格式
+
+              [
+                {...}
+              ]
+
+              或
 
               {
-                 users:[],
-                 total:5
+                users:[]
               }
 
             */
 
 
-
-            totalUsers =
-                result.total ?? 0;
+            const users =
+                Array.isArray(data)
+                    ? data
+                    : data.users;
 
 
 
             renderUsers(
-                result.users || []
+                users || []
             );
 
 
@@ -557,7 +425,6 @@
             setMessage(
                 "用户数据加载完成。"
             );
-
 
 
 
@@ -571,128 +438,35 @@
             );
 
 
+            elements.tbody.innerHTML = `
 
-            totalUsers = 0;
+                <tr>
+                    <td colspan="6">
+                        加载失败
+                    </td>
+                </tr>
 
-
-
-            renderMessage(
-                "加载失败"
-            );
-
+            `;
 
 
             setMessage(
                 error.message ||
-                "用户数据加载失败",
+                "加载失败",
                 true
             );
-
 
 
         }
         finally{
 
 
-            loading=false;
-
-
-            updatePagination();
+            loading = false;
 
 
         }
 
 
-
     }
-
-
-
-
-
-
-
-
-
-    /* =====================================================
-       EVENTS
-    ===================================================== */
-
-
-    function initEvents(){
-
-
-        elements.refresh.onclick =
-            function(){
-
-                currentPage = 1;
-
-                loadUsers();
-
-            };
-
-
-
-
-        elements.prev.onclick =
-            function(){
-
-                if(
-                    loading ||
-                    currentPage <= 1
-                )
-                    return;
-
-
-
-                currentPage--;
-
-                loadUsers();
-
-
-            };
-
-
-
-
-
-        elements.next.onclick =
-            function(){
-
-
-                const totalPages =
-                    Math.max(
-                        1,
-                        Math.ceil(
-                            totalUsers /
-                            PAGE_SIZE
-                        )
-                    );
-
-
-
-                if(
-                    loading ||
-                    currentPage >= totalPages
-                )
-                    return;
-
-
-
-                currentPage++;
-
-
-                loadUsers();
-
-
-            };
-
-
-    }
-
-
-
-
 
 
 
@@ -702,8 +476,10 @@
        INIT
     ===================================================== */
 
+    function initialize(){
 
-    function init(){
+
+        if(initialized) return;
 
 
         getElements();
@@ -712,12 +488,11 @@
 
         if(
             !elements.tbody ||
-            !elements.refresh ||
-            !elements.pageInfo
+            !elements.refresh
         ){
 
             console.error(
-                "[U9 Admin PAGE1] HTML missing"
+                "[U9 Admin PAGE1] Missing HTML"
             );
 
             return;
@@ -726,8 +501,18 @@
 
 
 
+        initialized = true;
 
-        initEvents();
+
+
+        elements.refresh.addEventListener(
+            "click",
+            function(){
+
+                loadUsers();
+
+            }
+        );
 
 
 
@@ -739,6 +524,17 @@
 
 
 
+    window.U9AdminUsers = {
+
+        refresh:
+            loadUsers,
+
+        load:
+            loadUsers
+
+    };
+
+
 
 
     if(
@@ -747,7 +543,7 @@
 
         document.addEventListener(
             "DOMContentLoaded",
-            init,
+            initialize,
             {
                 once:true
             }
@@ -756,11 +552,8 @@
     }
     else{
 
-        init();
+        initialize();
 
     }
-
-
-
 
 })();
