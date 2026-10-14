@@ -1,1 +1,243 @@
-hi
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f5f7fb">
+
+    <title>U9 Admin</title>
+
+    <!-- Shared Admin CSS -->
+    <link rel="stylesheet" href="CSS/admin.css">
+
+    <!-- PAGE CSS -->
+    <link rel="stylesheet" href="CSS/PAGE/PAGE1/page-1.css">
+    <link rel="stylesheet" href="CSS/PAGE/PAGE2/page-2.css">
+    <link rel="stylesheet" href="CSS/PAGE/PAGE3/page-3.css">
+    <link rel="stylesheet" href="CSS/PAGE/PAGE4/page-4.css">
+    <link rel="stylesheet" href="CSS/PAGE/PAGE5/page-5.css">
+    <link rel="stylesheet" href="CSS/PAGE/PAGE6/page-6.css">
+</head>
+
+<body>
+
+<div id="U9-admin-app">
+
+    <!-- =========================
+         ADMIN HEADER
+    ========================== -->
+    <header id="U9-admin-header">
+        <div class="U9-admin-brand">
+            <div class="U9-admin-logo">U9</div>
+
+            <div class="U9-admin-brand-info">
+                <p>CONTROL CENTER</p>
+                <h1>Admin Panel</h1>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- =========================
+         ADMIN PAGE CONTAINER
+    ========================== -->
+    <main id="U9-admin-main">
+
+        <!-- PAGE 1 -->
+        <section
+            id="U9-admin-page-1"
+            class="U9-admin-page active"
+            data-page="PAGE1"
+        >
+            <div class="U9-admin-page-header">
+                <h2>Dashboard</h2>
+                <p>Admin overview</p>
+            </div>
+
+            <div id="U9-admin-page-1-content">
+                <!-- PAGE1 content -->
+            </div>
+        </section>
+
+
+        <!-- PAGE 2 -->
+        <section
+            id="U9-admin-page-2"
+            class="U9-admin-page"
+            data-page="PAGE2"
+            hidden
+        >
+            <div class="U9-admin-page-header">
+                <h2>User Management</h2>
+                <p>Manage user accounts</p>
+            </div>
+
+            <div id="U9-admin-page-2-content">
+                <!-- PAGE2 content -->
+            </div>
+        </section>
+
+
+        <!-- PAGE 3 -->
+        <section
+            id="U9-admin-page-3"
+            class="U9-admin-page"
+            data-page="PAGE3"
+            hidden
+        >
+            <div class="U9-admin-page-header">
+                <h2>Order Management</h2>
+                <p>Manage orders</p>
+            </div>
+
+            <div id="U9-admin-page-3-content">
+                <!-- PAGE3 content -->
+            </div>
+        </section>
+
+
+        <!-- PAGE 4 -->
+        <section
+            id="U9-admin-page-4"
+            class="U9-admin-page"
+            data-page="PAGE4"
+            hidden
+        >
+            <div class="U9-admin-page-header">
+                <h2>Finance</h2>
+                <p>Financial overview</p>
+            </div>
+
+            <div id="U9-admin-page-4-content">
+                <!-- PAGE4 content -->
+            </div>
+        </section>
+
+
+        <!-- PAGE 5 -->
+        <section
+            id="U9-admin-page-5"
+            class="U9-admin-page"
+            data-page="PAGE5"
+            hidden
+        >
+            <div class="U9-admin-page-header">
+                <h2>Customer Service</h2>
+                <p>Messages and support</p>
+            </div>
+
+            <div id="U9-admin-page-5-content">
+                <!-- PAGE5 content -->
+            </div>
+        </section>
+
+
+        <!-- PAGE 6 -->
+        <section
+            id="U9-admin-page-6"
+            class="U9-admin-page"
+            data-page="PAGE6"
+            hidden
+        >
+            <div class="U9-admin-page-header">
+                <h2>Settings</h2>
+                <p>System configuration</p>
+            </div>
+
+            <div id="U9-admin-page-6-content">
+                <!-- PAGE6 content -->
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         FIXED BOTTOM NAVIGATION
+    ========================== -->
+    <nav id="U9-admin-bottom-nav" aria-label="Admin navigation">
+
+        <button
+            type="button"
+            class="U9-admin-nav-button active"
+            data-target="PAGE1"
+            aria-label="PAGE1"
+            aria-current="page"
+        >
+            <img src="SVG/BUTTON/one.svg" alt="">
+            <span>PAGE1</span>
+        </button>
+
+        <button
+            type="button"
+            class="U9-admin-nav-button"
+            data-target="PAGE2"
+            aria-label="PAGE2"
+        >
+            <img src="SVG/BUTTON/one.svg" alt="">
+            <span>PAGE2</span>
+        </button>
+
+        <button
+            type="button"
+            class="U9-admin-nav-button"
+            data-target="PAGE3"
+            aria-label="PAGE3"
+        >
+            <img src="SVG/BUTTON/one.svg" alt="">
+            <span>PAGE3</span>
+        </button>
+
+        <button
+            type="button"
+            class="U9-admin-nav-button"
+            data-target="PAGE4"
+            aria-label="PAGE4"
+        >
+            <img src="SVG/BUTTON/one.svg" alt="">
+            <span>PAGE4</span>
+        </button>
+
+        <button
+            type="button"
+            class="U9-admin-nav-button"
+            data-target="PAGE5"
+            aria-label="PAGE5"
+        >
+            <img src="SVG/BUTTON/one.svg" alt="">
+            <span>PAGE5</span>
+        </button>
+
+        <button
+            type="button"
+            class="U9-admin-nav-button"
+            data-target="PAGE6"
+            aria-label="PAGE6"
+        >
+            <img src="SVG/BUTTON/one.svg" alt="">
+            <span>PAGE6</span>
+        </button>
+
+    </nav>
+
+</div>
+
+
+<!-- =========================
+     ADMIN JAVASCRIPT
+========================== -->
+
+<!-- Shared navigation controller -->
+<script src="JS/admin.js" defer></script>
+
+<!-- Independent PAGE JS -->
+<script src="JS/PAGE/PAGE1/page-1.js" defer></script>
+<script src="JS/PAGE/PAGE2/page-2.js" defer></script>
+<script src="JS/PAGE/PAGE3/page-3.js" defer></script>
+<script src="JS/PAGE/PAGE4/page-4.js" defer></script>
+<script src="JS/PAGE/PAGE5/page-5.js" defer></script>
+<script src="JS/PAGE/PAGE6/page-6.js" defer></script>
+
+</body>
+</html>
