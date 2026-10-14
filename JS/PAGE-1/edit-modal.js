@@ -4,11 +4,14 @@
    File:
    JS/PAGE-1/edit-modal.js
 
-   Edit Modal
+   Edit User Modal
 
    Functions:
    - Open modal
    - Close modal
+   - Show username in header
+   - Refresh button
+   - Lock background scroll
 
 ===================================================== */
 
@@ -18,8 +21,10 @@
 "use strict";
 
 
-
 const elements = {};
+
+let currentUser = null;
+
 
 
 
@@ -38,16 +43,26 @@ function getElements(){
         );
 
 
+
     elements.close =
         document.getElementById(
             "U9-admin-edit-modal-close"
         );
 
 
-    elements.username =
+
+    elements.title =
         document.getElementById(
-            "U9-admin-edit-username"
+            "U9-admin-edit-modal-title"
         );
+
+
+
+    elements.refresh =
+        document.getElementById(
+            "U9-admin-edit-modal-refresh"
+        );
+
 
 }
 
@@ -57,15 +72,31 @@ function getElements(){
 
 
 /* ===============================
-   OPEN
+   OPEN MODAL
 ================================ */
 
 
 function openEditModal(user){
 
 
-    if(!elements.modal)
+    if(!elements.modal){
+
+
+        console.error(
+            "[U9 Admin] Edit modal missing."
+        );
+
+
         return;
+
+
+    }
+
+
+
+    currentUser =
+        user || {};
+
 
 
 
@@ -76,6 +107,7 @@ function openEditModal(user){
 
 
 
+
     console.log(
         "Open edit modal:",
         username
@@ -83,34 +115,33 @@ function openEditModal(user){
 
 
 
-    if(elements.username){
 
-        elements.username.value =
+
+    if(elements.title){
+
+
+        elements.title.textContent =
             username;
+
 
     }
 
 
 
-    const title =
-        elements.modal.querySelector(
-            ".U9-admin-edit-modal-header h3"
-        );
-
-
-
-    if(title){
-
-        title.textContent =
-            username;
-
-    }
 
 
 
     elements.modal.classList.add(
         "active"
     );
+
+
+
+
+
+    document.body.style.overflow =
+        "hidden";
+
 
 
 }
@@ -120,8 +151,10 @@ function openEditModal(user){
 
 
 
+
+
 /* ===============================
-   CLOSE
+   CLOSE MODAL
 ================================ */
 
 
@@ -133,12 +166,72 @@ function closeEditModal(){
 
 
 
+
+
     elements.modal.classList.remove(
         "active"
     );
 
 
+
+
+
+    document.body.style.overflow =
+        "";
+
+
+
+
+
+    currentUser = null;
+
+
+
 }
+
+
+
+
+
+
+
+
+
+/* ===============================
+   REFRESH MODAL
+================================ */
+
+
+function refreshEditModal(){
+
+
+
+    if(!currentUser){
+
+
+        console.warn(
+            "[U9 Admin] No user selected."
+        );
+
+
+        return;
+
+
+    }
+
+
+
+    console.log(
+        "Refresh edit modal:",
+        currentUser
+    );
+
+
+
+}
+
+
+
 
 
 
@@ -157,28 +250,68 @@ function init(){
 
 
 
+
+
     if(!elements.modal){
 
+
         console.error(
-            "[U9 Admin] Edit modal missing."
+            "[U9 Admin] Edit modal HTML not found."
         );
+
 
         return;
 
+
     }
+
+
+
+
+
 
 
 
     if(elements.close){
 
+
         elements.close.onclick =
             function(){
 
+
                 closeEditModal();
+
 
             };
 
+
     }
+
+
+
+
+
+
+
+
+    if(elements.refresh){
+
+
+        elements.refresh.onclick =
+            function(){
+
+
+                refreshEditModal();
+
+
+            };
+
+
+    }
+
+
+
+
 
 
 
@@ -192,13 +325,23 @@ function init(){
 
 
 
+
+
+
+
+
 /* ===============================
-   GLOBAL
+   GLOBAL FUNCTIONS
+
+   Used by page-1.js
+
 ================================ */
 
 
 window.openEditModal =
     openEditModal;
+
+
 
 
 window.closeEditModal =
@@ -209,8 +352,11 @@ window.closeEditModal =
 
 
 
+
+
+
 if(
-    document.readyState==="loading"
+    document.readyState === "loading"
 ){
 
 
