@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
@@ -8,10 +9,13 @@
 
 <title>Admin</title>
 
+
 <link rel="stylesheet" href="index.css">
+
 
 <link rel="stylesheet" href="CSS/PAGE-1/page-1.css">
 <link rel="stylesheet" href="CSS/PAGE-1/edit-modal.css">
+
 
 <link rel="stylesheet" href="CSS/PAGE-2/page-2.css">
 <link rel="stylesheet" href="CSS/PAGE-3/page-3.css">
@@ -19,105 +23,268 @@
 <link rel="stylesheet" href="CSS/PAGE-5/page-5.css">
 <link rel="stylesheet" href="CSS/PAGE-6/page-6.css">
 
+
 </head>
 
 
 <body>
 
 
+
+
 <main id="U9-admin-main">
 
 
-<section id="U9-admin-page-1" class="U9-admin-page active">
+
+
+
+<section 
+id="U9-admin-page-1" 
+class="U9-admin-page active">
+
+
+
 
 
 <div id="U9-admin-users">
 
 
+
+
+
 <div class="U9-admin-users-header">
 
-<h2>User Management</h2>
+
+
+<h2>
+User Management
+</h2>
+
+
+
 
 
 <div class="U9-admin-header-actions">
 
 
-<button type="button" id="U9-admin-users-refresh">
+
+
+
+<button 
+type="button" 
+id="U9-admin-users-refresh">
+
 Refresh
+
 </button>
 
 
-<button type="button" id="U9-admin-login-button">
+
+
+
+<!-- ===============================
+     ADMIN LOGIN
+================================ -->
+
+
+<input
+type="text"
+id="U9-admin-login-username"
+placeholder="Username"
+autocomplete="username">
+
+
+
+<input
+type="password"
+id="U9-admin-login-password"
+placeholder="Password"
+autocomplete="current-password">
+
+
+
+
+
+<button 
+type="button" 
+id="U9-admin-login-button">
+
 Login
+
 </button>
 
 
+
+
 </div>
 
+
+
 </div>
 
 
 
-<div id="U9-admin-users-message" role="status" aria-live="polite"></div>
+
+
+<div 
+id="U9-admin-login-message"
+role="status"
+aria-live="polite">
+</div>
+
+
+
+
+
+<div 
+id="U9-admin-users-message" 
+role="status" 
+aria-live="polite">
+</div>
+
+
+
+
 
 
 
 <div class="U9-admin-users-table-wrap">
 
 
+
+
+
 <table class="U9-admin-users-table">
+
+
+
 
 
 <thead>
 
 <tr>
 
-<th class="username-column">Username</th>
-<th>Account</th>
-<th>Coins</th>
-<th>Balance</th>
-<th>Registered</th>
-<th>Orders</th>
-<th class="action-column">Action</th>
+<th class="username-column">
+Username
+</th>
+
+
+<th>
+Account
+</th>
+
+
+<th>
+Coins
+</th>
+
+
+<th>
+Balance
+</th>
+
+
+<th>
+Registered
+</th>
+
+
+<th>
+Orders
+</th>
+
+
+<th class="action-column">
+Action
+</th>
+
 
 </tr>
+
 
 </thead>
 
 
+
+
+
+
+
 <tbody id="U9-admin-users-tbody">
 
+
 <tr>
+
 <td colspan="7">
+
 Loading user data...
+
 </td>
+
+
 </tr>
 
+
 </tbody>
+
+
+
+
 
 
 </table>
 
 
+
+
+
 </div>
 
 
+
+
+
+
+
 </div>
+
+
+
+
 
 
 </section>
 
 
 
-<section id="U9-admin-page-2" class="U9-admin-page"></section>
 
-<section id="U9-admin-page-3" class="U9-admin-page"></section>
 
-<section id="U9-admin-page-4" class="U9-admin-page"></section>
 
-<section id="U9-admin-page-5" class="U9-admin-page"></section>
 
-<section id="U9-admin-page-6" class="U9-admin-page"></section>
+
+<section id="U9-admin-page-2" class="U9-admin-page">
+</section>
+
+
+<section id="U9-admin-page-3" class="U9-admin-page">
+</section>
+
+
+<section id="U9-admin-page-4" class="U9-admin-page">
+</section>
+
+
+<section id="U9-admin-page-5" class="U9-admin-page">
+</section>
+
+
+<section id="U9-admin-page-6" class="U9-admin-page">
+</section>
+
+
+
+
+
 
 
 
@@ -127,58 +294,160 @@ Loading user data...
 
 
 
-<nav id="U9-admin-bottom-nav" aria-label="Admin navigation">
 
 
-<button type="button" class="active" data-target="U9-admin-page-1">
 
-<img src="SVG/BUTTON/avatar.svg" alt="">
-<span>PAGE1</span>
+
+<nav 
+id="U9-admin-bottom-nav" 
+aria-label="Admin navigation">
+
+
+
+
+
+<button 
+type="button" 
+class="active"
+data-target="U9-admin-page-1">
+
+
+<img 
+src="SVG/BUTTON/avatar.svg" 
+alt="">
+
+
+<span>
+PAGE1
+</span>
+
 
 </button>
 
 
-<button type="button" data-target="U9-admin-page-2">
 
-<img src="SVG/BUTTON/one.svg" alt="">
-<span>PAGE2</span>
+
+
+
+
+<button 
+type="button"
+data-target="U9-admin-page-2">
+
+
+<img 
+src="SVG/BUTTON/one.svg" 
+alt="">
+
+
+<span>
+PAGE2
+</span>
+
 
 </button>
 
 
-<button type="button" data-target="U9-admin-page-3">
 
-<img src="SVG/BUTTON/one.svg" alt="">
-<span>PAGE3</span>
+
+
+
+
+<button 
+type="button"
+data-target="U9-admin-page-3">
+
+
+<img 
+src="SVG/BUTTON/one.svg" 
+alt="">
+
+
+<span>
+PAGE3
+</span>
+
 
 </button>
 
 
-<button type="button" data-target="U9-admin-page-4">
 
-<img src="SVG/BUTTON/one.svg" alt="">
-<span>PAGE4</span>
+
+
+
+
+<button 
+type="button"
+data-target="U9-admin-page-4">
+
+
+<img 
+src="SVG/BUTTON/one.svg" 
+alt="">
+
+
+<span>
+PAGE4
+</span>
+
 
 </button>
 
 
-<button type="button" data-target="U9-admin-page-5">
 
-<img src="SVG/BUTTON/one.svg" alt="">
-<span>PAGE5</span>
+
+
+
+
+<button 
+type="button"
+data-target="U9-admin-page-5">
+
+
+<img 
+src="SVG/BUTTON/one.svg" 
+alt="">
+
+
+<span>
+PAGE5
+</span>
+
 
 </button>
 
 
-<button type="button" data-target="U9-admin-page-6">
 
-<img src="SVG/BUTTON/one.svg" alt="">
-<span>PAGE6</span>
+
+
+
+
+<button 
+type="button"
+data-target="U9-admin-page-6">
+
+
+<img 
+src="SVG/BUTTON/one.svg" 
+alt="">
+
+
+<span>
+PAGE6
+</span>
+
 
 </button>
+
+
+
 
 
 </nav>
+
+
+
+
 
 
 
@@ -189,80 +458,106 @@ Loading user data...
 ================================ -->
 
 
+
 <div id="U9-admin-edit-modal">
 
 
-    <div class="U9-admin-edit-modal-box">
 
 
 
-        <div class="U9-admin-edit-modal-header">
-
-
-
-            <!-- CLOSE -->
-
-            <button
-                type="button"
-                id="U9-admin-edit-modal-close">
-
-                ×
-
-            </button>
+<div class="U9-admin-edit-modal-box">
 
 
 
 
 
-            <!-- USERNAME -->
-
-            <h3
-                id="U9-admin-edit-modal-title">
-
-                User
-
-            </h3>
+<div class="U9-admin-edit-modal-header">
 
 
 
 
 
-            <!-- REFRESH -->
-
-            <button
-                type="button"
-                id="U9-admin-edit-modal-refresh">
+<button
+type="button"
+id="U9-admin-edit-modal-close">
 
 
-                <img
-                    src="SVG/BUTTON/refresh.svg"
-                    alt="Refresh">
+×
 
-
-            </button>
-
-
-
-
-        </div>
+</button>
 
 
 
 
 
-        <div class="U9-admin-edit-modal-body">
 
 
-        </div>
+<h3
+id="U9-admin-edit-modal-title">
+
+User
+
+</h3>
 
 
 
 
 
-    </div>
+
+
+<button
+type="button"
+id="U9-admin-edit-modal-refresh">
+
+
+
+<img
+src="SVG/BUTTON/refresh.svg"
+alt="Refresh">
+
+
+
+</button>
+
+
+
+
+
 
 
 </div>
+
+
+
+
+
+
+
+
+
+<div 
+class="U9-admin-edit-modal-body">
+
+
+</div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+</div>
+
+
+
+
 
 
 
@@ -273,16 +568,22 @@ Loading user data...
 ================================ -->
 
 
+
 <script src="JS/Supabase/supabase-client.js"></script>
 
+
 <script src="index.js" defer></script>
+
 
 <script src="JS/LOGIN/admin-login.js" defer></script>
 
 
+
 <script src="JS/PAGE-1/edit-modal.js" defer></script>
 
+
 <script src="JS/PAGE-1/page-1.js" defer></script>
+
 
 
 <script src="JS/PAGE-2/page-2.js" defer></script>
@@ -294,6 +595,9 @@ Loading user data...
 <script src="JS/PAGE-5/page-5.js" defer></script>
 
 <script src="JS/PAGE-6/page-6.js" defer></script>
+
+
+
 
 
 </body>
