@@ -75,10 +75,11 @@
 
                 const response = await fetch(ADMIN_ME_URL, {
                     method: "GET",
+                    credentials: "include",
                     cache: "no-store",
                     headers: {
                         "apikey": publicKey,
-                        "Authorization": `Bearer ${localStorage.getItem("U9_ADMIN_TOKEN") || ""}`
+                        "Authorization": `Bearer ${publicKey}`
                     }
                 });
 
