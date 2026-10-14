@@ -111,6 +111,34 @@ function formatAmount(value){
 
 
 
+function formatUsername(value){
+
+    if(!value)
+        return "—";
+
+
+    const text =
+        String(value);
+
+
+    if(text.length <= 6)
+        return text;
+
+
+    return (
+        text.slice(0,3)
+        +
+        "..."
+        +
+        text.slice(-3)
+    );
+
+}
+
+
+
+
+
 function formatDate(value){
 
     if(!value)
@@ -216,7 +244,9 @@ function renderUsers(users){
         );
 
         return;
+
     }
+
 
 
 
@@ -236,11 +266,15 @@ function renderUsers(users){
                 );
 
 
+
             tr.appendChild(
                 createCell(
-                    user.username
+                    formatUsername(
+                        user.username
+                    )
                 )
             );
+
 
 
             tr.appendChild(
@@ -248,6 +282,7 @@ function renderUsers(users){
                     user.account
                 )
             );
+
 
 
             tr.appendChild(
@@ -259,6 +294,7 @@ function renderUsers(users){
             );
 
 
+
             tr.appendChild(
                 createCell(
                     formatAmount(
@@ -266,6 +302,7 @@ function renderUsers(users){
                     )
                 )
             );
+
 
 
             tr.appendChild(
@@ -277,6 +314,7 @@ function renderUsers(users){
             );
 
 
+
             tr.appendChild(
                 createCell(
                     user.order_count ?? 0
@@ -284,7 +322,11 @@ function renderUsers(users){
             );
 
 
-            fragment.appendChild(tr);
+
+            fragment.appendChild(
+                tr
+            );
+
 
         }
     );
@@ -376,9 +418,11 @@ async function loadUsers(){
         );
 
 
+
         renderMessage(
             "加载失败"
         );
+
 
 
         setMessage(
