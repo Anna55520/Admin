@@ -471,7 +471,6 @@
         try {
             const response = await fetch(ADMIN_LOGIN_URL, {
                 method: "POST",
-                credentials: "include",
                 headers: getRequestHeaders(),
                 body: JSON.stringify({
                     username: username,
@@ -482,6 +481,10 @@
             const result = await response.json().catch(function () {
                 return {};
             });
+
+            if (result.token) {
+                localStorage.setItem("U9_ADMIN_TOKEN", result.token);
+            }
 
             if (!response.ok || result.success !== true) {
                 if (response.status === 401) {
@@ -537,7 +540,6 @@
         try {
             const response = await fetch(ADMIN_ME_URL, {
                 method: "GET",
-                credentials: "include",
                 headers: getRequestHeaders(),
                 cache: "no-store"
             });
@@ -552,6 +554,10 @@
             const result = await response.json().catch(function () {
                 return {};
             });
+
+            if (result.token) {
+                localStorage.setItem("U9_ADMIN_TOKEN", result.token);
+            }
 
             if (
                 !response.ok ||
