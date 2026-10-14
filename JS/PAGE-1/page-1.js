@@ -4,17 +4,19 @@
 
    PAGE 1: User Management
 
-   Data source:
+   Data:
    admin-users-list Edge Function
 
    Features:
    1. Load users
    2. Pagination
    3. Refresh
-   4. Format Coins / Balance
-   5. Order count display
+   4. Coins format
+   5. Balance format
+   6. Order count
 
 ===================================================== */
+
 
 (function () {
 
@@ -23,16 +25,22 @@
 
     const PAGE_SIZE = 20;
 
-    let currentPage = 1;
-    let totalUsers = 0;
-    let loading = false;
-
 
     const API_URL =
         "https://tvtakmswbzawaweytimx.supabase.co/functions/v1/admin-users-list";
 
 
+
+    let currentPage = 1;
+
+    let totalUsers = 0;
+
+    let loading = false;
+
+
+
     const elements = {};
+
 
 
 
@@ -86,14 +94,15 @@
 
 
 
+
     /* =====================================================
        MESSAGE
     ===================================================== */
 
 
     function setMessage(
-        text,
-        error=false
+        message,
+        isError=false
     ){
 
         if(!elements.message)
@@ -101,15 +110,17 @@
 
 
         elements.message.textContent =
-            text || "";
+            message || "";
 
 
         elements.message.classList.toggle(
             "error",
-            error
+            isError
         );
 
     }
+
+
 
 
 
@@ -123,17 +134,22 @@
     function formatAmount(value){
 
 
-        const num =
+        const number =
             Number(value ?? 0);
 
 
 
-        if(!Number.isFinite(num))
+        if(
+            !Number.isFinite(number)
+        ){
+
             return "0.00";
 
+        }
 
 
-        return num.toLocaleString(
+
+        return number.toLocaleString(
             "en-US",
             {
                 minimumFractionDigits:2,
@@ -142,6 +158,7 @@
         );
 
     }
+
 
 
 
@@ -216,6 +233,7 @@
             );
 
 
+
         td.textContent =
             value === null ||
             value === undefined ||
@@ -234,7 +252,9 @@
 
 
 
-    function renderMessage(text){
+
+
+    function renderMessage(message){
 
 
         elements.tbody.replaceChildren();
@@ -255,7 +275,9 @@
 
         td.colSpan = 6;
 
-        td.textContent=text;
+        td.textContent =
+            message;
+
 
 
         tr.appendChild(td);
@@ -265,6 +287,8 @@
 
 
     }
+
+
 
 
 
@@ -292,9 +316,9 @@
 
 
 
-
         const fragment =
             document.createDocumentFragment();
+
 
 
 
@@ -375,7 +399,9 @@
             fragment
         );
 
+
     }
+
 
 
 
@@ -392,7 +418,7 @@
     function updatePagination(){
 
 
-        const pages =
+        const totalPages =
             Math.max(
                 1,
                 Math.ceil(
@@ -404,19 +430,19 @@
 
 
         elements.pageInfo.textContent =
-            `第 ${currentPage} / ${pages} 页，共 ${totalUsers} 位用户`;
+            `第 ${currentPage} / ${totalPages} 页，共 ${totalUsers} 位用户`;
 
 
 
         elements.prev.disabled =
-            currentPage <= 1 ||
-            loading;
+            loading ||
+            currentPage <= 1;
 
 
 
         elements.next.disabled =
-            currentPage >= pages ||
-            loading;
+            loading ||
+            currentPage >= totalPages;
 
 
     }
@@ -441,10 +467,12 @@
             return;
 
 
-        loading=true;
+
+        loading = true;
 
 
         updatePagination();
+
 
 
         renderMessage(
@@ -456,34 +484,23 @@
 
 
 
+
         try{
+
+
+            const url =
+                `${API_URL}?page=${currentPage}&page_size=${PAGE_SIZE}`;
+
+
 
 
             const response =
                 await fetch(
-                    API_URL,
+                    url,
                     {
-                        method:"POST",
+                        method:"GET",
 
-                        headers:{
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        credentials:
-                            "include",
-
-                        body:
-                            JSON.stringify({
-
-                                page:
-                                    currentPage,
-
-                                page_size:
-                                    PAGE_SIZE
-
-                            })
-
+                        credentials:"include"
                     }
                 );
 
@@ -498,7 +515,9 @@
 
 
 
-            if(!response.ok){
+            if(
+                !response.ok
+            ){
 
                 throw new Error(
                     result.error ||
@@ -512,9 +531,20 @@
 
 
 
+            /*
+              期待返回:
+
+              {
+                 users:[],
+                 total:5
+              }
+
+            */
+
+
+
             totalUsers =
-                result.total ||
-                0;
+                result.total ?? 0;
 
 
 
@@ -530,6 +560,7 @@
 
 
 
+
         }
         catch(error){
 
@@ -541,7 +572,7 @@
 
 
 
-            totalUsers=0;
+            totalUsers = 0;
 
 
 
@@ -552,9 +583,11 @@
 
 
             setMessage(
-                error.message,
+                error.message ||
+                "用户数据加载失败",
                 true
             );
+
 
 
         }
@@ -566,10 +599,97 @@
 
             updatePagination();
 
+
         }
 
 
+
     }
+
+
+
+
+
+
+
+
+
+    /* =====================================================
+       EVENTS
+    ===================================================== */
+
+
+    function initEvents(){
+
+
+        elements.refresh.onclick =
+            function(){
+
+                currentPage = 1;
+
+                loadUsers();
+
+            };
+
+
+
+
+        elements.prev.onclick =
+            function(){
+
+                if(
+                    loading ||
+                    currentPage <= 1
+                )
+                    return;
+
+
+
+                currentPage--;
+
+                loadUsers();
+
+
+            };
+
+
+
+
+
+        elements.next.onclick =
+            function(){
+
+
+                const totalPages =
+                    Math.max(
+                        1,
+                        Math.ceil(
+                            totalUsers /
+                            PAGE_SIZE
+                        )
+                    );
+
+
+
+                if(
+                    loading ||
+                    currentPage >= totalPages
+                )
+                    return;
+
+
+
+                currentPage++;
+
+
+                loadUsers();
+
+
+            };
+
+
+    }
+
 
 
 
@@ -592,11 +712,12 @@
 
         if(
             !elements.tbody ||
-            !elements.refresh
+            !elements.refresh ||
+            !elements.pageInfo
         ){
 
             console.error(
-                "PAGE1 HTML missing"
+                "[U9 Admin PAGE1] HTML missing"
             );
 
             return;
@@ -606,66 +727,7 @@
 
 
 
-        elements.refresh.onclick =
-            function(){
-
-                currentPage=1;
-
-                loadUsers();
-
-            };
-
-
-
-
-        elements.prev.onclick =
-            function(){
-
-                if(
-                    currentPage>1
-                ){
-
-                    currentPage--;
-
-                    loadUsers();
-
-                }
-
-            };
-
-
-
-
-
-        elements.next.onclick =
-            function(){
-
-
-                const pages =
-                    Math.max(
-                        1,
-                        Math.ceil(
-                            totalUsers /
-                            PAGE_SIZE
-                        )
-                    );
-
-
-
-                if(
-                    currentPage < pages
-                ){
-
-                    currentPage++;
-
-                    loadUsers();
-
-                }
-
-
-            };
-
-
+        initEvents();
 
 
 
@@ -678,8 +740,9 @@
 
 
 
+
     if(
-        document.readyState==="loading"
+        document.readyState === "loading"
     ){
 
         document.addEventListener(
@@ -696,6 +759,7 @@
         init();
 
     }
+
 
 
 
