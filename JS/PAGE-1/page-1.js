@@ -17,8 +17,7 @@
 "use strict";
 
 
-const API_URL =
-"https://tvtakmswbzawaweytimx.supabase.co/functions/v1/admin-users-list";
+const API_URL = "/api/admin-users-list";
 
 
 const elements = {};
