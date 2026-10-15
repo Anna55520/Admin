@@ -1,45 +1,717 @@
+
 /* =====================================================
    U9 ADMIN — Edit User Modal
    Responsive Desktop + Mobile
-   Existing SVG paths remain unchanged.
+   File: CSS/PAGE-1/edit-modal.css
+
+   Notes:
+   - Status bar stays outside the scrolling content.
+   - Modal body scrolls normally; scrollbar is hidden.
+   - Background click behavior is controlled by JavaScript.
+   - Existing SVG paths remain unchanged.
 ===================================================== */
-#U9-admin-edit-modal{display:none;position:fixed;inset:0;z-index:9999;align-items:center;justify-content:center;background:rgba(0,0,0,.45);padding:12px;box-sizing:border-box}
-#U9-admin-edit-modal.active{display:flex}
-.U9-admin-edit-modal-box{width:80%;height:85%;min-width:0;min-height:0;background:#fff;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box}
-.U9-admin-edit-modal-header{flex:0 0 56px;height:56px;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 18px;background:#515151;color:#fff;box-sizing:border-box}
-.U9-admin-edit-modal-header h3{flex:1 1 auto;min-width:0;margin:0;text-align:center;color:#fff;font-size:16px;font-weight:600;overflow-wrap:anywhere;word-break:break-word}
-#U9-admin-edit-modal-close{flex:0 0 40px;width:40px;height:40px;padding:0;border:0;background:none;color:#fff;font-size:28px;cursor:pointer}
-#U9-admin-edit-modal-refresh{flex:0 0 40px;width:40px;height:40px;padding:0;border:0;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center}
-#U9-admin-edit-modal-refresh img{width:22px;height:22px;object-fit:contain;filter:brightness(0) invert(1)}
-.U9-admin-edit-modal-body{flex:1 1 auto;min-width:0;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;-ms-overflow-style:none;box-sizing:border-box}.U9-admin-edit-modal-body::-webkit-scrollbar{display:none;width:0;height:0}
-.U9-admin-edit-status-bar{position:relative;z-index:2;flex:0 0 auto;background:#fff;width:100%;min-width:0;min-height:70px;padding:12px clamp(8px,2vw,24px);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:center;justify-items:stretch;gap:clamp(6px,1.5vw,24px);border-bottom:1px solid #eee;box-sizing:border-box}
-.U9-admin-edit-status-item{display:flex;align-items:center;justify-content:center;gap:clamp(4px,.8vw,10px);min-width:0;max-width:100%;font-size:clamp(12px,1.1vw,15px);font-weight:600;white-space:nowrap;box-sizing:border-box}
-.U9-admin-edit-status-item img{display:block;flex:0 0 auto;width:clamp(16px,1.8vw,24px);height:clamp(16px,1.8vw,24px);object-fit:contain}
-#U9-edit-order-status,#U9-edit-order-count,#U9-edit-user-coins,#U9-edit-user-balance{display:block;min-width:0;max-width:100%;text-align:center;overflow:hidden;text-overflow:ellipsis}
-#U9-edit-order-status{color:#515151}
-#U9-edit-user-coins.is-negative,#U9-edit-user-balance.is-negative{color:#f00!important}
-.U9-edit-section{margin:14px 18px;padding:18px 20px;border:1px solid #e7eaf0;border-radius:12px;background:#fff;box-shadow:0 3px 12px rgba(25,35,55,.06);box-sizing:border-box}
-.U9-edit-section h4{margin:0 0 12px;font-size:15px;color:#333}
-.U9-edit-field-label{display:block;margin:0 0 5px;font-size:12px;font-weight:600;color:#555}
-.U9-edit-uuid-row{display:flex;align-items:center;gap:8px;min-width:0}
-#U9-edit-user-uuid{display:block;flex:1;min-width:0;overflow-wrap:anywhere;word-break:break-all;font-size:12px;color:#444;background:#f5f6f8;border:1px solid #e2e5e9;border-radius:6px;padding:10px}
-.U9-edit-form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.U9-edit-field{min-width:0}
-.U9-edit-field input,.U9-edit-field select{width:100%;min-width:0;min-height:40px;padding:8px 10px;border:1px solid #d5d9df;border-radius:6px;background:#fff;color:#222;font:inherit;box-sizing:border-box}
-.U9-edit-primary-button,.U9-edit-secondary-button{min-height:38px;border:0;border-radius:6px;padding:8px 13px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
-.U9-edit-primary-button{background:#315efb;color:#fff}
-.U9-edit-secondary-button{background:#eef1f5;color:#303846}
-.U9-edit-primary-button:disabled,.U9-edit-secondary-button:disabled,#U9-admin-edit-modal-refresh:disabled{opacity:.55;cursor:not-allowed}
-.U9-edit-form-actions{display:flex;justify-content:flex-end;margin-top:12px}
-.U9-edit-round-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
-#U9-edit-round-progress{font-size:22px;font-weight:700;color:#242a35;white-space:nowrap}
-#U9-edit-round-label{font-size:12px;color:#737b87}
-#U9-edit-modal-message{min-height:18px;padding:8px 20px;font-size:12px;color:#167347;overflow-wrap:anywhere}
-#U9-edit-modal-message.error{color:#d32323}
-.U9-edit-rules-list{display:flex;flex-direction:column;gap:8px}
-.U9-edit-rule-item{display:flex;align-items:center;gap:8px;padding:10px;border:1px solid #e4e7eb;border-radius:8px;min-width:0}
-.U9-edit-rule-info{display:flex;flex:1;min-width:0;flex-direction:column;gap:4px}
-.U9-edit-rule-info strong{font-size:13px;overflow-wrap:anywhere}
-.U9-edit-rule-info span,.U9-edit-empty{font-size:12px;color:#737b87;margin:0}
-@media(max-width:900px) and (min-width:481px){.U9-admin-edit-modal-box{width:92%;height:88%}.U9-admin-edit-status-bar{padding:12px 8px;gap:6px}.U9-admin-edit-status-item{gap:5px;font-size:12px}.U9-admin-edit-status-item img{width:18px;height:18px}.U9-edit-section{margin:12px;padding:14px}.U9-edit-form-grid{gap:8px}}
-@media(max-width:480px){#U9-admin-edit-modal{padding:10px}.U9-admin-edit-modal-box{width:100%;height:92%;border-radius:12px}.U9-admin-edit-modal-header{flex-basis:52px;height:52px;gap:6px;padding:0 10px}.U9-admin-edit-modal-header h3{font-size:15px}#U9-admin-edit-modal-close,#U9-admin-edit-modal-refresh{flex-basis:36px;width:36px;height:36px}#U9-admin-edit-modal-close{font-size:26px}.U9-admin-edit-modal-body{overflow-x:hidden;overflow-y:auto}.U9-admin-edit-status-bar{min-height:0;padding:14px 6px;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:2px;row-gap:0}.U9-admin-edit-status-item{gap:3px;font-size:11px}.U9-admin-edit-status-item img{flex:0 0 16px;width:16px;height:16px}#U9-edit-order-status,#U9-edit-order-count,#U9-edit-user-coins,#U9-edit-user-balance{font-size:11px;text-align:left}.U9-edit-section{margin:10px;padding:14px 12px}.U9-edit-form-grid{grid-template-columns:1fr;gap:10px}.U9-edit-primary-button,.U9-edit-secondary-button{font-size:12px;padding:8px 10px}.U9-edit-rule-item{flex-wrap:wrap}.U9-edit-rule-info{flex-basis:100%}#U9-edit-modal-message{padding:8px 12px}}
+
+
+/* =====================================================
+   1. MODAL OVERLAY
+===================================================== */
+
+#U9-admin-edit-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 12px;
+    box-sizing: border-box;
+
+    background: rgba(0, 0, 0, 0.45);
+}
+
+#U9-admin-edit-modal.active {
+    display: flex;
+}
+
+
+/* =====================================================
+   2. MODAL CONTAINER
+===================================================== */
+
+.U9-admin-edit-modal-box {
+    display: flex;
+    flex-direction: column;
+
+    width: 80%;
+    height: 85%;
+
+    min-width: 0;
+    min-height: 0;
+
+    overflow: hidden;
+    box-sizing: border-box;
+
+    background: #ffffff;
+    border-radius: 12px;
+}
+
+
+/* =====================================================
+   3. MODAL HEADER
+===================================================== */
+
+.U9-admin-edit-modal-header {
+    display: flex;
+    flex: 0 0 56px;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 8px;
+    min-width: 0;
+    height: 56px;
+    padding: 0 18px;
+
+    box-sizing: border-box;
+
+    color: #ffffff;
+    background: #515151;
+}
+
+.U9-admin-edit-modal-header h3 {
+    flex: 1 1 auto;
+    min-width: 0;
+
+    margin: 0;
+
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+
+/* Close button */
+
+#U9-admin-edit-modal-close {
+    display: flex;
+    flex: 0 0 40px;
+    align-items: center;
+    justify-content: center;
+
+    width: 40px;
+    height: 40px;
+    padding: 0;
+
+    border: 0;
+    background: transparent;
+
+    color: #ffffff;
+    font-size: 28px;
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+
+/* Refresh button */
+
+#U9-admin-edit-modal-refresh {
+    display: flex;
+    flex: 0 0 40px;
+    align-items: center;
+    justify-content: center;
+
+    width: 40px;
+    height: 40px;
+    padding: 0;
+
+    border: 0;
+    background: transparent;
+
+    cursor: pointer;
+}
+
+#U9-admin-edit-modal-refresh img {
+    display: block;
+
+    width: 22px;
+    height: 22px;
+
+    object-fit: contain;
+
+    filter: brightness(0) invert(1);
+}
+
+#U9-admin-edit-modal-close:disabled,
+#U9-admin-edit-modal-refresh:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+
+/* =====================================================
+   4. STATUS BAR
+   Important:
+   Keep this as a direct child of the modal container,
+   outside .U9-admin-edit-modal-body.
+===================================================== */
+
+.U9-admin-edit-status-bar {
+    position: relative;
+    z-index: 2;
+
+    display: grid;
+    flex: 0 0 auto;
+
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: center;
+    justify-items: stretch;
+
+    gap: clamp(6px, 1.5vw, 24px);
+
+    width: 100%;
+    min-width: 0;
+    min-height: 34px;
+
+    padding: 12px clamp(8px, 2vw, 24px);
+
+    box-sizing: border-box;
+
+    background: #ffffff;
+    border-bottom: 1px solid #eeeeee;
+}
+
+
+/* Individual status item */
+
+.U9-admin-edit-status-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: clamp(4px, 0.8vw, 10px);
+
+    min-width: 0;
+    max-width: 100%;
+
+    box-sizing: border-box;
+
+    font-size: clamp(12px, 1.1vw, 15px);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+
+/* Status icons */
+
+.U9-admin-edit-status-item img {
+    display: block;
+    flex: 0 0 auto;
+
+    width: clamp(16px, 1.8vw, 24px);
+    height: clamp(16px, 1.8vw, 24px);
+
+    object-fit: contain;
+}
+
+
+/* Status values */
+
+#U9-edit-order-status,
+#U9-edit-order-count,
+#U9-edit-user-coins,
+#U9-edit-user-balance {
+    display: block;
+
+    min-width: 0;
+    max-width: 100%;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    text-align: center;
+}
+
+#U9-edit-order-status {
+    color: #515151;
+}
+
+
+/* Negative Coins / Balance */
+
+#U9-edit-user-coins.is-negative,
+#U9-edit-user-balance.is-negative {
+    color: #ff0000 !important;
+}
+
+
+/* =====================================================
+   5. MODAL BODY
+   The status bar is not inside this scrolling area.
+===================================================== */
+
+.U9-admin-edit-modal-body {
+    position: relative;
+
+    display: block;
+    flex: 1 1 auto;
+
+    min-width: 0;
+    min-height: 0;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    box-sizing: border-box;
+
+    background: #515151;
+
+    /* Firefox */
+    scrollbar-width: none;
+
+    /* Legacy Microsoft browsers */
+    -ms-overflow-style: none;
+}
+
+
+/* Chrome / Safari / Edge */
+
+.U9-admin-edit-modal-body::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+
+/* =====================================================
+   6. CONTENT CARDS
+===================================================== */
+
+.U9-edit-section {
+    margin: 14px 18px;
+    padding: 18px 20px;
+
+    box-sizing: border-box;
+
+    background: #ffffff;
+    border: 1px solid #e7eaf0;
+    border-radius: 12px;
+
+    box-shadow: 0 3px 12px rgba(25, 35, 55, 0.06);
+}
+
+.U9-edit-section h4 {
+    margin: 0 0 12px;
+
+    color: #333333;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+
+/* Field labels */
+
+.U9-edit-field-label {
+    display: block;
+
+    margin: 0 0 5px;
+
+    color: #555555;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+
+/* =====================================================
+   7. USER UUID
+===================================================== */
+
+.U9-edit-uuid-row {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+    min-width: 0;
+}
+
+#U9-edit-user-uuid {
+    display: block;
+    flex: 1 1 auto;
+
+    min-width: 0;
+    padding: 10px;
+
+    box-sizing: border-box;
+
+    color: #444444;
+    font-size: 12px;
+
+    background: #f5f6f8;
+    border: 1px solid #e2e5e9;
+    border-radius: 6px;
+
+    overflow-wrap: anywhere;
+    word-break: break-all;
+}
+
+
+/* =====================================================
+   8. FORM GRID
+===================================================== */
+
+.U9-edit-form-grid {
+    display: grid;
+
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.U9-edit-field {
+    min-width: 0;
+}
+
+
+/* Input / Select */
+
+.U9-edit-field input,
+.U9-edit-field select {
+    display: block;
+
+    width: 100%;
+    min-width: 0;
+    min-height: 40px;
+
+    padding: 8px 10px;
+
+    box-sizing: border-box;
+
+    color: #222222;
+    font: inherit;
+
+    background: #ffffff;
+    border: 1px solid #d5d9df;
+    border-radius: 6px;
+}
+
+.U9-edit-field input:focus,
+.U9-edit-field select:focus {
+    outline: 2px solid rgba(0, 0, 0, 0.12);
+    outline-offset: 1px;
+}
+
+
+/* =====================================================
+   9. BUTTONS
+===================================================== */
+
+.U9-edit-primary-button,
+.U9-edit-secondary-button {
+    min-height: 38px;
+    padding: 8px 13px;
+
+    box-sizing: border-box;
+
+    border: 0;
+    border-radius: 6px;
+
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+
+    cursor: pointer;
+}
+
+.U9-edit-primary-button {
+    color: #ffffff;
+    background: #000000;
+}
+
+.U9-edit-secondary-button {
+    color: #ffffff;
+    background: #000000;
+}
+
+.U9-edit-primary-button:disabled,
+.U9-edit-secondary-button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+
+/* Form action row */
+
+.U9-edit-form-actions {
+    display: flex;
+    justify-content: flex-end;
+
+    gap: 8px;
+    margin-top: 12px;
+}
+
+
+/* =====================================================
+   10. ROUND PROGRESS
+===================================================== */
+
+.U9-edit-round-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+    min-width: 0;
+}
+
+#U9-edit-round-progress {
+    color: #242a35;
+    font-size: 22px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+#U9-edit-round-label {
+    color: #737b87;
+    font-size: 12px;
+}
+
+
+/* =====================================================
+   11. MESSAGE
+===================================================== */
+
+#U9-edit-modal-message {
+    min-height: 18px;
+    padding: 8px 20px;
+
+    box-sizing: border-box;
+
+    color: #fcfcfc;
+    font-size: 12px;
+
+    overflow-wrap: anywhere;
+}
+
+#U9-edit-modal-message.error {
+    color: #ff6b6b;
+}
+
+
+/* =====================================================
+   12. MANUAL MATCHING RULES
+===================================================== */
+
+.U9-edit-rules-list {
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+
+/* Individual rule card */
+
+.U9-edit-rule-item {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+    min-width: 0;
+    padding: 10px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #e4e7eb;
+    border-radius: 8px;
+    background: #ffffff;
+}
+
+
+/* Rule information */
+
+.U9-edit-rule-info {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+
+    gap: 4px;
+    min-width: 0;
+}
+
+.U9-edit-rule-info strong {
+    font-size: 13px;
+
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.U9-edit-rule-info span,
+.U9-edit-empty {
+    margin: 0;
+
+    color: #737b87;
+    font-size: 12px;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* =====================================================
+   13. TABLET
+===================================================== */
+
+@media (max-width: 900px) and (min-width: 481px) {
+
+    .U9-admin-edit-modal-box {
+        width: 92%;
+        height: 88%;
+    }
+
+    .U9-admin-edit-status-bar {
+        gap: 6px;
+        padding: 0;
+    }
+
+    .U9-admin-edit-status-item {
+        gap: 5px;
+        font-size: 12px;
+    }
+
+    .U9-admin-edit-status-item img {
+        width: 18px;
+        height: 18px;
+    }
+
+    .U9-edit-section {
+        margin: 12px;
+        padding: 14px;
+    }
+
+    .U9-edit-form-grid {
+        gap: 8px;
+    }
+}
+
+
+/* =====================================================
+   14. MOBILE
+===================================================== */
+
+@media (max-width: 480px) {
+
+    #U9-admin-edit-modal {
+        padding: 10px;
+    }
+
+    .U9-admin-edit-modal-box {
+        width: 100%;
+        height: 92%;
+
+        border-radius: 12px;
+    }
+
+
+    /* Header */
+
+    .U9-admin-edit-modal-header {
+        flex-basis: 52px;
+        height: 52px;
+
+        gap: 6px;
+        padding: 0 10px;
+    }
+
+    .U9-admin-edit-modal-header h3 {
+        font-size: 15px;
+    }
+
+    #U9-admin-edit-modal-close,
+    #U9-admin-edit-modal-refresh {
+        flex-basis: 36px;
+
+        width: 36px;
+        height: 36px;
+    }
+
+    #U9-admin-edit-modal-close {
+        font-size: 26px;
+    }
+
+
+    /* Status bar */
+
+    .U9-admin-edit-status-bar {
+        min-height: 0;
+
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+
+        column-gap: 2px;
+        row-gap: 0;
+
+        padding: 14px 6px;
+    }
+
+    .U9-admin-edit-status-item {
+        gap: 3px;
+        font-size: 11px;
+    }
+
+    .U9-admin-edit-status-item img {
+        flex: 0 0 16px;
+
+        width: 16px;
+        height: 16px;
+    }
+
+    #U9-edit-order-status,
+    #U9-edit-order-count,
+    #U9-edit-user-coins,
+    #U9-edit-user-balance {
+        font-size: 11px;
+        text-align: left;
+    }
+
+
+    /* Content cards */
+
+    .U9-edit-section {
+        margin: 10px;
+        padding: 14px 12px;
+    }
+
+
+    /* Forms */
+
+    .U9-edit-form-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+    }
+
+    .U9-edit-primary-button,
+    .U9-edit-secondary-button {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+
+    /* Rule items */
+
+    .U9-edit-rule-item {
+        flex-wrap: wrap;
+    }
+
+    .U9-edit-rule-info {
+        flex-basis: 100%;
+    }
+
+
+    /* Messages */
+
+    #U9-edit-modal-message {
+        padding: 8px 12px;
+    }
+}
