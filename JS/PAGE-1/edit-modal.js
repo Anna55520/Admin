@@ -16,6 +16,7 @@
    - Show balance
    - Refresh button
    - Lock background scroll
+   - Negative Coins / Balance display in red
 
 ===================================================== */
 
@@ -149,6 +150,41 @@ function formatAmount(value){
 
 
 /* ===============================
+   NEGATIVE AMOUNT COLOR
+================================ */
+
+
+function updateNegativeColor(element, value){
+
+
+    if(!element)
+        return;
+
+
+
+    const amount =
+        Number(value ?? 0);
+
+
+
+    element.classList.toggle(
+        "is-negative",
+        Number.isFinite(amount) &&
+        amount < 0
+    );
+
+
+}
+
+
+
+
+
+
+
+
+
+/* ===============================
    LOAD USER DATA
 ================================ */
 
@@ -224,6 +260,12 @@ function renderUserData(user){
             );
 
 
+        updateNegativeColor(
+            elements.coins,
+            user.coins
+        );
+
+
     }
 
 
@@ -244,6 +286,12 @@ function renderUserData(user){
             formatAmount(
                 user.balance
             );
+
+
+        updateNegativeColor(
+            elements.balance,
+            user.balance
+        );
 
 
     }
@@ -291,8 +339,8 @@ function openEditModal(user){
 
 
     const username =
-        user.username ||
-        user.email ||
+        currentUser.username ||
+        currentUser.email ||
         "User";
 
 
