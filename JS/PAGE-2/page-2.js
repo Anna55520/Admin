@@ -1,8 +1,19 @@
-
-
 /* =========================================================
    U9 ADMIN - PAGE 2 PRODUCT MANAGEMENT
    File: JS/PAGE-2/page-2.js
+
+   Responsibilities:
+   - Load and render product list
+   - Refresh products
+   - Copy product UUID
+   - Open the separate product edit modal
+   - Keep Name and Action columns sticky via CSS
+
+   Product modal logic belongs in:
+   JS/PAGE-2/edit-cp-modal.js
+
+   Edit icon:
+   SVG/BUTTON/one.svg
 ========================================================= */
 
 (function () {
@@ -11,44 +22,45 @@
   const API_URL =
     "https://tvtakmswbzawaweytimx.supabase.co/functions/v1/admin-user-management";
 
+  const EDIT_ICON_URL = "SVG/BUTTON/one.svg";
+
   const elements = {};
+
   let products = [];
-  let currentProductId = null;
   let loading = false;
-  let saving = false;
+
+  /* =======================================================
+     DOM HELPERS
+  ======================================================= */
 
   function $(id) {
     return document.getElementById(id);
   }
 
   function initializeElements() {
-    [
+    const ids = [
       "U9-admin-page-2",
       "U9-admin-products-tbody",
       "U9-admin-products-message",
       "U9-admin-products-refresh",
-      "U9-admin-product-modal",
-      "U9-admin-product-modal-title",
-      "U9-admin-product-modal-close",
-      "U9-admin-product-form",
-      "U9-admin-product-modal-message",
-      "U9-admin-product-save",
-      "U9-admin-product-cancel",
-      "U9-product-id",
-      "U9-product-name",
-      "U9-product-price",
-      "U9-product-profit",
-      "U9-product-description",
-      "U9-product-url",
-      "U9-product-image-url",
-      "U9-product-enabled",
-      "U9-product-manual-only",
-      "U9-product-copy-uuid",
-    ].forEach((id) => {
+    ];
+
+    ids.forEach((id) => {
       elements[id] = $(id);
     });
 
-    return Object.values(elements).every(Boolean);
+    const missing = ids.filter((id) => !elements[id]);
+
+    if (missing.length) {
+      console.error(
+        "[U9 Admin PAGE 2] Missing required elements:",
+        missing,
+      );
+
+      return false;
+    }
+
+    return true;
   }
 
   function escapeHTML(value) {
@@ -72,24 +84,28 @@
       : "0.00";
   }
 
+  /* =======================================================
+     PAGE MESSAGES
+  ======================================================= */
+
   function showPageMessage(message, type = "") {
     const target = elements["U9-admin-products-message"];
 
-    target.textContent = message;
-    target.dataset.type = type;
-  }
-
-  function showModalMessage(message, type = "") {
-    const target = elements["U9-admin-product-modal-message"];
+    if (!target) return;
 
     target.textContent = message;
     target.dataset.type = type;
   }
+
+  /* =======================================================
+     API
+  ======================================================= */
 
   async function api(action, payload = {}) {
     const response = await fetch(API_URL, {
       method: "POST",
       credentials: "include",
+      cache: "no-store",
       headers: {
         "Content-Type": "application/json",
       },
@@ -107,7 +123,11 @@
       throw new Error("Invalid server response.");
     }
 
-    if (!response.ok || result.success === false || result.error) {
+    if (
+      !response.ok ||
+      result.success === false ||
+      result.error
+    ) {
       throw new Error(
         result.error || `Request failed (${response.status}).`,
       );
@@ -116,93 +136,162 @@
     return result;
   }
 
+  /* =======================================================
+     PRODUCT LOOKUP
+  ======================================================= */
+
+  function findProduct(productId) {
+    return products.find(
+      (product) => String(product.id) === String(productId),
+    );
+  }
+
+  /* =======================================================
+     RENDER PRODUCT TABLE
+
+     Columns:
+     Name | Price | Profit | Enabled | Manual UUID | Action
+
+     Manual UUID cell:
+     - Shows whether Manual Only is enabled
+     - Shows a shortened product UUID
+     - Provides a button to copy the full UUID
+
+     The full UUID is still available in the edit modal.
+  ======================================================= */
+
   function renderProducts() {
     const tbody = elements["U9-admin-products-tbody"];
 
     if (!products.length) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="7">No products found.</td>
+          <td colspan="6" class="U9-admin-products-empty">
+            No products found.
+          </td>
         </tr>
       `;
+
       return;
     }
 
     tbody.innerHTML = products.map((product) => {
-      const id = escapeHTML(product.id);
-      const shortId = escapeHTML(product.id.slice(0, 8));
+      const id = String(product.id ?? "");
+      const safeId = escapeHTML(id);
+      const shortId = escapeHTML(id.slice(0, 8));
+      const safeName = escapeHTML(product.name ?? "");
+
+      const enabled = product.enabled === true;
+      const manualOnly = product.manual_only === true;
 
       return `
-        <tr>
-          <td>
-            <div class="U9-admin-product-id-cell">
-              <code title="${id}">${shortId}</code>
-              <button
-                type="button"
-                class="U9-admin-product-copy"
-                data-copy-product="${id}"
-                aria-label="Copy full product UUID"
-                title="Copy full UUID"
-              >Copy</button>
-            </div>
+        <tr data-product-row="${safeId}">
+
+          <!-- NAME: sticky left column -->
+          <td class="U9-admin-product-name U9-admin-product-sticky-name">
+            <span title="${safeName}">
+              ${safeName || "Unnamed product"}
+            </span>
           </td>
 
-          <td class="U9-admin-product-name">
-            ${escapeHTML(product.name)}
-          </td>
-
+          <!-- PRICE -->
           <td class="U9-admin-product-number">
             ${formatAmount(product.price)}
           </td>
 
+          <!-- PROFIT -->
           <td class="U9-admin-product-number">
             ${formatAmount(product.profit)}
           </td>
 
+          <!-- ENABLED -->
           <td>
             <span class="U9-admin-product-status ${
-              product.enabled ? "is-enabled" : "is-disabled"
+              enabled ? "is-enabled" : "is-disabled"
             }">
-              ${product.enabled ? "Enabled" : "Disabled"}
+              ${enabled ? "Enabled" : "Disabled"}
             </span>
           </td>
 
-          <td>
-            <span class="U9-admin-product-status ${
-              product.manual_only ? "is-manual" : "is-automatic"
-            }">
-              ${product.manual_only ? "Yes" : "No"}
-            </span>
+          <!-- MANUAL UUID -->
+          <td class="U9-admin-product-manual-uuid">
+            <div class="U9-admin-product-manual-uuid-content">
+
+              <span class="U9-admin-product-status ${
+                manualOnly ? "is-manual" : "is-automatic"
+              }">
+                ${manualOnly ? "Manual" : "Auto"}
+              </span>
+
+              <code
+                class="U9-admin-product-short-uuid"
+                title="${safeId}"
+              >${shortId}</code>
+
+              <button
+                type="button"
+                class="U9-admin-product-copy"
+                data-copy-product="${safeId}"
+                aria-label="Copy product UUID"
+                title="Copy full product UUID"
+              >Copy</button>
+
+            </div>
           </td>
 
-          <td>
+          <!-- ACTION: sticky right column -->
+          <td class="U9-admin-product-action-cell U9-admin-product-sticky-action">
             <button
               type="button"
-              class="U9-admin-product-action"
-              data-edit-product="${id}"
-            >Edit</button>
+              class="U9-admin-product-action U9-admin-edit-button"
+              data-edit-product="${safeId}"
+              aria-label="Edit ${safeName || "product"}"
+              title="Edit product"
+            >
+              <img
+                src="${EDIT_ICON_URL}"
+                alt=""
+                width="16"
+                height="16"
+              >
+            </button>
           </td>
+
         </tr>
       `;
     }).join("");
   }
 
+  /* =======================================================
+     LOAD PRODUCTS
+
+     Important:
+     This function only reads products.
+     It does not call update_product.
+  ======================================================= */
+
   async function loadProducts() {
     if (loading) return;
 
     loading = true;
-    elements["U9-admin-products-refresh"].disabled = true;
+
+    const refreshButton =
+      elements["U9-admin-products-refresh"];
+
+    refreshButton.disabled = true;
     showPageMessage("Loading product data...");
 
     try {
-      // 正确的操作：只获取商品列表，不更新商品
       const result = await api("products");
 
       if (!Array.isArray(result.products)) {
-        throw new Error("The server did not return a product list.");
+        throw new Error(
+          "The server did not return a product list.",
+        );
       }
 
       products = result.products;
+
       renderProducts();
 
       showPageMessage(
@@ -210,7 +299,10 @@
         "success",
       );
     } catch (error) {
-      console.error("U9 Admin products load error:", error);
+      console.error(
+        "[U9 Admin PAGE 2] Product loading error:",
+        error,
+      );
 
       showPageMessage(
         error.message || "Failed to load products.",
@@ -218,179 +310,127 @@
       );
     } finally {
       loading = false;
-      elements["U9-admin-products-refresh"].disabled = false;
+      refreshButton.disabled = false;
     }
   }
 
+  /* =======================================================
+     OPEN PRODUCT MODAL
+
+     The separate edit-cp-modal.js file should expose:
+
+       window.openProductModal = function (product) { ... }
+
+     Pass the complete product object so the modal can
+     populate every field, including the product UUID.
+  ======================================================= */
 
   function openProductModal(productId) {
-    const product = products.find((item) => item.id === productId);
+    const product = findProduct(productId);
 
     if (!product) {
-      showPageMessage("Product not found. Refresh the list and try again.", "error");
+      showPageMessage(
+        "Product not found. Refresh the list and try again.",
+        "error",
+      );
+
       return;
     }
 
-    currentProductId = product.id;
+    if (typeof window.openProductModal !== "function") {
+      console.error(
+        "[U9 Admin PAGE 2] Product modal function is unavailable. " +
+        "Check that JS/PAGE-2/edit-cp-modal.js is loaded.",
+      );
 
-    elements["U9-admin-product-modal-title"].textContent = "Edit Product";
-    elements["U9-product-id"].value = product.id;
-    elements["U9-product-name"].value = product.name ?? "";
-    elements["U9-product-price"].value = product.price ?? 0;
-    elements["U9-product-profit"].value = product.profit ?? 0;
-    elements["U9-product-description"].value = product.description ?? "";
-    elements["U9-product-url"].value = product.url ?? "";
-    elements["U9-product-image-url"].value = product.image_url ?? "";
-    elements["U9-product-enabled"].checked = product.enabled === true;
-    elements["U9-product-manual-only"].checked =
-      product.manual_only === true;
+      showPageMessage(
+        "Product edit modal is unavailable. Check the modal JavaScript file.",
+        "error",
+      );
 
-    showModalMessage("");
-
-    elements["U9-admin-product-modal"].classList.add("is-open");
-    elements["U9-admin-product-modal"].setAttribute("aria-hidden", "false");
-    elements["U9-product-name"].focus();
-  }
-
-  function closeProductModal() {
-    const modal = elements["U9-admin-product-modal"];
-
-    if (modal.contains(document.activeElement)) {
-      elements["U9-admin-products-refresh"].focus();
+      return;
     }
 
-    modal.classList.remove("is-open");
-    modal.setAttribute("aria-hidden", "true");
-
-    currentProductId = null;
-    showModalMessage("");
+    window.openProductModal(product);
   }
+
+  /* =======================================================
+     COPY UUID
+  ======================================================= */
 
   async function copyText(value) {
     try {
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(value);
-      } else {
-        const temporary = document.createElement("textarea");
+        return true;
+      }
 
-        temporary.value = value;
-        temporary.style.position = "fixed";
-        temporary.style.opacity = "0";
+      const temporary = document.createElement("textarea");
 
-        document.body.appendChild(temporary);
-        temporary.select();
+      temporary.value = value;
+      temporary.setAttribute("readonly", "");
+      temporary.style.position = "fixed";
+      temporary.style.left = "-9999px";
+      temporary.style.top = "0";
 
-        const copied = document.execCommand("copy");
-        temporary.remove();
+      document.body.appendChild(temporary);
+      temporary.select();
 
-        if (!copied) {
-          throw new Error("Copy failed.");
-        }
+      const copied = document.execCommand("copy");
+
+      temporary.remove();
+
+      if (!copied) {
+        throw new Error("Copy failed.");
       }
 
       return true;
     } catch (error) {
-      console.error("U9 Admin copy error:", error);
+      console.error(
+        "[U9 Admin PAGE 2] UUID copy error:",
+        error,
+      );
+
       return false;
     }
   }
 
   async function handleCopy(button, value) {
+    if (!value) return;
+
+    if (button.disabled) return;
+
     const originalText = button.textContent;
+
+    button.disabled = true;
+
     const copied = await copyText(value);
 
-    button.textContent = copied ? "Copied" : "Copy failed";
+    button.textContent = copied
+      ? "Copied"
+      : "Copy failed";
+
+    if (copied) {
+      showPageMessage(
+        "Product UUID copied.",
+        "success",
+      );
+    } else {
+      showPageMessage(
+        "Unable to copy UUID. Please copy it manually.",
+        "error",
+      );
+    }
 
     window.setTimeout(() => {
       button.textContent = originalText;
+      button.disabled = false;
     }, 1500);
   }
 
-  async function saveProduct(event) {
-    event.preventDefault();
-
-    if (saving || !currentProductId) return;
-
-    const name = elements["U9-product-name"].value.trim();
-    const price = Number(elements["U9-product-price"].value);
-    const profitValue = elements["U9-product-profit"].value.trim();
-    const profit = profitValue === "" ? 0 : Number(profitValue);
-    const description = elements["U9-product-description"].value;
-    const url = elements["U9-product-url"].value.trim();
-    const imageUrl = elements["U9-product-image-url"].value.trim();
-
-    if (!name) {
-      showModalMessage("Product name is required.", "error");
-      elements["U9-product-name"].focus();
-      return;
-    }
-
-    if (!Number.isFinite(price) || price < 0) {
-      showModalMessage("Price must be a valid non-negative number.", "error");
-      return;
-    }
-
-    if (!Number.isFinite(profit)) {
-      showModalMessage("Profit must be a valid number.", "error");
-      return;
-    }
-
-    if (url && !isValidHttpUrl(url)) {
-      showModalMessage("Product URL must be a valid HTTP or HTTPS URL.", "error");
-      return;
-    }
-
-    if (imageUrl && !isValidHttpUrl(imageUrl)) {
-      showModalMessage("Image URL must be a valid HTTP or HTTPS URL.", "error");
-      return;
-    }
-
-    saving = true;
-    elements["U9-admin-product-save"].disabled = true;
-    elements["U9-admin-product-save"].textContent = "Saving...";
-    showModalMessage("Saving changes...");
-
-    try {
-      await api("update_product", {
-        product_id: currentProductId,
-        name,
-        price,
-        profit,
-        description,
-        url,
-        image_url: imageUrl,
-        enabled: elements["U9-product-enabled"].checked,
-        manual_only: elements["U9-product-manual-only"].checked,
-      });
-
-      showModalMessage("Product updated successfully.", "success");
-
-      await loadProducts();
-      closeProductModal();
-      showPageMessage("Product updated successfully.", "success");
-    } catch (error) {
-      console.error("U9 Admin product update error:", error);
-
-      showModalMessage(
-        error.message || "Failed to update product.",
-        "error",
-      );
-    } finally {
-      saving = false;
-      elements["U9-admin-product-save"].disabled = false;
-      elements["U9-admin-product-save"].textContent = "Save Changes";
-    }
-  }
-
-  function isValidHttpUrl(value) {
-    try {
-      const url = new URL(value);
-
-      return url.protocol === "https:" || url.protocol === "http:";
-    } catch {
-      return false;
-    }
-  }
+  /* =======================================================
+     EVENT HANDLERS
+  ======================================================= */
 
   function bindEvents() {
     elements["U9-admin-products-refresh"].addEventListener(
@@ -401,83 +441,62 @@
     elements["U9-admin-products-tbody"].addEventListener(
       "click",
       async (event) => {
-        const copyButton = event.target.closest("[data-copy-product]");
+        const target = event.target;
+
+        if (!(target instanceof Element)) return;
+
+        /* Copy UUID */
+        const copyButton = target.closest(
+          "[data-copy-product]",
+        );
 
         if (copyButton) {
           await handleCopy(
             copyButton,
             copyButton.dataset.copyProduct,
           );
+
           return;
         }
 
-        const editButton = event.target.closest("[data-edit-product]");
+        /* Open edit modal */
+        const editButton = target.closest(
+          "[data-edit-product]",
+        );
 
         if (editButton) {
-          openProductModal(editButton.dataset.editProduct);
+          openProductModal(
+            editButton.dataset.editProduct,
+          );
         }
       },
     );
-
-    elements["U9-product-copy-uuid"].addEventListener("click", async () => {
-      await handleCopy(
-        elements["U9-product-copy-uuid"],
-        elements["U9-product-id"].value,
-      );
-    });
-
-    elements["U9-admin-product-modal-close"].addEventListener(
-      "click",
-      closeProductModal,
-    );
-
-    elements["U9-admin-product-cancel"].addEventListener(
-      "click",
-      closeProductModal,
-    );
-
-    elements["U9-admin-product-form"].addEventListener(
-      "submit",
-      saveProduct,
-    );
-
-    elements["U9-admin-product-modal"].addEventListener(
-      "click",
-      (event) => {
-        if (event.target === elements["U9-admin-product-modal"]) {
-          closeProductModal();
-        }
-      },
-    );
-
-    document.addEventListener("keydown", (event) => {
-      if (
-        event.key === "Escape" &&
-        elements["U9-admin-product-modal"].classList.contains("is-open")
-      ) {
-        closeProductModal();
-      }
-    });
   }
+
+  /* =======================================================
+     INITIALIZATION
+  ======================================================= */
 
   function initialize() {
     if (!initializeElements()) {
-      console.error(
-        "U9 Admin PAGE 2: Required product management elements are missing.",
-      );
       return;
     }
 
     bindEvents();
 
-    // Load on startup. Refresh is also available manually.
     loadProducts();
 
-    console.log("U9 Admin PAGE 2 Product Management initialized.");
+    console.log(
+      "[U9 Admin] PAGE 2 Product Management initialized.",
+    );
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initialize, { once: true });
+    document.addEventListener(
+      "DOMContentLoaded",
+      initialize,
+      { once: true },
+    );
   } else {
     initialize();
   }
