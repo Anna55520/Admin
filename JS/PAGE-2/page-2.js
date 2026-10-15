@@ -1,4 +1,5 @@
 
+
 /* =========================================================
    U9 ADMIN - PAGE 2 PRODUCT MANAGEMENT
    File: JS/PAGE-2/page-2.js
@@ -194,7 +195,17 @@
     showPageMessage("Loading product data...");
 
     try {
-      const result = await api("products");
+      const result = await api("update_product", {
+      product_id: product.id,
+      name: nameInput.value.trim(),
+      price: Number(priceInput.value),
+      profit: Number(profitInput.value),
+      description: descriptionInput.value,
+      enabled: enabledInput.checked,
+      manual_only: manualOnlyInput.checked,
+      url: urlInput.value.trim(),
+      image_url: imageUrlInput.value.trim()
+      });
 
       if (!Array.isArray(result.products)) {
         throw new Error("The server did not return a product list.");
