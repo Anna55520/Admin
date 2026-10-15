@@ -21,8 +21,7 @@
     const SUPABASE_URL =
         "https://tvtakmswbzawaweytimx.supabase.co";
 
-    const ADMIN_ME_URL =
-        `${SUPABASE_URL}/functions/v1/admin-me`;
+    const ADMIN_ME_URL = "/api/admin-me";
 
     let adminSessionCheckPromise = null;
 
