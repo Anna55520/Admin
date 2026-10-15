@@ -181,68 +181,225 @@ Loading user data...
 </nav>
 
 
-
-
-
 <!-- ===============================
      EDIT USER MODAL
 ================================ -->
 
-
 <div id="U9-admin-edit-modal">
   <div class="U9-admin-edit-modal-box">
+
     <div class="U9-admin-edit-modal-header">
-      <button type="button" id="U9-admin-edit-modal-close" aria-label="Close">×</button>
+      <button
+        type="button"
+        id="U9-admin-edit-modal-close"
+        aria-label="Close"
+      >×</button>
+
       <h3 id="U9-admin-edit-modal-title">User</h3>
-      <button type="button" id="U9-admin-edit-modal-refresh" aria-label="Refresh">
+
+      <button
+        type="button"
+        id="U9-admin-edit-modal-refresh"
+        aria-label="Refresh"
+      >
         <img src="SVG/BUTTON/refresh.svg" alt="Refresh">
       </button>
     </div>
+
     <div class="U9-admin-edit-status-bar">
-      <div class="U9-admin-edit-status-item"><img src="SVG/BUTTON/one.svg" alt="Order Status"><span id="U9-edit-order-status">—</span></div>
-      <div class="U9-admin-edit-status-item"><img src="SVG/BUTTON/one.svg" alt="Orders"><span id="U9-edit-order-count">0</span></div>
-      <div class="U9-admin-edit-status-item"><img src="SVG/BUTTON/one.svg" alt="Coins"><span id="U9-edit-user-coins">0.00</span></div>
-      <div class="U9-admin-edit-status-item"><img src="SVG/BUTTON/one.svg" alt="Balance"><span id="U9-edit-user-balance">0.00</span></div>
+      <div class="U9-admin-edit-status-item">
+        <img src="SVG/BUTTON/one.svg" alt="Order Status">
+        <span id="U9-edit-order-status">—</span>
+      </div>
+
+      <div class="U9-admin-edit-status-item">
+        <img src="SVG/BUTTON/one.svg" alt="Orders">
+        <span id="U9-edit-order-count">0</span>
+      </div>
+
+      <div class="U9-admin-edit-status-item">
+        <img src="SVG/BUTTON/one.svg" alt="Coins">
+        <span id="U9-edit-user-coins">0.00</span>
+      </div>
+
+      <div class="U9-admin-edit-status-item">
+        <img src="SVG/BUTTON/one.svg" alt="Balance">
+        <span id="U9-edit-user-balance">0.00</span>
+      </div>
     </div>
+
     <div class="U9-admin-edit-modal-body">
+
+      <!-- User UUID -->
       <section class="U9-edit-section">
         <h4>User UUID</h4>
-        <div class="U9-edit-uuid-row"><code id="U9-edit-user-uuid">—</code><button type="button" class="U9-edit-secondary-button" id="U9-edit-copy-uuid">Copy UUID</button></div>
+
+        <div class="U9-edit-uuid-row">
+          <code id="U9-edit-user-uuid">—</code>
+
+          <button
+            type="button"
+            class="U9-edit-secondary-button"
+            id="U9-edit-copy-uuid"
+          >
+            Copy UUID
+          </button>
+        </div>
       </section>
 
+      <!-- Round Progress -->
       <section class="U9-edit-section">
-        <div class="U9-edit-round-row"><div><h4>Round Progress</h4><div id="U9-edit-round-label">Loading round…</div></div><strong id="U9-edit-round-progress">—</strong></div>
+        <div class="U9-edit-round-row">
+          <div>
+            <h4>Round Progress</h4>
+            <div id="U9-edit-round-label">Loading round…</div>
+          </div>
+
+          <strong id="U9-edit-round-progress">—</strong>
+        </div>
       </section>
 
+      <!-- Coins - Balance -->
       <section class="U9-edit-section">
         <h4>Coins - Balance</h4>
+
         <div class="U9-edit-form-grid">
-          <div class="U9-edit-field"><label class="U9-edit-field-label" for="U9-edit-fund-type">Account</label><select id="U9-edit-fund-type"><option value="coins">Coins</option><option value="balance">Balance</option></select></div>
-          <div class="U9-edit-field"><label class="U9-edit-field-label" for="U9-edit-fund-operation">Operation</label><select id="U9-edit-fund-operation"><option value="add">Add</option><option value="subtract">Subtract</option></select></div>
-          <div class="U9-edit-field"><label class="U9-edit-field-label" for="U9-edit-fund-amount">Amount</label><input id="U9-edit-fund-amount" type="number" min="0.01" step="0.01" placeholder="0.00" inputmode="decimal"></div>
+
+          <div class="U9-edit-field">
+            <label
+              class="U9-edit-field-label"
+              for="U9-edit-fund-type"
+            >
+              Account
+            </label>
+
+            <select id="U9-edit-fund-type">
+              <option value="coins">Coins</option>
+              <option value="balance">Balance</option>
+            </select>
+          </div>
+
+          <div class="U9-edit-field">
+            <label
+              class="U9-edit-field-label"
+              for="U9-edit-fund-operation"
+            >
+              Operation
+            </label>
+
+            <select id="U9-edit-fund-operation">
+              <option value="add">Add</option>
+              <option value="subtract">Subtract</option>
+            </select>
+          </div>
+
+          <div class="U9-edit-field">
+            <label
+              class="U9-edit-field-label"
+              for="U9-edit-fund-amount"
+            >
+              Amount
+            </label>
+
+            <input
+              id="U9-edit-fund-amount"
+              type="number"
+              min="0.01"
+              step="0.01"
+              placeholder="0.00"
+              inputmode="decimal"
+            >
+          </div>
+
         </div>
-        <div class="U9-edit-form-actions"><button type="button" class="U9-edit-primary-button" id="U9-edit-fund-submit">Apply Adjustment</button></div>
+
+        <div class="U9-edit-form-actions">
+          <button
+            type="button"
+            class="U9-edit-primary-button"
+            id="U9-edit-fund-submit"
+          >
+            Apply Adjustment
+          </button>
+        </div>
       </section>
 
+      <!-- Manual Order Matching Rule -->
       <section class="U9-edit-section">
         <h4>Manual Order Matching Rule</h4>
+
         <div class="U9-edit-form-grid">
-          <div class="U9-edit-field"><label class="U9-edit-field-label" for="U9-edit-rule-order-number">Order Number</label><input id="U9-edit-rule-order-number" type="number" min="1" step="1" placeholder="e.g. 10"></div>
-          <div class="U9-edit-field"><label class="U9-edit-field-label" for="U9-edit-rule-product">Product</label><select id="U9-edit-rule-product"><option value="">Loading products…</option></select></div>
-          <div class="U9-edit-field"><label class="U9-edit-field-label" for="U9-edit-rule-max-orders">Max Orders</label><input id="U9-edit-rule-max-orders" type="number" min="1" step="1" value="1"></div>
-          <div class="U9-edit-field"><label class="U9-edit-field-label" for="U9-edit-rule-period-minutes">Period (minutes)</label><input id="U9-edit-rule-period-minutes" type="number" min="1" step="1" value="1"></div>
+
+          <div class="U9-edit-field">
+            <label
+              class="U9-edit-field-label"
+              for="U9-edit-rule-order-number"
+            >
+              Order Number
+            </label>
+
+            <input
+              id="U9-edit-rule-order-number"
+              type="number"
+              min="1"
+              step="1"
+              placeholder="e.g. 10"
+            >
+          </div>
+
+          <div class="U9-edit-field">
+            <label
+              class="U9-edit-field-label"
+              for="U9-edit-rule-product-id"
+            >
+              Product ID
+            </label>
+
+            <input
+              id="U9-edit-rule-product-id"
+              type="text"
+              placeholder="Enter product UUID"
+              autocomplete="off"
+              spellcheck="false"
+            >
+          </div>
+
         </div>
-        <div class="U9-edit-form-actions"><button type="button" class="U9-edit-primary-button" id="U9-edit-rule-submit">Save Matching Rule</button></div>
+
+        <div class="U9-edit-form-actions">
+          <button
+            type="button"
+            class="U9-edit-primary-button"
+            id="U9-edit-rule-submit"
+          >
+            Save Matching Rule
+          </button>
+        </div>
       </section>
 
+      <!-- Existing Rules -->
       <section class="U9-edit-section U9-edit-existing-rules-card">
         <h4>Existing Rules</h4>
-        <div class="U9-edit-rules-list" id="U9-edit-rules-list"><p class="U9-edit-empty">Loading rules…</p></div>
+
+        <div
+          class="U9-edit-rules-list"
+          id="U9-edit-rules-list"
+        >
+          <p class="U9-edit-empty">Loading rules…</p>
+        </div>
       </section>
-      <div id="U9-edit-modal-message" role="status" aria-live="polite"></div>
+
+      <!-- Modal Message -->
+      <div
+        id="U9-edit-modal-message"
+        role="status"
+        aria-live="polite"
+      ></div>
+
     </div>
   </div>
 </div>
+
 
 
 
