@@ -1,1 +1,30 @@
-
+/* PAGE 2 PRODUCT EDIT MODAL ONLY — independent from page-2.css and Page 1 */
+#U9-admin-products-edit-modal,#U9-admin-products-edit-modal *{box-sizing:border-box}
+#U9-admin-products-edit-modal[aria-hidden="true"]{display:none}
+#U9-admin-products-edit-modal[aria-hidden="false"]{position:fixed;z-index:10000;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto;background:rgb(15 23 42 / 55%)}
+#U9-admin-products-edit-modal .U9-admin-products-edit-modal-box{width:100%;max-width:560px;max-height:calc(100vh - 40px);overflow-y:auto;border:1px solid #e2e8f0;border-radius:14px;background:#fff;color:#1e293b;box-shadow:0 24px 70px rgb(15 23 42 / 22%)}
+#U9-admin-products-edit-modal .U9-admin-products-edit-modal-header{position:sticky;top:0;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;border-bottom:1px solid #e2e8f0;background:#fff}
+#U9-admin-products-edit-modal .U9-admin-products-edit-modal-header h3{min-width:0;margin:0;font-size:18px;font-weight:700;overflow-wrap:anywhere}
+#U9-admin-products-edit-modal .U9-admin-products-edit-modal-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+#U9-admin-products-edit-modal .U9-admin-products-edit-modal-actions button{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;padding:7px;border:1px solid #dbe2ea;border-radius:8px;background:#fff;color:#334155;font-size:22px;line-height:1;cursor:pointer}
+#U9-admin-products-edit-modal .U9-admin-products-edit-modal-actions img{display:block;width:20px;height:20px;object-fit:contain}
+#U9-admin-products-edit-status{display:none;margin:14px 18px 0;padding:9px 11px;border-radius:8px;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+#U9-admin-products-edit-status.is-visible{display:block}
+#U9-admin-products-edit-status.is-error{background:#fef2f2;color:#b91c1c}
+#U9-admin-products-edit-status.is-success{background:#f0fdf4;color:#166534}
+#U9-admin-products-edit-form{margin:0}
+#U9-admin-products-edit-modal .U9-admin-products-edit-modal-body{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;padding:18px}
+#U9-admin-products-edit-modal .U9-admin-products-edit-field{display:flex;flex-direction:column;gap:7px;min-width:0}
+#U9-admin-products-edit-modal .U9-admin-products-edit-field label{color:#475569;font-size:12px;font-weight:700}
+#U9-admin-products-edit-modal .U9-admin-products-edit-field input,#U9-admin-products-edit-modal .U9-admin-products-edit-field textarea{width:100%;min-width:0;padding:10px 11px;border:1px solid #cbd5e1;border-radius:8px;outline:none;background:#fff;color:#1e293b;font:inherit;font-size:14px}
+#U9-admin-products-edit-modal .U9-admin-products-edit-field input:focus,#U9-admin-products-edit-modal .U9-admin-products-edit-field textarea:focus{border-color:#64748b;box-shadow:0 0 0 3px rgb(100 116 139 / 12%)}
+#U9-admin-products-edit-modal .U9-admin-products-edit-field textarea{min-height:88px;resize:vertical}
+#U9-admin-products-edit-modal #U9-admin-products-edit-description,#U9-admin-products-edit-modal #U9-admin-products-edit-url,#U9-admin-products-edit-modal #U9-admin-products-edit-image-url{grid-column:1/-1}
+#U9-admin-products-edit-modal .U9-admin-products-edit-checkboxes{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:18px;padding:12px;border:1px solid #e2e8f0;border-radius:9px;background:#f8fafc}
+#U9-admin-products-edit-modal .U9-admin-products-edit-checkboxes label{display:inline-flex;align-items:center;gap:8px;color:#334155;font-size:13px;font-weight:600;cursor:pointer}
+#U9-admin-products-edit-modal .U9-admin-products-edit-checkboxes input{width:16px;height:16px;margin:0;accent-color:#334155}
+#U9-admin-products-edit-modal .U9-admin-products-edit-modal-footer{display:flex;justify-content:flex-end;gap:10px;padding:14px 18px 18px;border-top:1px solid #e2e8f0}
+#U9-admin-products-edit-modal .U9-admin-products-edit-modal-footer button{min-height:40px;padding:9px 16px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#334155;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+#U9-admin-products-edit-modal #U9-admin-products-edit-save{border-color:#1e293b;background:#1e293b;color:#fff}
+#U9-admin-products-edit-modal button:disabled{opacity:.55;cursor:not-allowed}
+@media(max-width:520px){#U9-admin-products-edit-modal[aria-hidden="false"]{align-items:flex-start;padding:10px}#U9-admin-products-edit-modal .U9-admin-products-edit-modal-box{max-height:calc(100vh - 20px)}#U9-admin-products-edit-modal .U9-admin-products-edit-modal-body{grid-template-columns:minmax(0,1fr);gap:13px;padding:14px}#U9-admin-products-edit-modal #U9-admin-products-edit-description,#U9-admin-products-edit-modal #U9-admin-products-edit-url,#U9-admin-products-edit-modal #U9-admin-products-edit-image-url,#U9-admin-products-edit-modal .U9-admin-products-edit-checkboxes{grid-column:auto}}
