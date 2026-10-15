@@ -5,6 +5,7 @@
    Uses admin-user-management Edge Function.
    Existing SVG source paths are intentionally unchanged.
 ===================================================== */
+
 (function () {
   "use strict";
 
@@ -26,26 +27,37 @@
     return document.getElementById(id);
   }
 
+  /* =====================================================
+     ELEMENTS
+  ===================================================== */
+
   function getElements() {
     const ids = {
       modal: "U9-admin-edit-modal",
       close: "U9-admin-edit-modal-close",
       title: "U9-admin-edit-modal-title",
       refresh: "U9-admin-edit-modal-refresh",
+
       orderStatus: "U9-edit-order-status",
       orderCount: "U9-edit-order-count",
       coins: "U9-edit-user-coins",
       balance: "U9-edit-user-balance",
+
       uuid: "U9-edit-user-uuid",
       copyUuid: "U9-edit-copy-uuid",
+
       roundProgress: "U9-edit-round-progress",
       roundLabel: "U9-edit-round-label",
+
       message: "U9-edit-modal-message",
+
       fundType: "U9-edit-fund-type",
       fundOperation: "U9-edit-fund-operation",
       fundAmount: "U9-edit-fund-amount",
       fundSubmit: "U9-edit-fund-submit",
-      product: "U9-edit-rule-product",
+
+      // Updated: Product ID is now entered manually.
+      ruleProductId: "U9-edit-rule-product-id",
       ruleOrderNumber: "U9-edit-rule-order-number",
       ruleSubmit: "U9-edit-rule-submit",
       rulesList: "U9-edit-rules-list"
@@ -55,6 +67,10 @@
       elements[key] = byId(ids[key]);
     });
   }
+
+  /* =====================================================
+     FORMAT / MESSAGES
+  ===================================================== */
 
   function formatAmount(value) {
     const n = Number(value ?? 0);
@@ -82,7 +98,10 @@
     if (!elements.message) return;
 
     elements.message.textContent = message || "";
-    elements.message.classList.toggle("error", Boolean(isError));
+    elements.message.classList.toggle(
+      "error",
+      Boolean(isError)
+    );
   }
 
   function setBusy(value) {
@@ -105,7 +124,15 @@
     }
   }
 
+  /* =====================================================
+     API
+  ===================================================== */
+
   async function api(action, payload) {
+    if (!currentUser || !currentUser.id) {
+      throw new Error("Selected user UUID is missing.");
+    }
+
     const response = await fetch(API_URL, {
       method: "POST",
       credentials: "include",
@@ -117,7 +144,7 @@
         Object.assign(
           {
             action: action,
-            user_id: currentUser && currentUser.id
+            user_id: currentUser.id
           },
           payload || {}
         )
@@ -174,7 +201,9 @@
 
     const timestamp = new Date(raw).getTime();
 
-    return Number.isFinite(timestamp) ? timestamp : null;
+    return Number.isFinite(timestamp)
+      ? timestamp
+      : null;
   }
 
   function formatCountdown(milliseconds) {
@@ -184,7 +213,9 @@
     );
 
     const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const minutes = Math.floor(
+      (totalSeconds % 3600) / 60
+    );
     const seconds = totalSeconds % 60;
 
     const mm = String(minutes).padStart(2, "0");
@@ -241,22 +272,23 @@
       return;
     }
 
-    const countdown = formatCountdown(remaining);
+    elements.roundLabel.textContent =
+      "Cooldown " + formatCountdown(remaining);
 
     const completed = Number(
-      currentDetails && currentDetails.round_completed || 0
+      currentDetails &&
+      currentDetails.round_completed || 0
     );
 
     const required = Number(
-      currentDetails && currentDetails.orders_per_round || 0
+      currentDetails &&
+      currentDetails.orders_per_round || 0
     );
-
-    elements.roundLabel.textContent =
-      "Cooldown " + countdown;
 
     if (elements.roundProgress && required > 0) {
       elements.roundProgress.textContent =
-        Math.min(completed, required) + " / " + required;
+        Math.min(completed, required) +
+        " / " + required;
     }
   }
 
@@ -272,8 +304,11 @@
     renderCooldownTick();
 
     cooldownTimer = setInterval(function () {
-      if (!currentUser || !elements.modal ||
-          !elements.modal.classList.contains("active")) {
+      if (
+        !currentUser ||
+        !elements.modal ||
+        !elements.modal.classList.contains("active")
+      ) {
         stopCooldownTimer();
         return;
       }
@@ -332,8 +367,14 @@
         user.id || (currentUser && currentUser.id) || "—";
     }
 
-    const completed = Number(details.round_completed || 0);
-    const required = Number(details.orders_per_round || 0);
+    const completed = Number(
+      details.round_completed || 0
+    );
+
+    const required = Number(
+      details.orders_per_round || 0
+    );
+
     const safeCompleted = Math.max(0, completed);
     const safeRequired = Math.max(0, required);
 
@@ -344,7 +385,7 @@
 
     const endTime = getCooldownEndTime(details);
 
-    // Cooldown is active: show a live countdown.
+    // Active cooldown: show a live countdown.
     if (endTime && endTime > Date.now()) {
       if (elements.roundLabel) {
         elements.roundLabel.textContent =
@@ -373,46 +414,9 @@
   }
 
   /* =====================================================
-     PRODUCTS
-  ===================================================== */
-
-  function renderProducts(products) {
-    if (!elements.product) return;
-
-    const previous = elements.product.value;
-
-    elements.product.replaceChildren();
-
-    const placeholder = document.createElement("option");
-    placeholder.value = "";
-    placeholder.textContent = "Select enabled product";
-
-    elements.product.appendChild(placeholder);
-
-    (products || []).forEach(function (product) {
-      const option = document.createElement("option");
-
-      option.value = product.id;
-      option.textContent =
-        product.name +
-        " — " + formatAmount(product.price) +
-        " (profit " + formatAmount(product.profit) + ")";
-
-      elements.product.appendChild(option);
-    });
-
-    if (
-      previous &&
-      Array.from(elements.product.options).some(function (option) {
-        return option.value === previous;
-      })
-    ) {
-      elements.product.value = previous;
-    }
-  }
-
-  /* =====================================================
      MANUAL MATCHING RULES
+
+     Product ID is entered manually.
      max_orders / period_minutes are no longer used.
   ===================================================== */
 
@@ -456,17 +460,55 @@
           rule.product_id
         );
 
-      const meta = document.createElement("span");
+      const productIdText = document.createElement("span");
+      productIdText.textContent =
+        "Product ID: " + rule.product_id;
 
-      meta.textContent = rule.enabled ? "Enabled" : "Disabled";
+      const status = document.createElement("span");
+      status.textContent = rule.enabled
+        ? "Enabled"
+        : "Disabled";
 
-      info.append(title, meta);
+      info.append(title, productIdText, status);
 
+      // Edit button
+      const edit = document.createElement("button");
+
+      edit.type = "button";
+      edit.className = "U9-edit-secondary-button";
+      edit.textContent = "Edit";
+      edit.disabled = busy;
+
+      edit.addEventListener("click", function () {
+        if (busy) return;
+
+        if (elements.ruleOrderNumber) {
+          elements.ruleOrderNumber.value =
+            String(rule.order_number);
+        }
+
+        if (elements.ruleProductId) {
+          elements.ruleProductId.value =
+            rule.product_id || "";
+        }
+
+        setMessage(
+          "Rule loaded into the form. Edit the values and save."
+        );
+
+        if (elements.ruleOrderNumber) {
+          elements.ruleOrderNumber.focus();
+        }
+      });
+
+      // Enable / Disable button
       const toggle = document.createElement("button");
 
       toggle.type = "button";
       toggle.className = "U9-edit-secondary-button";
-      toggle.textContent = rule.enabled ? "Disable" : "Enable";
+      toggle.textContent = rule.enabled
+        ? "Disable"
+        : "Enable";
       toggle.disabled = busy;
 
       toggle.addEventListener("click", async function () {
@@ -491,24 +533,49 @@
         }
       });
 
-      const edit = document.createElement("button");
+      // Delete button
+      const remove = document.createElement("button");
 
-      edit.type = "button";
-      edit.className = "U9-edit-secondary-button";
-      edit.textContent = "Edit";
-      edit.disabled = busy;
+      remove.type = "button";
+      remove.className = "U9-edit-secondary-button";
+      remove.textContent = "Delete";
+      remove.disabled = busy;
+      remove.setAttribute(
+        "aria-label",
+        "Delete matching rule for order " + rule.order_number
+      );
 
-      edit.addEventListener("click", function () {
-        if (elements.ruleOrderNumber) {
-          elements.ruleOrderNumber.value = rule.order_number;
-        }
+      remove.addEventListener("click", async function () {
+        if (busy) return;
 
-        if (elements.product) {
-          elements.product.value = rule.product_id;
+        const confirmed = window.confirm(
+          "Delete this manual matching rule?\n\n" +
+          "Order Number: " + rule.order_number + "\n" +
+          "Product ID: " + rule.product_id + "\n\n" +
+          "This action cannot be undone."
+        );
+
+        if (!confirmed) return;
+
+        setBusy(true);
+        setMessage("Deleting matching rule…");
+
+        try {
+          await api("delete_rule", {
+            rule_id: rule.id
+          });
+
+          await loadDetails();
+
+          setMessage("Matching rule deleted.");
+        } catch (error) {
+          setMessage(error.message, true);
+        } finally {
+          setBusy(false);
         }
       });
 
-      item.append(info, edit, toggle);
+      item.append(info, edit, toggle, remove);
       elements.rulesList.appendChild(item);
     });
   }
@@ -526,15 +593,16 @@
     const result = await api("details");
 
     // Ignore an old response if the modal has switched users.
-    if (!currentUser || currentUser.id !== userIdAtRequest) {
+    if (
+      !currentUser ||
+      currentUser.id !== userIdAtRequest
+    ) {
       return null;
     }
 
     currentDetails = result;
 
     renderStatus(result);
-
-    renderProducts(result.products || []);
 
     renderRules(
       result.rules || [],
@@ -566,12 +634,16 @@
 
   function openEditModal(user) {
     if (!elements.modal) {
-      console.error("[U9 Admin] Edit modal HTML not found.");
+      console.error(
+        "[U9 Admin] Edit modal HTML not found."
+      );
       return;
     }
 
     if (!user || !user.id) {
-      console.error("[U9 Admin] Selected user has no UUID.");
+      console.error(
+        "[U9 Admin] Selected user has no UUID."
+      );
       return;
     }
 
@@ -595,13 +667,23 @@
     }
 
     if (elements.coins) {
-      elements.coins.textContent = formatAmount(user.coins);
-      updateNegativeColor(elements.coins, user.coins);
+      elements.coins.textContent =
+        formatAmount(user.coins);
+
+      updateNegativeColor(
+        elements.coins,
+        user.coins
+      );
     }
 
     if (elements.balance) {
-      elements.balance.textContent = formatAmount(user.balance);
-      updateNegativeColor(elements.balance, user.balance);
+      elements.balance.textContent =
+        formatAmount(user.balance);
+
+      updateNegativeColor(
+        elements.balance,
+        user.balance
+      );
     }
 
     if (elements.uuid) {
@@ -613,7 +695,16 @@
     }
 
     if (elements.roundLabel) {
-      elements.roundLabel.textContent = "Loading round…";
+      elements.roundLabel.textContent =
+        "Loading round…";
+    }
+
+    if (elements.ruleOrderNumber) {
+      elements.ruleOrderNumber.value = "";
+    }
+
+    if (elements.ruleProductId) {
+      elements.ruleProductId.value = "";
     }
 
     setMessage("");
@@ -646,18 +737,28 @@
     if (busy || !currentUser) return;
 
     const amount = Number(
-      elements.fundAmount && elements.fundAmount.value
+      elements.fundAmount &&
+      elements.fundAmount.value
     );
 
     if (!Number.isFinite(amount) || amount <= 0) {
-      setMessage("Enter an amount greater than zero.", true);
+      setMessage(
+        "Enter an amount greater than zero.",
+        true
+      );
       return;
     }
 
     const field = elements.fundType.value;
     const operation = elements.fundOperation.value;
-    const delta = operation === "subtract" ? -amount : amount;
-    const label = field === "coins" ? "Coins" : "Balance";
+
+    const delta = operation === "subtract"
+      ? -amount
+      : amount;
+
+    const label = field === "coins"
+      ? "Coins"
+      : "Balance";
 
     const confirmed = window.confirm(
       (operation === "subtract" ? "Subtract " : "Add ") +
@@ -685,7 +786,9 @@
 
       setMessage(label + " updated successfully.");
 
-      const listRefresh = byId("U9-admin-users-refresh");
+      const listRefresh = byId(
+        "U9-admin-users-refresh"
+      );
 
       if (listRefresh) {
         listRefresh.click();
@@ -699,29 +802,56 @@
 
   /* =====================================================
      SAVE MANUAL MATCHING RULE
+
+     Required:
+     - Order Number
+     - Product ID (UUID)
+
+     Removed:
+     - Max Orders
+     - Period (minutes)
   ===================================================== */
+
+  function isValidUuid(value) {
+    return typeof value === "string" &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+        .test(value);
+  }
 
   async function submitRule() {
     if (busy || !currentUser) return;
 
-    const productId =
-      elements.product && elements.product.value;
+    const productId = (
+      elements.ruleProductId &&
+      elements.ruleProductId.value || ""
+    ).trim();
 
     const orderNumber = Number(
       elements.ruleOrderNumber &&
       elements.ruleOrderNumber.value
     );
 
-    if (!productId) {
-      setMessage("Select a product.", true);
-      return;
-    }
-
-    if (!Number.isInteger(orderNumber) || orderNumber < 1) {
+    if (
+      !Number.isInteger(orderNumber) ||
+      orderNumber < 1
+    ) {
       setMessage(
         "Order number must be a positive integer.",
         true
       );
+      return;
+    }
+
+    if (!isValidUuid(productId)) {
+      setMessage(
+        "Enter a valid Product ID UUID.",
+        true
+      );
+
+      if (elements.ruleProductId) {
+        elements.ruleProductId.focus();
+      }
+
       return;
     }
 
@@ -736,6 +866,14 @@
       });
 
       await loadDetails();
+
+      if (elements.ruleOrderNumber) {
+        elements.ruleOrderNumber.value = "";
+      }
+
+      if (elements.ruleProductId) {
+        elements.ruleProductId.value = "";
+      }
 
       setMessage("Manual matching rule saved.");
     } catch (error) {
@@ -753,7 +891,9 @@
     getElements();
 
     if (!elements.modal) {
-      console.error("[U9 Admin] Edit modal HTML not found.");
+      console.error(
+        "[U9 Admin] Edit modal HTML not found."
+      );
       return;
     }
 
@@ -778,10 +918,16 @@
           if (!currentUser || !currentUser.id) return;
 
           try {
-            if (navigator.clipboard && window.isSecureContext) {
-              await navigator.clipboard.writeText(currentUser.id);
+            if (
+              navigator.clipboard &&
+              window.isSecureContext
+            ) {
+              await navigator.clipboard.writeText(
+                currentUser.id
+              );
             } else {
-              const temp = document.createElement("textarea");
+              const temp =
+                document.createElement("textarea");
 
               temp.value = currentUser.id;
               temp.style.position = "fixed";
@@ -790,12 +936,15 @@
               document.body.appendChild(temp);
               temp.select();
 
-              const ok = document.execCommand("copy");
+              const ok =
+                document.execCommand("copy");
 
               temp.remove();
 
               if (!ok) {
-                throw new Error("Clipboard copy failed.");
+                throw new Error(
+                  "Clipboard copy failed."
+                );
               }
             }
 
@@ -824,22 +973,32 @@
       );
     }
 
-    elements.modal.addEventListener("click", function (event) {
-      if (event.target === elements.modal) {
-        closeEditModal();
+    // Close when clicking the modal backdrop.
+    elements.modal.addEventListener(
+      "click",
+      function (event) {
+        if (event.target === elements.modal) {
+          closeEditModal();
+        }
       }
-    });
+    );
 
-    document.addEventListener("keydown", function (event) {
-      if (
-        event.key === "Escape" &&
-        elements.modal.classList.contains("active")
-      ) {
-        closeEditModal();
+    // Close with Escape.
+    document.addEventListener(
+      "keydown",
+      function (event) {
+        if (
+          event.key === "Escape" &&
+          elements.modal.classList.contains("active")
+        ) {
+          closeEditModal();
+        }
       }
-    });
+    );
 
-    console.log("[U9 Admin] Edit modal initialized.");
+    console.log(
+      "[U9 Admin] Edit modal initialized."
+    );
   }
 
   window.openEditModal = openEditModal;
