@@ -1,3 +1,4 @@
+```css
 /* =====================================================
    U9 ADMIN
 
@@ -5,489 +6,307 @@
    CSS/PAGE-1/edit-modal.css
 
    Edit User Modal
+   Responsive Desktop + Mobile
 
 ===================================================== */
 
 
+/* ===============================
+   MODAL OVERLAY
+================================ */
 
 #U9-admin-edit-modal {
-
-    display:none;
-
-    position:fixed;
-
-    inset:0;
-
-    z-index:9999;
-
-    align-items:center;
-
-    justify-content:center;
-
-    background:rgba(0,0,0,0.45);
-
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.45);
+    padding: 12px;
+    box-sizing: border-box;
 }
-
-
 
 #U9-admin-edit-modal.active {
-
-    display:flex;
-
+    display: flex;
 }
 
 
-
-
-
-
+/* ===============================
+   MODAL BOX
+================================ */
 
 .U9-admin-edit-modal-box {
-
-    width:80%;
-
-    height:80%;
-
-    background:#ffffff;
-
-    border-radius:12px;
-
-    overflow:hidden;
-
+    width: 80%;
+    height: 80%;
+    min-width: 0;
+    min-height: 0;
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
 }
-
-
-
-
-
-
 
 
 /* ===============================
    HEADER
 ================================ */
 
-
 .U9-admin-edit-modal-header {
-
-
-    height:56px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:space-between;
-
-    padding:0 18px;
-
-    background:#515151;
-
-    color:#ffffff;
-
-
+    flex: 0 0 56px;
+    height: 56px;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 0 18px;
+    background: #515151;
+    color: #ffffff;
+    box-sizing: border-box;
 }
-
-
-
-
 
 .U9-admin-edit-modal-header h3 {
-
-
-    flex:1;
-
-    margin:0;
-
-    text-align:center;
-
-    color:#ffffff;
-
-    font-size:16px;
-
-    font-weight:600;
-
-    word-break:break-word;
-
-    overflow-wrap:anywhere;
-
-
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+    text-align: center;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
-
-
-
-
-
-
 
 #U9-admin-edit-modal-close {
-
-
-    width:40px;
-
-    height:40px;
-
-    border:none;
-
-    background:none;
-
-    color:#ffffff;
-
-    font-size:28px;
-
-    cursor:pointer;
-
-
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: #ffffff;
+    font-size: 28px;
+    cursor: pointer;
 }
-
-
-
-
-
-
 
 #U9-admin-edit-modal-refresh {
-
-
-    width:40px;
-
-    height:40px;
-
-    border:none;
-
-    background:none;
-
-    cursor:pointer;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-
-
-
-
 
 #U9-admin-edit-modal-refresh img {
-
-
-    width:22px;
-
-    height:22px;
-
-    filter:brightness(0) invert(1);
-
-
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
 }
-
-
-
-
-
-
 
 
 /* ===============================
    BODY
 ================================ */
 
-
 .U9-admin-edit-modal-body {
-
-
-    height:calc(100% - 56px);
-
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
-
-
-
-
-
-
-
 
 
 /* ===============================
    USER STATUS BAR
 
    Desktop:
-
-   icon text | icon text | icon text | icon text
+   Four items in one row
 
 ================================ */
 
-
 .U9-admin-edit-status-bar {
-
-
-    height:70px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    gap:40px;
-
-    border-bottom:1px solid #eeeeee;
-
-
+    width: 100%;
+    min-width: 0;
+    min-height: 70px;
+    height: auto;
+    padding: 12px clamp(8px, 2vw, 24px);
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: center;
+    justify-items: stretch;
+    gap: clamp(6px, 1.5vw, 24px);
+    border-bottom: 1px solid #eeeeee;
+    box-sizing: border-box;
 }
 
 
-
-
-
-
+/* ===============================
+   STATUS ITEM
+================================ */
 
 .U9-admin-edit-status-item {
-
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    gap:10px;
-
-    font-size:15px;
-
-    font-weight:600;
-
-    white-space:nowrap;
-
-
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(4px, 0.8vw, 10px);
+    min-width: 0;
+    max-width: 100%;
+    font-size: clamp(12px, 1.1vw, 15px);
+    font-weight: 600;
+    white-space: nowrap;
+    box-sizing: border-box;
 }
 
 
-
-
-
-
+/* Keep the existing SVG source.
+   Only change its displayed size. */
 
 .U9-admin-edit-status-item img {
-
-
-    width:24px;
-
-    height:24px;
-
-
+    display: block;
+    flex: 0 0 auto;
+    width: clamp(16px, 1.8vw, 24px);
+    height: clamp(16px, 1.8vw, 24px);
+    object-fit: contain;
 }
 
 
+/* ===============================
+   STATUS VALUES
+================================ */
 
-
-
-
-
-#U9-edit-order-status {
-
-
-    color:#515151;
-
-
-}
-
-
-
-
-
-
-
+#U9-edit-order-status,
 #U9-edit-order-count,
 #U9-edit-user-coins,
 #U9-edit-user-balance {
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
-
-    min-width:60px;
-
-    text-align:center;
-
-
+#U9-edit-order-status {
+    color: #515151;
 }
 
 
+/* =====================================================
+   SMALL DESKTOP / TABLET
 
+   Keep four items in one row,
+   but reduce spacing and font size.
+===================================================== */
 
+@media (max-width: 900px) and (min-width: 481px) {
 
+    .U9-admin-edit-modal-box {
+        width: 92%;
+        height: 85%;
+    }
 
+    .U9-admin-edit-status-bar {
+        padding: 12px 8px;
+        gap: 6px;
+    }
 
+    .U9-admin-edit-status-item {
+        gap: 5px;
+        font-size: 12px;
+    }
+
+    .U9-admin-edit-status-item img {
+        width: 18px;
+        height: 18px;
+    }
+}
 
 
 /* =====================================================
    MOBILE
 
-   Layout:
+   Two columns, two rows:
 
-   「Status」「Order Count」
-
-   「Coins」「Balance」
+   Status       Order Count
+   Coins        Balance
 
 ===================================================== */
 
+@media (max-width: 480px) {
 
-@media(max-width:480px){
-
-
+    #U9-admin-edit-modal {
+        padding: 10px;
+    }
 
     .U9-admin-edit-modal-box {
-
-
-        width:92%;
-
-        height:85%;
-
-
+        width: 100%;
+        height: 85%;
+        border-radius: 12px;
     }
-
-
-
-
-
 
     .U9-admin-edit-modal-header {
-
-
-        height:52px;
-
-        padding:0 10px;
-
-
+        flex-basis: 52px;
+        height: 52px;
+        gap: 6px;
+        padding: 0 10px;
     }
-
-
-
-
-
 
     .U9-admin-edit-modal-header h3 {
-
-
-        font-size:15px;
-
-
+        font-size: 15px;
     }
-
-
-
-
-
-
 
     #U9-admin-edit-modal-close {
-
-
-        width:36px;
-
-        height:36px;
-
-        font-size:26px;
-
-
+        flex-basis: 36px;
+        width: 36px;
+        height: 36px;
+        font-size: 26px;
     }
-
-
-
-
-
-
 
     #U9-admin-edit-modal-refresh {
-
-
-        width:36px;
-
-        height:36px;
-
-
+        flex-basis: 36px;
+        width: 36px;
+        height: 36px;
     }
-
-
-
-
-
-
-
 
     .U9-admin-edit-modal-body {
-
-
-        height:calc(100% - 52px);
-
-
+        overflow-x: hidden;
+        overflow-y: auto;
     }
-
-
-
-
-
-
 
     .U9-admin-edit-status-bar {
-
-
-        height:auto;
-
-        padding:20px 10px;
-
-        display:grid;
-
-        grid-template-columns:repeat(2,1fr);
-
-        row-gap:24px;
-
-        column-gap:10px;
-
-
+        width: 100%;
+        min-height: 0;
+        height: auto;
+        padding: 20px 10px;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        row-gap: 24px;
+        column-gap: 10px;
+        box-sizing: border-box;
     }
-
-
-
-
-
-
-
 
     .U9-admin-edit-status-item {
-
-
-        width:100%;
-
-        justify-content:center;
-
-        font-size:14px;
-
-
+        width: 100%;
+        min-width: 0;
+        gap: 7px;
+        justify-content: center;
+        font-size: 14px;
     }
-
-
-
-
-
-
-
 
     .U9-admin-edit-status-item img {
-
-
-        width:22px;
-
-        height:22px;
-
-
+        width: 22px;
+        height: 22px;
     }
-
-
-
-
-
-
-
 }
+```
