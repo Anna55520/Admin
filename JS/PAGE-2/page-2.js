@@ -1,503 +1,163 @@
-/* =========================================================
-   U9 ADMIN - PAGE 2 PRODUCT MANAGEMENT
-   File: JS/PAGE-2/page-2.js
-
-   Responsibilities:
-   - Load and render product list
-   - Refresh products
-   - Copy product UUID
-   - Open the separate product edit modal
-   - Keep Name and Action columns sticky via CSS
-
-   Product modal logic belongs in:
-   JS/PAGE-2/edit-cp-modal.js
-
-   Edit icon:
-   SVG/BUTTON/one.svg
-========================================================= */
-
+/* PAGE 2 LIST ONLY. Modal form logic lives in edit-cp-modal.js. */
 (function () {
   "use strict";
-
-  const API_URL =
-    "https://tvtakmswbzawaweytimx.supabase.co/functions/v1/admin-user-management";
-
-  const EDIT_ICON_URL = "SVG/BUTTON/one.svg";
-
-  const elements = {};
-
+  const API = "https://tvtakmswbzawaweytimx.supabase.co/functions/v1/admin-user-management";
+  const $ = id => document.getElementById(id);
   let products = [];
   let loading = false;
+  let initialized = false;
 
-  /* =======================================================
-     DOM HELPERS
-  ======================================================= */
-
-  function $(id) {
-    return document.getElementById(id);
+  function esc(v) {
+    return String(v == null ? "" : v).replace(/[&<>"']/g, c => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    })[c]);
   }
-
-  function initializeElements() {
-    const ids = [
-      "U9-admin-page-2",
-      "U9-admin-products-tbody",
-      "U9-admin-products-message",
-      "U9-admin-products-refresh",
-    ];
-
-    ids.forEach((id) => {
-      elements[id] = $(id);
-    });
-
-    const missing = ids.filter((id) => !elements[id]);
-
-    if (missing.length) {
-      console.error(
-        "[U9 Admin PAGE 2] Missing required elements:",
-        missing,
-      );
-
-      return false;
-    }
-
-    return true;
+  function amount(v) {
+    const n = Number(v);
+    return Number.isFinite(n) ? n.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) : "0.00";
   }
-
-  function escapeHTML(value) {
-    return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#39;",
-    })[char]);
+  function message(text, type) {
+    const el = $("U9-admin-products-message");
+    if (!el) return;
+    el.textContent = text || "";
+    el.className = text ? "is-visible" : "";
+    if (type) el.classList.add("is-" + type);
   }
-
-  function formatAmount(value) {
-    const number = Number(value);
-
-    return Number.isFinite(number)
-      ? number.toLocaleString("en-US", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        })
-      : "0.00";
+  function tableMessage(text) {
+    const body = $("U9-admin-products-tbody");
+    if (!body) return;
+    const tr = document.createElement("tr");
+    const td = document.createElement("td");
+    td.colSpan = 7;
+    td.className = "product-table-message";
+    td.textContent = text;
+    tr.appendChild(td);
+    body.replaceChildren(tr);
   }
-
-  /* =======================================================
-     PAGE MESSAGES
-  ======================================================= */
-
-  function showPageMessage(message, type = "") {
-    const target = elements["U9-admin-products-message"];
-
-    if (!target) return;
-
-    target.textContent = message;
-    target.dataset.type = type;
-  }
-
-  /* =======================================================
-     API
-  ======================================================= */
-
-  async function api(action, payload = {}) {
-    const response = await fetch(API_URL, {
+  async function requestAdmin(action, extra) {
+    const response = await fetch(API, {
       method: "POST",
       credentials: "include",
-      cache: "no-store",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        action,
-        ...payload,
-      }),
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify(Object.assign({action}, extra || {}))
     });
-
-    let result;
-
-    try {
-      result = await response.json();
-    } catch {
-      throw new Error("Invalid server response.");
+    const raw = await response.text();
+    let data = {};
+    if (raw) { try { data = JSON.parse(raw); } catch (_) { data = {message:raw}; } }
+    if (!response.ok || data.success === false || data.error) {
+      throw new Error(data.error || data.message || ("Request failed (" + response.status + ")"));
     }
-
-    if (
-      !response.ok ||
-      result.success === false ||
-      result.error
-    ) {
-      throw new Error(
-        result.error || `Request failed (${response.status}).`,
-      );
-    }
-
-    return result;
+    return data;
   }
-
-  /* =======================================================
-     PRODUCT LOOKUP
-  ======================================================= */
-
-  function findProduct(productId) {
-    return products.find(
-      (product) => String(product.id) === String(productId),
-    );
+  function unpack(data) {
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data.products)) return data.products;
+    if (Array.isArray(data.data)) return data.data;
+    if (data.data && Array.isArray(data.data.products)) return data.data.products;
+    return [];
   }
-
-  /* =======================================================
-     RENDER PRODUCT TABLE
-
-     Columns:
-     Name | Price | Profit | Enabled | Manual UUID | Action
-
-     Manual UUID cell:
-     - Shows whether Manual Only is enabled
-     - Shows a shortened product UUID
-     - Provides a button to copy the full UUID
-
-     The full UUID is still available in the edit modal.
-  ======================================================= */
-
-  function renderProducts() {
-    const tbody = elements["U9-admin-products-tbody"];
-
-    if (!products.length) {
-      tbody.innerHTML = `
-        <tr>
-          <td colspan="6" class="U9-admin-products-empty">
-            No products found.
-          </td>
-        </tr>
-      `;
-
-      return;
-    }
-
-    tbody.innerHTML = products.map((product) => {
-      const id = String(product.id ?? "");
-      const safeId = escapeHTML(id);
-      const shortId = escapeHTML(id.slice(0, 8));
-      const safeName = escapeHTML(product.name ?? "");
-
-      const enabled = product.enabled === true;
-      const manualOnly = product.manual_only === true;
-
-      return `
-        <tr data-product-row="${safeId}">
-
-          <!-- NAME: sticky left column -->
-          <td class="U9-admin-product-name U9-admin-product-sticky-name">
-            <span title="${safeName}">
-              ${safeName || "Unnamed product"}
-            </span>
-          </td>
-
-          <!-- PRICE -->
-          <td class="U9-admin-product-number">
-            ${formatAmount(product.price)}
-          </td>
-
-          <!-- PROFIT -->
-          <td class="U9-admin-product-number">
-            ${formatAmount(product.profit)}
-          </td>
-
-          <!-- ENABLED -->
-          <td>
-            <span class="U9-admin-product-status ${
-              enabled ? "is-enabled" : "is-disabled"
-            }">
-              ${enabled ? "Enabled" : "Disabled"}
-            </span>
-          </td>
-
-          <!-- MANUAL UUID -->
-          <td class="U9-admin-product-manual-uuid">
-            <div class="U9-admin-product-manual-uuid-content">
-
-              <span class="U9-admin-product-status ${
-                manualOnly ? "is-manual" : "is-automatic"
-              }">
-                ${manualOnly ? "Manual" : "Auto"}
-              </span>
-
-              <code
-                class="U9-admin-product-short-uuid"
-                title="${safeId}"
-              >${shortId}</code>
-
-              <button
-                type="button"
-                class="U9-admin-product-copy"
-                data-copy-product="${safeId}"
-                aria-label="Copy product UUID"
-                title="Copy full product UUID"
-              >Copy</button>
-
-            </div>
-          </td>
-
-          <!-- ACTION: sticky right column -->
-          <td class="U9-admin-product-action-cell U9-admin-product-sticky-action">
-            <button
-              type="button"
-              class="U9-admin-product-action U9-admin-edit-button"
-              data-edit-product="${safeId}"
-              aria-label="Edit ${safeName || "product"}"
-              title="Edit product"
-            >
-              <img
-                src="${EDIT_ICON_URL}"
-                alt=""
-                width="16"
-                height="16"
-              >
-            </button>
-          </td>
-
-        </tr>
-      `;
+  function flag(v) {
+    const yes = v === true || v === 1 || v === "true";
+    return '<span class="U9-admin-product-flag ' + (yes ? "is-on" : "is-off") + '">' + (yes ? "Yes" : "No") + "</span>";
+  }
+  function render() {
+    const body = $("U9-admin-products-tbody");
+    if (!body) return;
+    if (!products.length) { tableMessage("No products found."); return; }
+    body.innerHTML = products.map(p => {
+      const id = String(p.id || p.uuid || "");
+      return "<tr>" +
+        '<td class="product-name-cell">' + esc(p.name || "") + "</td>" +
+        '<td class="product-number-cell">' + esc(amount(p.price)) + "</td>" +
+        '<td class="product-number-cell">' + esc(amount(p.profit)) + "</td>" +
+        "<td>" + flag(p.enabled) + "</td>" +
+        "<td>" + flag(p.manual_only) + "</td>" +
+        '<td class="product-uuid-cell"><span class="U9-admin-product-uuid-row">' +
+        '<code class="U9-admin-product-uuid-short">' + esc(id ? id.slice(0,8) : "—") + "</code>" +
+        '<button type="button" class="U9-admin-product-copy-uuid" data-copy-uuid="' + esc(id) + '" title="Copy UUID">Copy</button>' +
+        "</span></td>" +
+        '<td class="action-column"><button type="button" class="U9-admin-products-edit-button" data-product-edit="' + esc(id) + '" aria-label="Edit product" title="Edit">' +
+        '<img src="SVG/BUTTON/one.svg" alt=""></button></td>' +
+        "</tr>";
     }).join("");
   }
-
-  /* =======================================================
-     LOAD PRODUCTS
-
-     Important:
-     This function only reads products.
-     It does not call update_product.
-  ======================================================= */
-
-  async function loadProducts() {
+  async function refresh() {
     if (loading) return;
-
     loading = true;
-
-    const refreshButton =
-      elements["U9-admin-products-refresh"];
-
-    refreshButton.disabled = true;
-    showPageMessage("Loading product data...");
-
+    const refreshButton = $("U9-admin-products-refresh");
+    if (refreshButton) refreshButton.disabled = true;
+    if (!products.length) tableMessage("Loading product data...");
+    message("");
     try {
-      const result = await api("products");
-
-      if (!Array.isArray(result.products)) {
-        throw new Error(
-          "The server did not return a product list.",
-        );
-      }
-
-      products = result.products;
-
-      renderProducts();
-
-      showPageMessage(
-        `Loaded ${products.length} products.`,
-        "success",
-      );
-    } catch (error) {
-      console.error(
-        "[U9 Admin PAGE 2] Product loading error:",
-        error,
-      );
-
-      showPageMessage(
-        error.message || "Failed to load products.",
-        "error",
-      );
+      // Backend must implement action: "products" and return { products: [...] }.
+      products = unpack(await requestAdmin("products"));
+      render();
+    } catch (e) {
+      console.error("[U9 Page 2] Product load failed:", e);
+      if (!products.length) tableMessage("Unable to load products.");
+      message(e.message || "Unable to load products.", "error");
     } finally {
       loading = false;
-      refreshButton.disabled = false;
+      if (refreshButton) refreshButton.disabled = false;
     }
   }
-
-  /* =======================================================
-     OPEN PRODUCT MODAL
-
-     The separate edit-cp-modal.js file should expose:
-
-       window.openProductModal = function (product) { ... }
-
-     Pass the complete product object so the modal can
-     populate every field, including the product UUID.
-  ======================================================= */
-
-  function openProductModal(productId) {
-    const product = findProduct(productId);
-
-    if (!product) {
-      showPageMessage(
-        "Product not found. Refresh the list and try again.",
-        "error",
-      );
-
-      return;
-    }
-
-    if (typeof window.openProductModal !== "function") {
-      console.error(
-        "[U9 Admin PAGE 2] Product modal function is unavailable. " +
-        "Check that JS/PAGE-2/edit-cp-modal.js is loaded.",
-      );
-
-      showPageMessage(
-        "Product edit modal is unavailable. Check the modal JavaScript file.",
-        "error",
-      );
-
-      return;
-    }
-
-    window.openProductModal(product);
+  function find(id) {
+    return products.find(p => String(p.id || p.uuid || "") === String(id)) || null;
   }
-
-  /* =======================================================
-     COPY UUID
-  ======================================================= */
-
-  async function copyText(value) {
+  function openModal(product) {
+    if (!window.U9ProductEditModal || typeof window.U9ProductEditModal.open !== "function") {
+      message("Product modal JS is not loaded. Check JS/PAGE-2/edit-cp-modal.js.", "error");
+      return;
+    }
+    window.U9ProductEditModal.open(product || null);
+  }
+  async function copy(id, button) {
     try {
       if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(value);
-        return true;
+        await navigator.clipboard.writeText(id);
+      } else {
+        const field = document.createElement("textarea");
+        field.value = id; field.readOnly = true;
+        field.style.position = "fixed"; field.style.opacity = "0";
+        document.body.appendChild(field); field.select();
+        const ok = document.execCommand("copy"); field.remove();
+        if (!ok) throw new Error("Copy was blocked");
       }
-
-      const temporary = document.createElement("textarea");
-
-      temporary.value = value;
-      temporary.setAttribute("readonly", "");
-      temporary.style.position = "fixed";
-      temporary.style.left = "-9999px";
-      temporary.style.top = "0";
-
-      document.body.appendChild(temporary);
-      temporary.select();
-
-      const copied = document.execCommand("copy");
-
-      temporary.remove();
-
-      if (!copied) {
-        throw new Error("Copy failed.");
+      if (button) {
+        const old = button.textContent; button.textContent = "Done";
+        setTimeout(() => { button.textContent = old; }, 1000);
       }
-
-      return true;
-    } catch (error) {
-      console.error(
-        "[U9 Admin PAGE 2] UUID copy error:",
-        error,
-      );
-
-      return false;
-    }
+    } catch (e) { message("Unable to copy UUID. Copy it manually.", "error"); }
   }
-
-  async function handleCopy(button, value) {
-    if (!value) return;
-
-    if (button.disabled) return;
-
-    const originalText = button.textContent;
-
-    button.disabled = true;
-
-    const copied = await copyText(value);
-
-    button.textContent = copied
-      ? "Copied"
-      : "Copy failed";
-
-    if (copied) {
-      showPageMessage(
-        "Product UUID copied.",
-        "success",
-      );
-    } else {
-      showPageMessage(
-        "Unable to copy UUID. Please copy it manually.",
-        "error",
-      );
-    }
-
-    window.setTimeout(() => {
-      button.textContent = originalText;
-      button.disabled = false;
-    }, 1500);
+  function bind() {
+    $("U9-admin-products-refresh")?.addEventListener("click", refresh);
+    $("U9-admin-products-add")?.addEventListener("click", () => openModal(null));
+    $("U9-admin-products-tbody")?.addEventListener("click", event => {
+      const copyButton = event.target.closest("[data-copy-uuid]");
+      if (copyButton) { copy(copyButton.dataset.copyUuid || "", copyButton); return; }
+      const editButton = event.target.closest("[data-product-edit]");
+      if (editButton) {
+        const product = find(editButton.dataset.productEdit);
+        if (product) openModal(product);
+        else message("Product not found. Refresh and try again.", "error");
+      }
+    });
+    document.addEventListener("u9:products-changed", refresh);
   }
-
-  /* =======================================================
-     EVENT HANDLERS
-  ======================================================= */
-
-  function bindEvents() {
-    elements["U9-admin-products-refresh"].addEventListener(
-      "click",
-      loadProducts,
-    );
-
-    elements["U9-admin-products-tbody"].addEventListener(
-      "click",
-      async (event) => {
-        const target = event.target;
-
-        if (!(target instanceof Element)) return;
-
-        /* Copy UUID */
-        const copyButton = target.closest(
-          "[data-copy-product]",
-        );
-
-        if (copyButton) {
-          await handleCopy(
-            copyButton,
-            copyButton.dataset.copyProduct,
-          );
-
-          return;
-        }
-
-        /* Open edit modal */
-        const editButton = target.closest(
-          "[data-edit-product]",
-        );
-
-        if (editButton) {
-          openProductModal(
-            editButton.dataset.editProduct,
-          );
-        }
-      },
-    );
+  function init() {
+    if (initialized) return;
+    initialized = true;
+    if (!$("U9-admin-page-2") || !$("U9-admin-products-tbody")) return;
+    bind();
+    refresh();
   }
-
-  /* =======================================================
-     INITIALIZATION
-  ======================================================= */
-
-  function initialize() {
-    if (!initializeElements()) {
-      return;
-    }
-
-    bindEvents();
-
-    loadProducts();
-
-    console.log(
-      "[U9 Admin] PAGE 2 Product Management initialized.",
-    );
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener(
-      "DOMContentLoaded",
-      initialize,
-      { once: true },
-    );
-  } else {
-    initialize();
-  }
+  window.U9AdminProducts = {
+    refresh,
+    findProduct: find,
+    getProducts: () => products.slice(),
+    requestAdmin,
+    showMessage: message
+  };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, {once:true});
+  else init();
 })();
