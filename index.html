@@ -14,6 +14,9 @@
 <link rel="stylesheet" href="CSS/PAGE-1/edit-modal.css">
 
 <link rel="stylesheet" href="CSS/PAGE-2/page-2.css">
+<link rel="stylesheet" href="CSS/PAGE-2/edit-cp-modal.css">
+
+
 <link rel="stylesheet" href="CSS/PAGE-3/page-3.css">
 <link rel="stylesheet" href="CSS/PAGE-4/page-4.css">
 <link rel="stylesheet" href="CSS/PAGE-5/page-5.css">
@@ -27,7 +30,9 @@
 
 <main id="U9-admin-main">
 
-
+<!-- =====================================================
+     PAGE 1 
+===================================================== -->
 <section id="U9-admin-page-1" class="U9-admin-page active">
 
 
@@ -108,8 +113,79 @@ Loading user data...
 </section>
 
 
+<!-- =====================================================
+    PAGE 2 
+===================================================== -->
+<section id="U9-admin-page-2" class="U9-admin-page">
 
-<section id="U9-admin-page-2" class="U9-admin-page"></section>
+  <div id="U9-admin-products">
+
+    <!-- Header -->
+    <div class="U9-admin-products-header">
+      <h2>Product Management</h2>
+
+      <div class="U9-admin-products-header-actions">
+
+        <button
+          type="button"
+          id="U9-admin-products-refresh"
+          aria-label="Refresh products"
+          title="Refresh"
+        >
+          <img src="SVG/BUTTON/refresh.svg" alt="">
+        </button>
+
+        <button
+          type="button"
+          id="U9-admin-products-add"
+          aria-label="Add product"
+          title="Add product"
+        >
+          +
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Message -->
+    <div
+      id="U9-admin-products-message"
+      role="status"
+      aria-live="polite"
+    ></div>
+
+    <!-- Product Table -->
+    <div class="U9-admin-products-table-wrap">
+
+      <table class="U9-admin-products-table">
+
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Profit</th>
+            <th>Enabled</th>
+            <th>Manual</th>
+            <th>UUID</th>
+            <th class="action-column">Action</th>
+          </tr>
+        </thead>
+
+        <tbody id="U9-admin-products-tbody">
+          <tr>
+            <td colspan="7">Loading product data...</td>
+          </tr>
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</section>
+
+
 
 <section id="U9-admin-page-3" class="U9-admin-page"></section>
 
@@ -401,7 +477,178 @@ Loading user data...
 </div>
 
 
+<!-- =====================================================
+     PAGE 2 — PRODUCT EDIT MODAL
+===================================================== -->
+<div
+  id="U9-admin-products-edit-modal"
+  aria-hidden="true"
+>
+  <div
+    class="U9-admin-products-edit-modal-box"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="U9-admin-products-edit-modal-title"
+  >
 
+    <!-- Modal Header -->
+    <div class="U9-admin-products-edit-modal-header">
+
+      <h3 id="U9-admin-products-edit-modal-title">
+        Edit Product
+      </h3>
+
+      <div class="U9-admin-products-edit-modal-actions">
+
+        <button
+          type="button"
+          id="U9-admin-products-edit-refresh"
+          aria-label="Refresh product"
+          title="Refresh"
+        >
+          <img src="SVG/BUTTON/refresh.svg" alt="">
+        </button>
+
+        <button
+          type="button"
+          id="U9-admin-products-edit-close"
+          aria-label="Close"
+          title="Close"
+        >
+          ×
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Modal Status -->
+    <div
+      id="U9-admin-products-edit-status"
+      role="status"
+      aria-live="polite"
+    ></div>
+
+    <!-- Product Form -->
+    <form id="U9-admin-products-edit-form">
+
+      <input
+        type="hidden"
+        id="U9-admin-products-edit-id"
+        name="id"
+      >
+
+      <div class="U9-admin-products-edit-modal-body">
+
+        <div class="U9-admin-products-edit-field">
+          <label for="U9-admin-products-edit-name">Name</label>
+          <input
+            type="text"
+            id="U9-admin-products-edit-name"
+            name="name"
+            required
+          >
+        </div>
+
+        <div class="U9-admin-products-edit-field">
+          <label for="U9-admin-products-edit-price">Price</label>
+          <input
+            type="number"
+            id="U9-admin-products-edit-price"
+            name="price"
+            min="0"
+            step="0.01"
+            required
+          >
+        </div>
+
+        <div class="U9-admin-products-edit-field">
+          <label for="U9-admin-products-edit-profit">Profit</label>
+          <input
+            type="number"
+            id="U9-admin-products-edit-profit"
+            name="profit"
+            min="0"
+            step="0.01"
+            required
+          >
+        </div>
+
+        <div class="U9-admin-products-edit-field">
+          <label for="U9-admin-products-edit-description">
+            Description
+          </label>
+          <textarea
+            id="U9-admin-products-edit-description"
+            name="description"
+            rows="3"
+          ></textarea>
+        </div>
+
+        <div class="U9-admin-products-edit-field">
+          <label for="U9-admin-products-edit-url">Product URL</label>
+          <input
+            type="url"
+            id="U9-admin-products-edit-url"
+            name="url"
+          >
+        </div>
+
+        <div class="U9-admin-products-edit-field">
+          <label for="U9-admin-products-edit-image-url">Image URL</label>
+          <input
+            type="url"
+            id="U9-admin-products-edit-image-url"
+            name="image_url"
+          >
+        </div>
+
+        <div class="U9-admin-products-edit-checkboxes">
+
+          <label for="U9-admin-products-edit-enabled">
+            <input
+              type="checkbox"
+              id="U9-admin-products-edit-enabled"
+              name="enabled"
+            >
+            Enabled
+          </label>
+
+          <label for="U9-admin-products-edit-manual-only">
+            <input
+              type="checkbox"
+              id="U9-admin-products-edit-manual-only"
+              name="manual_only"
+            >
+            Manual
+          </label>
+
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="U9-admin-products-edit-modal-footer">
+
+        <button
+          type="button"
+          id="U9-admin-products-edit-cancel"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="submit"
+          id="U9-admin-products-edit-save"
+        >
+          Save
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+</div>
 
 
 
@@ -417,12 +664,13 @@ Loading user data...
 <script src="JS/LOGIN/admin-login.js" defer></script>
 
 
-<script src="JS/PAGE-1/edit-modal.js" defer></script>
-
 <script src="JS/PAGE-1/page-1.js" defer></script>
+<script src="JS/PAGE-1/edit-modal.js" defer></script>
 
 
 <script src="JS/PAGE-2/page-2.js" defer></script>
+<script src="JS/PAGE-2edit-modal.js" defer></script>
+
 
 <script src="JS/PAGE-3/page-3.js" defer></script>
 
