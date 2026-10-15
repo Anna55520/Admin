@@ -130,9 +130,8 @@
 /* ===============================
    USER STATUS BAR
 
-   Desktop:
+   All devices:
    Four items in one row
-
 ================================ */
 
 .U9-admin-edit-status-bar {
@@ -141,11 +140,15 @@
     min-height: 70px;
     height: auto;
     padding: 12px clamp(8px, 2vw, 24px);
+
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
+
     align-items: center;
     justify-items: stretch;
+
     gap: clamp(6px, 1.5vw, 24px);
+
     border-bottom: 1px solid #eeeeee;
     box-sizing: border-box;
 }
@@ -159,24 +162,29 @@
     display: flex;
     align-items: center;
     justify-content: center;
+
     gap: clamp(4px, 0.8vw, 10px);
+
     min-width: 0;
     max-width: 100%;
+
     font-size: clamp(12px, 1.1vw, 15px);
     font-weight: 600;
     white-space: nowrap;
+
     box-sizing: border-box;
 }
 
 
-/* Keep the existing SVG source.
-   Only change its displayed size. */
+/* Keep the existing SVG source */
 
 .U9-admin-edit-status-item img {
     display: block;
     flex: 0 0 auto;
+
     width: clamp(16px, 1.8vw, 24px);
     height: clamp(16px, 1.8vw, 24px);
+
     object-fit: contain;
 }
 
@@ -192,7 +200,9 @@
     display: block;
     min-width: 0;
     max-width: 100%;
+
     text-align: center;
+
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -205,8 +215,7 @@
 /* =====================================================
    SMALL DESKTOP / TABLET
 
-   Keep four items in one row,
-   but reduce spacing and font size.
+   Four items in one row
 ===================================================== */
 
 @media (max-width: 900px) and (min-width: 481px) {
@@ -236,16 +245,10 @@
 /* =====================================================
    MOBILE
 
-   Two columns, two rows:
+   Four items in ONE horizontal row:
 
-   Status       Order Count
-   Coins        Balance
+   Status | Order Count | Coins | Balance
 
-   IMPORTANT:
-   The SVG icons in each column share the same
-   horizontal starting position.
-
-   Text does not need to align between rows.
 ===================================================== */
 
 @media (max-width: 480px) {
@@ -291,7 +294,7 @@
 
 
     /* ===============================
-       STATUS BAR: TWO COLUMNS
+       FOUR ITEMS IN ONE ROW
     ================================ */
 
     .U9-admin-edit-status-bar {
@@ -299,47 +302,42 @@
         min-width: 0;
         min-height: 0;
         height: auto;
-        padding: 20px 10px;
+
+        padding: 14px 6px;
 
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(4, minmax(0, 1fr));
 
-        align-items: start;
+        align-items: center;
         justify-items: stretch;
 
-        row-gap: 24px;
-        column-gap: 10px;
+        column-gap: 2px;
+        row-gap: 0;
 
         box-sizing: border-box;
     }
 
 
     /* ===============================
-       STATUS ITEM
-
-       Each item uses:
-       Column 1 = SVG
-       Column 2 = text
-
-       This keeps SVGs aligned vertically
-       within each outer grid column.
+       COMPACT STATUS ITEMS
     ================================ */
 
     .U9-admin-edit-status-item {
-        display: grid;
-        grid-template-columns: 22px minmax(0, 1fr);
-
+        display: flex;
+        flex-direction: row;
         align-items: center;
-        justify-content: stretch;
+        justify-content: center;
 
         width: 100%;
         min-width: 0;
         max-width: 100%;
 
-        column-gap: 6px;
+        gap: 3px;
 
-        font-size: 14px;
-        line-height: 1.4;
+        font-size: 11px;
+        line-height: 1.3;
+        font-weight: 600;
+
         white-space: nowrap;
 
         box-sizing: border-box;
@@ -347,30 +345,23 @@
 
 
     /* ===============================
-       SVG ICON
-
-       Preserve existing SVG source.
-       Fixed-width icon column.
+       MOBILE SVG
     ================================ */
 
     .U9-admin-edit-status-item img {
         display: block;
 
-        width: 22px;
-        height: 22px;
-
-        justify-self: center;
-        align-self: center;
+        flex: 0 0 16px;
+        width: 16px;
+        height: 16px;
 
         object-fit: contain;
+        align-self: center;
     }
 
 
     /* ===============================
-       TEXT
-
-       Text alignment is independent.
-       Do not force text to align between rows.
+       MOBILE VALUES
     ================================ */
 
     #U9-edit-order-status,
@@ -382,7 +373,9 @@
         min-width: 0;
         max-width: 100%;
 
-        line-height: 1.4;
+        font-size: 11px;
+        line-height: 1.3;
+
         text-align: left;
 
         overflow: hidden;
