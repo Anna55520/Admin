@@ -382,3 +382,14 @@
         text-overflow: ellipsis;
     }
 }
+
+
+/* ===============================
+   NEGATIVE COINS / BALANCE
+================================ */
+
+#U9-edit-user-coins.is-negative,
+#U9-edit-user-balance.is-negative {
+    color: #ff0000 !important;
+}
+
