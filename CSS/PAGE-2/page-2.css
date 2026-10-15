@@ -1,410 +1,716 @@
-
 /* =========================================================
    U9 ADMIN - PAGE 2 PRODUCT MANAGEMENT
    File: CSS/PAGE-2/page-2.css
+
+   Includes:
+   - Product management page layout
+   - Product table
+   - Horizontal scrolling
+   - Sticky Name column on the left
+   - Sticky Action column on the right
+   - Product status labels
+   - UUID copy button
+   - Edit button using existing SVG/BUTTON/one.svg
+
+   Product modal styles are in:
+   CSS/PAGE-2/edit-cp-modal.css
+========================================================= */
+
+
+/* =========================================================
+   PAGE CONTAINER
 ========================================================= */
 
 #U9-admin-page-2 {
-  box-sizing: border-box;
+  position: relative;
   width: 100%;
   min-width: 0;
-  padding: 24px;
-  padding-bottom: 100px;
+  box-sizing: border-box;
+  color: var(--U9-admin-text, #202124);
 }
 
 #U9-admin-page-2 *,
-#U9-admin-product-modal * {
+#U9-admin-page-2 *::before,
+#U9-admin-page-2 *::after {
   box-sizing: border-box;
 }
 
-#U9-admin-products {
-  width: 100%;
-  min-width: 0;
-}
 
-.U9-admin-products-header {
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
+#U9-admin-page-2 .U9-admin-page-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  width: 100%;
   margin-bottom: 20px;
 }
 
-.U9-admin-products-header h2 {
+#U9-admin-page-2 .U9-admin-page-heading {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+#U9-admin-page-2 .U9-admin-page-heading h2 {
   margin: 0;
-  color: #172033;
+  color: var(--U9-admin-heading, #202124);
   font-size: 24px;
   font-weight: 700;
-}
-
-.U9-admin-products-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-#U9-admin-products-refresh,
-.U9-admin-product-action,
-.U9-admin-product-copy,
-.U9-admin-product-uuid-row button,
-#U9-admin-product-cancel,
-#U9-admin-product-save {
-  min-height: 38px;
-  padding: 9px 14px;
-  border: 1px solid #d8deea;
-  border-radius: 8px;
-  background: #fff;
-  color: #25334b;
-  font: inherit;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease;
-}
-
-#U9-admin-products-refresh:hover,
-.U9-admin-product-copy:hover,
-.U9-admin-product-uuid-row button:hover,
-#U9-admin-product-cancel:hover {
-  background: #f1f5f9;
-}
-
-#U9-admin-products-refresh:disabled,
-#U9-admin-product-save:disabled {
-  cursor: wait;
-  opacity: 0.6;
-}
-
-#U9-admin-products-message {
-  min-height: 20px;
-  margin-bottom: 12px;
-  color: #64748b;
-  font-size: 13px;
-}
-
-#U9-admin-products-message[data-type="error"],
-#U9-admin-product-modal-message[data-type="error"] {
-  color: #b42318;
-}
-
-#U9-admin-products-message[data-type="success"],
-#U9-admin-product-modal-message[data-type="success"] {
-  color: #15803d;
-}
-
-.U9-admin-products-table-wrap {
-  width: 100%;
-  overflow-x: auto;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  background: #fff;
-}
-
-.U9-admin-products-table {
-  width: 100%;
-  min-width: 850px;
-  border-collapse: collapse;
-  text-align: left;
-}
-
-.U9-admin-products-table th,
-.U9-admin-products-table td {
-  padding: 14px 16px;
-  border-bottom: 1px solid #edf0f5;
-  vertical-align: middle;
-  font-size: 13px;
-}
-
-.U9-admin-products-table th {
-  background: #f8fafc;
-  color: #64748b;
-  font-size: 12px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.U9-admin-products-table tbody tr:last-child td {
-  border-bottom: 0;
-}
-
-.U9-admin-products-table tbody tr:hover {
-  background: #fafcff;
-}
-
-.U9-admin-product-id-cell {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
-}
-
-.U9-admin-product-id-cell code {
-  color: #334155;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 12px;
-}
-
-.U9-admin-product-copy {
-  min-height: 30px;
-  padding: 5px 8px;
-  font-size: 11px;
-}
-
-.U9-admin-product-name {
-  max-width: 240px;
-  color: #172033;
-  font-weight: 600;
+  line-height: 1.35;
   overflow-wrap: anywhere;
 }
 
-.U9-admin-product-number {
-  color: #334155;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
+#U9-admin-page-2 .U9-admin-page-heading p {
+  margin: 6px 0 0;
+  color: var(--U9-admin-muted, #6b7280);
+  font-size: 14px;
+  line-height: 1.5;
 }
 
-.U9-admin-product-status {
+
+/* =========================================================
+   REFRESH BUTTON
+========================================================= */
+
+#U9-admin-page-2 .U9-admin-products-refresh {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 25px;
-  padding: 4px 9px;
-  border-radius: 6px;
-  font-size: 11px;
+  flex: 0 0 auto;
+  min-height: 40px;
+  padding: 9px 16px;
+
+  border: 1px solid var(--U9-admin-border, #d1d5db);
+  border-radius: 8px;
+
+  background: var(--U9-admin-button-bg, #ffffff);
+  color: var(--U9-admin-text, #202124);
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    opacity 0.18s ease;
+}
+
+#U9-admin-page-2 .U9-admin-products-refresh:hover:not(:disabled) {
+  background: var(--U9-admin-button-hover, #f3f4f6);
+  border-color: var(--U9-admin-border-hover, #9ca3af);
+}
+
+#U9-admin-page-2 .U9-admin-products-refresh:focus-visible {
+  outline: 2px solid var(--U9-admin-focus, #2563eb);
+  outline-offset: 2px;
+}
+
+#U9-admin-page-2 .U9-admin-products-refresh:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   PAGE MESSAGE
+========================================================= */
+
+#U9-admin-page-2 .U9-admin-products-message {
+  min-height: 20px;
+  margin: 0 0 12px;
+
+  color: var(--U9-admin-muted, #6b7280);
+  font-size: 13px;
+  line-height: 1.5;
+
+  overflow-wrap: anywhere;
+}
+
+#U9-admin-page-2 .U9-admin-products-message:empty {
+  display: none;
+}
+
+#U9-admin-page-2 .U9-admin-products-message[data-type="success"] {
+  color: var(--U9-admin-success, #15803d);
+}
+
+#U9-admin-page-2 .U9-admin-products-message[data-type="error"] {
+  color: var(--U9-admin-danger, #dc2626);
+}
+
+
+/* =========================================================
+   TABLE SCROLL CONTAINER
+
+   Horizontal scrolling happens in this container.
+   Sticky columns remain visible while the middle columns
+   move horizontally.
+========================================================= */
+
+#U9-admin-page-2 .U9-admin-products-table-wrapper {
+  position: relative;
+  isolation: isolate;
+
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+
+  overflow-x: auto;
+  overflow-y: auto;
+
+  border: 1px solid var(--U9-admin-border, #e5e7eb);
+  border-radius: 10px;
+
+  background: var(--U9-admin-panel-bg, #ffffff);
+
+  scrollbar-width: thin;
+  scrollbar-color: #9ca3af #f3f4f6;
+
+  -webkit-overflow-scrolling: touch;
+}
+
+#U9-admin-page-2 .U9-admin-products-table-wrapper::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+#U9-admin-page-2 .U9-admin-products-table-wrapper::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+#U9-admin-page-2 .U9-admin-products-table-wrapper::-webkit-scrollbar-thumb {
+  background: #9ca3af;
+  border-radius: 8px;
+}
+
+#U9-admin-page-2 .U9-admin-products-table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+
+/* =========================================================
+   PRODUCT TABLE
+========================================================= */
+
+#U9-admin-page-2 .U9-admin-products-table {
+  width: 100%;
+  min-width: 850px;
+
+  border: 0;
+  border-collapse: separate;
+  border-spacing: 0;
+
+  background: var(--U9-admin-panel-bg, #ffffff);
+
+  color: var(--U9-admin-text, #202124);
+
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+
+/* =========================================================
+   TABLE HEADER
+========================================================= */
+
+#U9-admin-page-2 .U9-admin-products-table thead th {
+  position: relative;
+  z-index: 2;
+
+  height: 48px;
+  padding: 12px 16px;
+
+  border: 0;
+  border-bottom: 1px solid var(--U9-admin-border, #e5e7eb);
+
+  background: var(--U9-admin-table-header-bg, #f9fafb);
+  color: var(--U9-admin-table-header-text, #374151);
+
+  font-size: 12px;
   font-weight: 700;
+  line-height: 1.4;
+  text-align: left;
   white-space: nowrap;
 }
 
-.U9-admin-product-status.is-enabled {
-  background: #dcfce7;
+
+/* =========================================================
+   TABLE BODY
+========================================================= */
+
+#U9-admin-page-2 .U9-admin-products-table tbody td {
+  height: 58px;
+  padding: 12px 16px;
+
+  border: 0;
+  border-bottom: 1px solid var(--U9-admin-table-divider, #e5e7eb);
+
+  background: var(--U9-admin-panel-bg, #ffffff);
+
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+#U9-admin-page-2 .U9-admin-products-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+#U9-admin-page-2 .U9-admin-products-table tbody tr:hover td {
+  background: var(--U9-admin-table-row-hover, #f9fafb);
+}
+
+
+/* =========================================================
+   COLUMN WIDTHS
+========================================================= */
+
+/* Name */
+#U9-admin-page-2 .U9-admin-products-table th:nth-child(1),
+#U9-admin-page-2 .U9-admin-products-table td:nth-child(1) {
+  width: 220px;
+  min-width: 220px;
+  max-width: 220px;
+}
+
+/* Price */
+#U9-admin-page-2 .U9-admin-products-table th:nth-child(2),
+#U9-admin-page-2 .U9-admin-products-table td:nth-child(2) {
+  width: 130px;
+  min-width: 130px;
+}
+
+/* Profit */
+#U9-admin-page-2 .U9-admin-products-table th:nth-child(3),
+#U9-admin-page-2 .U9-admin-products-table td:nth-child(3) {
+  width: 130px;
+  min-width: 130px;
+}
+
+/* Enabled */
+#U9-admin-page-2 .U9-admin-products-table th:nth-child(4),
+#U9-admin-page-2 .U9-admin-products-table td:nth-child(4) {
+  width: 120px;
+  min-width: 120px;
+}
+
+/* Manual UUID */
+#U9-admin-page-2 .U9-admin-products-table th:nth-child(5),
+#U9-admin-page-2 .U9-admin-products-table td:nth-child(5) {
+  width: 250px;
+  min-width: 250px;
+}
+
+/* Action */
+#U9-admin-page-2 .U9-admin-products-table th:nth-child(6),
+#U9-admin-page-2 .U9-admin-products-table td:nth-child(6) {
+  width: 88px;
+  min-width: 88px;
+  max-width: 88px;
+}
+
+
+/* =========================================================
+   STICKY NAME COLUMN — LEFT
+
+   The Name column remains fixed when scrolling right.
+========================================================= */
+
+#U9-admin-page-2 .U9-admin-product-sticky-name {
+  position: sticky;
+  left: 0;
+
+  width: 220px;
+  min-width: 220px;
+  max-width: 220px;
+
+  text-align: left;
+
+  border-right: 1px solid var(--U9-admin-border, #e5e7eb);
+
+  background: var(--U9-admin-panel-bg, #ffffff);
+}
+
+/* Header must appear above sticky body cells. */
+#U9-admin-page-2 .U9-admin-products-table thead .U9-admin-product-sticky-name {
+  z-index: 5;
+  background: var(--U9-admin-table-header-bg, #f9fafb);
+}
+
+/* Keep sticky Name cell opaque when its row is hovered. */
+#U9-admin-page-2 .U9-admin-products-table tbody tr:hover .U9-admin-product-sticky-name {
+  background: var(--U9-admin-table-row-hover, #f9fafb);
+}
+
+
+/* =========================================================
+   PRODUCT NAME
+========================================================= */
+
+#U9-admin-page-2 .U9-admin-product-name {
+  font-weight: 600;
+}
+
+#U9-admin-page-2 .U9-admin-product-name > span {
+  display: block;
+
+  width: 100%;
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   NUMERIC CELLS
+========================================================= */
+
+#U9-admin-page-2 .U9-admin-product-number {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+
+/* =========================================================
+   STATUS BADGES
+========================================================= */
+
+#U9-admin-page-2 .U9-admin-product-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 25px;
+  padding: 4px 9px;
+
+  border: 1px solid transparent;
+  border-radius: 999px;
+
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+#U9-admin-page-2 .U9-admin-product-status.is-enabled {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
   color: #166534;
 }
 
-.U9-admin-product-status.is-disabled {
-  background: #fee2e2;
-  color: #991b1b;
+#U9-admin-page-2 .U9-admin-product-status.is-disabled {
+  border-color: #e5e7eb;
+  background: #f3f4f6;
+  color: #4b5563;
 }
 
-.U9-admin-product-status.is-manual {
-  background: #fef3c7;
-  color: #92400e;
+#U9-admin-page-2 .U9-admin-product-status.is-manual {
+  border-color: #fed7aa;
+  background: #fff7ed;
+  color: #9a3412;
 }
 
-.U9-admin-product-status.is-automatic {
-  background: #e2e8f0;
-  color: #334155;
+#U9-admin-page-2 .U9-admin-product-status.is-automatic {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+  color: #1d4ed8;
 }
 
-.U9-admin-product-action {
-  background: #1d4ed8;
-  border-color: #1d4ed8;
-  color: #fff;
-}
 
-.U9-admin-product-action:hover {
-  background: #1e40af;
-}
+/* =========================================================
+   MANUAL UUID CELL
+========================================================= */
 
-/* Product edit modal */
-
-#U9-admin-product-modal {
-  position: fixed;
-  z-index: 10020;
-  inset: 0;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background: rgb(15 23 42 / 55%);
-}
-
-#U9-admin-product-modal.is-open {
-  display: flex;
-}
-
-.U9-admin-product-modal-box {
-  width: min(100%, 600px);
-  max-height: min(90vh, 850px);
-  overflow-y: auto;
-  border: 1px solid #e2e8f0;
-  border-radius: 14px;
-  background: #fff;
-  box-shadow: 0 24px 70px rgb(15 23 42 / 24%);
-}
-
-.U9-admin-product-modal-header {
-  position: sticky;
-  top: 0;
-  z-index: 1;
+#U9-admin-page-2 .U9-admin-product-manual-uuid-content {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 18px 22px;
-  border-bottom: 1px solid #e2e8f0;
-  background: #fff;
+  gap: 9px;
+
+  min-width: 0;
 }
 
-.U9-admin-product-modal-header h3 {
-  margin: 0;
-  color: #172033;
-  font-size: 19px;
+#U9-admin-page-2 .U9-admin-product-short-uuid {
+  display: inline-block;
+
+  max-width: 85px;
+  overflow: hidden;
+
+  color: var(--U9-admin-muted, #4b5563);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-#U9-admin-product-modal-close {
+
+/* =========================================================
+   COPY UUID BUTTON
+========================================================= */
+
+#U9-admin-page-2 .U9-admin-product-copy {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex: 0 0 auto;
+
+  min-width: 48px;
+  min-height: 28px;
+  padding: 5px 8px;
+
+  border: 1px solid var(--U9-admin-border, #d1d5db);
+  border-radius: 6px;
+
+  background: var(--U9-admin-button-bg, #ffffff);
+  color: var(--U9-admin-text, #374151);
+
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    opacity 0.18s ease;
+}
+
+#U9-admin-page-2 .U9-admin-product-copy:hover:not(:disabled) {
+  background: var(--U9-admin-button-hover, #f3f4f6);
+  border-color: var(--U9-admin-border-hover, #9ca3af);
+}
+
+#U9-admin-page-2 .U9-admin-product-copy:focus-visible {
+  outline: 2px solid var(--U9-admin-focus, #2563eb);
+  outline-offset: 2px;
+}
+
+#U9-admin-page-2 .U9-admin-product-copy:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   STICKY ACTION COLUMN — RIGHT
+
+   The Action column remains fixed when scrolling left/right.
+========================================================= */
+
+#U9-admin-page-2 .U9-admin-product-sticky-action {
+  position: sticky;
+  right: 0;
+
+  width: 88px;
+  min-width: 88px;
+  max-width: 88px;
+
+  text-align: center;
+
+  border-left: 1px solid var(--U9-admin-border, #e5e7eb);
+
+  background: var(--U9-admin-panel-bg, #ffffff);
+}
+
+/* Header must stay above body cells. */
+#U9-admin-page-2 .U9-admin-products-table thead .U9-admin-product-sticky-action {
+  z-index: 6;
+  background: var(--U9-admin-table-header-bg, #f9fafb);
+}
+
+/* Keep sticky Action cell opaque on hover. */
+#U9-admin-page-2 .U9-admin-products-table tbody tr:hover .U9-admin-product-sticky-action {
+  background: var(--U9-admin-table-row-hover, #f9fafb);
+}
+
+#U9-admin-page-2 .U9-admin-product-action-cell {
+  text-align: center;
+}
+
+
+/* =========================================================
+   EDIT BUTTON
+
+   Keep the existing SVG:
+   SVG/BUTTON/one.svg
+
+   This stylesheet changes appearance only.
+   It does not replace or hide the icon.
+========================================================= */
+
+#U9-admin-page-2 .U9-admin-product-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
   width: 36px;
   height: 36px;
-  border: 0;
+  padding: 0;
+
+  border: 1px solid var(--U9-admin-border, #d1d5db);
   border-radius: 8px;
-  background: transparent;
-  color: #475569;
-  font-size: 27px;
+
+  background: var(--U9-admin-button-bg, #ffffff);
+  color: var(--U9-admin-text, #202124);
+
   cursor: pointer;
+
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease;
 }
 
-#U9-admin-product-modal-close:hover {
-  background: #f1f5f9;
+#U9-admin-page-2 .U9-admin-product-action:hover {
+  background: var(--U9-admin-button-hover, #f3f4f6);
+  border-color: var(--U9-admin-border-hover, #9ca3af);
 }
 
-.U9-admin-product-modal-body {
-  display: grid;
-  gap: 16px;
-  padding: 22px;
+#U9-admin-page-2 .U9-admin-product-action:active {
+  transform: scale(0.96);
 }
 
-.U9-admin-product-field {
-  display: grid;
-  gap: 7px;
+#U9-admin-page-2 .U9-admin-product-action:focus-visible {
+  outline: 2px solid var(--U9-admin-focus, #2563eb);
+  outline-offset: 2px;
 }
 
-.U9-admin-product-field label {
-  color: #334155;
-  font-size: 13px;
-  font-weight: 700;
-}
+#U9-admin-page-2 .U9-admin-product-action img {
+  display: block;
 
-.U9-admin-product-field input,
-.U9-admin-product-field textarea {
-  width: 100%;
-  min-width: 0;
-  padding: 11px 12px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  outline: none;
-  background: #fff;
-  color: #172033;
-  font: inherit;
-  font-size: 14px;
-}
-
-.U9-admin-product-field input:focus,
-.U9-admin-product-field textarea:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgb(37 99 235 / 12%);
-}
-
-.U9-admin-product-field input[readonly] {
-  background: #f8fafc;
-  color: #64748b;
-}
-
-.U9-admin-product-field textarea {
-  resize: vertical;
-}
-
-.U9-admin-product-uuid-row {
-  display: flex;
-  gap: 8px;
-}
-
-.U9-admin-product-uuid-row input {
-  flex: 1;
-}
-
-.U9-admin-product-uuid-row button {
-  flex-shrink: 0;
-}
-
-.U9-admin-product-checkboxes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  padding: 14px;
-  border: 1px solid #e2e8f0;
-  border-radius: 9px;
-  background: #f8fafc;
-}
-
-.U9-admin-product-checkboxes label {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: #334155;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.U9-admin-product-checkboxes input {
   width: 16px;
   height: 16px;
-  accent-color: #2563eb;
+
+  object-fit: contain;
+  flex: 0 0 auto;
 }
 
-#U9-admin-product-modal-message {
-  min-height: 18px;
-  color: #64748b;
-  font-size: 13px;
+
+/* =========================================================
+   EMPTY TABLE MESSAGE
+========================================================= */
+
+#U9-admin-page-2 .U9-admin-products-empty {
+  height: 100px;
+  padding: 24px;
+
+  color: var(--U9-admin-muted, #6b7280);
+  font-size: 14px;
+  text-align: center;
 }
 
-.U9-admin-product-form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  padding-top: 4px;
-}
 
-#U9-admin-product-save {
-  border-color: #1d4ed8;
-  background: #1d4ed8;
-  color: #fff;
-}
+/* =========================================================
+   RESPONSIVE — TABLET
+========================================================= */
 
-#U9-admin-product-save:hover {
-  background: #1e40af;
-}
-
-@media (max-width: 700px) {
-  #U9-admin-page-2 {
-    padding: 16px;
-    padding-bottom: 100px;
+@media (max-width: 900px) {
+  #U9-admin-page-2 .U9-admin-page-heading h2 {
+    font-size: 22px;
   }
 
-  .U9-admin-products-header {
+  #U9-admin-page-2 .U9-admin-products-table {
+    min-width: 820px;
+  }
+
+  #U9-admin-page-2 .U9-admin-product-sticky-name,
+  #U9-admin-page-2 .U9-admin-products-table th:nth-child(1),
+  #U9-admin-page-2 .U9-admin-products-table td:nth-child(1) {
+    width: 190px;
+    min-width: 190px;
+    max-width: 190px;
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVE — MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+  #U9-admin-page-2 .U9-admin-page-header {
     align-items: flex-start;
+    gap: 12px;
   }
 
-  .U9-admin-products-header h2 {
+  #U9-admin-page-2 .U9-admin-page-heading h2 {
     font-size: 20px;
   }
 
-  .U9-admin-products-table th,
-  .U9-admin-products-table td {
-    padding: 12px;
+  #U9-admin-page-2 .U9-admin-page-heading p {
+    font-size: 12px;
   }
 
-  #U9-admin-product-modal {
-    padding: 10px;
+  #U9-admin-page-2 .U9-admin-products-refresh {
+    min-height: 36px;
+    padding: 8px 11px;
+    font-size: 12px;
   }
 
-  .U9-admin-product-modal-box {
-    max-height: 94vh;
+  #U9-admin-page-2 .U9-admin-products-table {
+    min-width: 790px;
+    font-size: 13px;
   }
 
-  .U9-admin-product-modal-body {
-    padding: 16px;
+  #U9-admin-page-2 .U9-admin-products-table thead th {
+    height: 44px;
+    padding: 10px 12px;
+  }
+
+  #U9-admin-page-2 .U9-admin-products-table tbody td {
+    height: 54px;
+    padding: 10px 12px;
+  }
+
+  #U9-admin-page-2 .U9-admin-product-sticky-name,
+  #U9-admin-page-2 .U9-admin-products-table th:nth-child(1),
+  #U9-admin-page-2 .U9-admin-products-table td:nth-child(1) {
+    width: 160px;
+    min-width: 160px;
+    max-width: 160px;
+  }
+
+  #U9-admin-page-2 .U9-admin-product-sticky-action,
+  #U9-admin-page-2 .U9-admin-products-table th:nth-child(6),
+  #U9-admin-page-2 .U9-admin-products-table td:nth-child(6) {
+    width: 72px;
+    min-width: 72px;
+    max-width: 72px;
+  }
+
+  #U9-admin-page-2 .U9-admin-product-action {
+    width: 32px;
+    height: 32px;
+  }
+
+  #U9-admin-page-2 .U9-admin-product-manual-uuid-content {
+    gap: 6px;
+  }
+
+  #U9-admin-page-2 .U9-admin-product-status {
+    min-height: 23px;
+    padding: 4px 7px;
+    font-size: 11px;
+  }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  #U9-admin-page-2 .U9-admin-products-refresh,
+  #U9-admin-page-2 .U9-admin-product-copy,
+  #U9-admin-page-2 .U9-admin-product-action {
+    transition: none;
   }
 }
