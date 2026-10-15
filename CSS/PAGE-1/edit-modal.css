@@ -241,7 +241,11 @@
    Status       Order Count
    Coins        Balance
 
-   SVG and text are vertically centered.
+   IMPORTANT:
+   The SVG icons in each column share the same
+   horizontal starting position.
+
+   Text does not need to align between rows.
 ===================================================== */
 
 @media (max-width: 480px) {
@@ -285,7 +289,11 @@
         overflow-y: auto;
     }
 
-    /* Two columns and two rows */
+
+    /* ===============================
+       STATUS BAR: TWO COLUMNS
+    ================================ */
+
     .U9-admin-edit-status-bar {
         width: 100%;
         min-width: 0;
@@ -296,7 +304,7 @@
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
 
-        align-items: center;
+        align-items: start;
         justify-items: stretch;
 
         row-gap: 24px;
@@ -305,18 +313,30 @@
         box-sizing: border-box;
     }
 
-    /* Vertically align SVG and text */
+
+    /* ===============================
+       STATUS ITEM
+
+       Each item uses:
+       Column 1 = SVG
+       Column 2 = text
+
+       This keeps SVGs aligned vertically
+       within each outer grid column.
+    ================================ */
+
     .U9-admin-edit-status-item {
-        display: flex;
-        flex-direction: row;
+        display: grid;
+        grid-template-columns: 22px minmax(0, 1fr);
+
         align-items: center;
-        justify-content: center;
+        justify-content: stretch;
 
         width: 100%;
         min-width: 0;
         max-width: 100%;
 
-        gap: 6px;
+        column-gap: 6px;
 
         font-size: 14px;
         line-height: 1.4;
@@ -325,31 +345,45 @@
         box-sizing: border-box;
     }
 
-    /* Keep SVG proportions and prevent shrinking */
+
+    /* ===============================
+       SVG ICON
+
+       Preserve existing SVG source.
+       Fixed-width icon column.
+    ================================ */
+
     .U9-admin-edit-status-item img {
         display: block;
 
-        flex: 0 0 22px;
         width: 22px;
         height: 22px;
 
-        object-fit: contain;
+        justify-self: center;
         align-self: center;
+
+        object-fit: contain;
     }
 
-    /* Align value text with the SVG center */
+
+    /* ===============================
+       TEXT
+
+       Text alignment is independent.
+       Do not force text to align between rows.
+    ================================ */
+
     #U9-edit-order-status,
     #U9-edit-order-count,
     #U9-edit-user-coins,
     #U9-edit-user-balance {
-        display: inline-block;
+        display: block;
 
         min-width: 0;
         max-width: 100%;
 
         line-height: 1.4;
         text-align: left;
-        vertical-align: middle;
 
         overflow: hidden;
         text-overflow: ellipsis;
