@@ -1,1 +1,38 @@
-
+/* PAGE 2 PRODUCT LIST ONLY — modal CSS is in edit-cp-modal.css */
+#U9-admin-page-2,#U9-admin-page-2 *{box-sizing:border-box}
+#U9-admin-page-2{width:100%;min-width:0;padding:20px}
+#U9-admin-products{width:100%;min-width:0;color:#202938;font-family:inherit}
+#U9-admin-page-2 .U9-admin-products-header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}
+#U9-admin-page-2 .U9-admin-products-header h2{margin:0;font-size:22px;line-height:1.35;font-weight:700;overflow-wrap:anywhere}
+#U9-admin-page-2 .U9-admin-products-header-actions{display:flex;align-items:center;gap:10px}
+#U9-admin-page-2 .U9-admin-products-header-actions button{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;padding:8px;border:1px solid #dce2eb;border-radius:10px;background:#fff;color:#202938;cursor:pointer}
+#U9-admin-page-2 .U9-admin-products-header-actions button:hover{background:#f1f5f9}
+#U9-admin-page-2 .U9-admin-products-header-actions img{display:block;width:21px;height:21px;object-fit:contain}
+#U9-admin-page-2 #U9-admin-products-add{font-size:26px;line-height:1}
+#U9-admin-page-2 #U9-admin-products-message{display:none;margin:0 0 14px;padding:10px 12px;border:1px solid #dbe4ef;border-radius:8px;background:#f8fafc;color:#334155;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+#U9-admin-page-2 #U9-admin-products-message.is-visible{display:block}
+#U9-admin-page-2 #U9-admin-products-message.is-error{border-color:#fecaca;background:#fef2f2;color:#b91c1c}
+#U9-admin-page-2 #U9-admin-products-message.is-success{border-color:#bbf7d0;background:#f0fdf4;color:#166534}
+#U9-admin-page-2 .U9-admin-products-table-wrap{width:100%;min-width:0;overflow-x:auto;border:1px solid #e2e8f0;border-radius:12px;background:#fff;-webkit-overflow-scrolling:touch}
+#U9-admin-page-2 .U9-admin-products-table{width:100%;min-width:760px;border-collapse:separate;border-spacing:0;text-align:left;font-size:13px}
+#U9-admin-page-2 .U9-admin-products-table th,#U9-admin-page-2 .U9-admin-products-table td{padding:13px 12px;border-bottom:1px solid #edf0f5;vertical-align:middle}
+#U9-admin-page-2 .U9-admin-products-table thead th{background:#f8fafc;color:#475569;font-size:12px;font-weight:700;white-space:nowrap}
+#U9-admin-page-2 .U9-admin-products-table tbody tr:last-child td{border-bottom:0}
+#U9-admin-page-2 .U9-admin-products-table tbody tr:hover{background:#fafcff}
+#U9-admin-page-2 .U9-admin-products-table td{color:#334155;overflow-wrap:anywhere}
+#U9-admin-page-2 .U9-admin-products-table td.product-name-cell{min-width:130px;max-width:260px;font-weight:600;color:#1e293b}
+#U9-admin-page-2 .U9-admin-products-table td.product-number-cell{white-space:nowrap;font-variant-numeric:tabular-nums}
+#U9-admin-page-2 .U9-admin-products-table td.product-uuid-cell{min-width:145px;white-space:nowrap}
+#U9-admin-page-2 .U9-admin-products-table td.action-column,#U9-admin-page-2 .U9-admin-products-table th.action-column{width:76px;min-width:76px;text-align:center;white-space:nowrap}
+#U9-admin-page-2 .U9-admin-product-flag{display:inline-flex;align-items:center;justify-content:center;min-width:48px;padding:4px 8px;border-radius:999px;font-size:11px;line-height:1.4;font-weight:700;white-space:nowrap}
+#U9-admin-page-2 .U9-admin-product-flag.is-on{background:#dcfce7;color:#166534}
+#U9-admin-page-2 .U9-admin-product-flag.is-off{background:#f1f5f9;color:#64748b}
+#U9-admin-page-2 .U9-admin-product-uuid-row{display:inline-flex;align-items:center;gap:7px}
+#U9-admin-page-2 .U9-admin-product-uuid-short{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:#475569}
+#U9-admin-page-2 .U9-admin-product-copy-uuid{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;padding:4px 6px;border:1px solid #dbe2ea;border-radius:7px;background:#fff;color:#475569;font-size:11px;cursor:pointer}
+#U9-admin-page-2 .U9-admin-products-edit-button{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;padding:8px;border:1px solid #e2e8f0;border-radius:9px;background:#fff;cursor:pointer}
+#U9-admin-page-2 .U9-admin-products-edit-button:hover{background:#f1f5f9;border-color:#cbd5e1}
+#U9-admin-page-2 .U9-admin-products-edit-button img{display:block;width:20px;height:20px;object-fit:contain}
+#U9-admin-page-2 button:focus-visible{outline:2px solid #64748b;outline-offset:2px}
+#U9-admin-page-2 .product-table-message{padding:28px 16px!important;text-align:center;color:#64748b!important}
+@media(max-width:640px){#U9-admin-page-2{padding:12px}#U9-admin-page-2 .U9-admin-products-header{align-items:flex-start;gap:10px}#U9-admin-page-2 .U9-admin-products-header h2{font-size:19px}}
