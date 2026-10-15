@@ -241,6 +241,7 @@
    Status       Order Count
    Coins        Balance
 
+   SVG and text are vertically centered.
 ===================================================== */
 
 @media (max-width: 480px) {
@@ -256,7 +257,7 @@
     }
 
     .U9-admin-edit-modal-header {
-        flex-basis: 52px;
+        flex: 0 0 52px;
         height: 52px;
         gap: 6px;
         padding: 0 10px;
@@ -267,14 +268,14 @@
     }
 
     #U9-admin-edit-modal-close {
-        flex-basis: 36px;
+        flex: 0 0 36px;
         width: 36px;
         height: 36px;
         font-size: 26px;
     }
 
     #U9-admin-edit-modal-refresh {
-        flex-basis: 36px;
+        flex: 0 0 36px;
         width: 36px;
         height: 36px;
     }
@@ -284,28 +285,73 @@
         overflow-y: auto;
     }
 
+    /* Two columns and two rows */
     .U9-admin-edit-status-bar {
         width: 100%;
+        min-width: 0;
         min-height: 0;
         height: auto;
         padding: 20px 10px;
+
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        align-items: center;
+        justify-items: stretch;
+
         row-gap: 24px;
         column-gap: 10px;
+
         box-sizing: border-box;
     }
 
+    /* Vertically align SVG and text */
     .U9-admin-edit-status-item {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+
         width: 100%;
         min-width: 0;
-        gap: 7px;
-        justify-content: center;
+        max-width: 100%;
+
+        gap: 6px;
+
         font-size: 14px;
+        line-height: 1.4;
+        white-space: nowrap;
+
+        box-sizing: border-box;
     }
 
+    /* Keep SVG proportions and prevent shrinking */
     .U9-admin-edit-status-item img {
+        display: block;
+
+        flex: 0 0 22px;
         width: 22px;
         height: 22px;
+
+        object-fit: contain;
+        align-self: center;
+    }
+
+    /* Align value text with the SVG center */
+    #U9-edit-order-status,
+    #U9-edit-order-count,
+    #U9-edit-user-coins,
+    #U9-edit-user-balance {
+        display: inline-block;
+
+        min-width: 0;
+        max-width: 100%;
+
+        line-height: 1.4;
+        text-align: left;
+        vertical-align: middle;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 }
