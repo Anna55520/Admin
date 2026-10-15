@@ -27,6 +27,7 @@
 
 <main id="U9-admin-main">
 
+<!-- === PAGE-1 === -->
 
 <section id="U9-admin-page-1" class="U9-admin-page active">
 
@@ -108,8 +109,52 @@ Loading user data...
 </section>
 
 
+<!-- === PAGE-2 === -->
 
-<section id="U9-admin-page-2" class="U9-admin-page"></section>
+<section id="U9-admin-page-2" class="U9-admin-page">
+  <div id="U9-admin-products">
+
+    <div class="U9-admin-products-header">
+      <h2>Product Management</h2>
+
+      <div class="U9-admin-products-header-actions">
+        <button type="button" id="U9-admin-products-refresh">
+          Refresh
+        </button>
+      </div>
+    </div>
+
+    <div
+      id="U9-admin-products-message"
+      role="status"
+      aria-live="polite"
+    ></div>
+
+    <div class="U9-admin-products-table-wrap">
+      <table class="U9-admin-products-table">
+        <thead>
+          <tr>
+            <th>Product UUID</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Profit</th>
+            <th>Enabled</th>
+            <th>Manual Only</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody id="U9-admin-products-tbody">
+          <tr>
+            <td colspan="7">Loading product data...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</section>
+
 
 <section id="U9-admin-page-3" class="U9-admin-page"></section>
 
@@ -401,8 +446,112 @@ Loading user data...
 </div>
 
 
+<!-- ===============================
+     EDIT PRODUCT MODAL
+================================= -->
 
+<div id="U9-admin-product-modal" aria-hidden="true">
+  <div
+    class="U9-admin-product-modal-box"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="U9-admin-product-modal-title"
+  >
+    <div class="U9-admin-product-modal-header">
+      <h3 id="U9-admin-product-modal-title">Edit Product</h3>
 
+      <button
+        type="button"
+        id="U9-admin-product-modal-close"
+        aria-label="Close"
+      >×</button>
+    </div>
+
+    <form id="U9-admin-product-form">
+      <div class="U9-admin-product-modal-body">
+
+        <div class="U9-admin-product-field">
+          <label for="U9-product-id">Product UUID</label>
+          <div class="U9-admin-product-uuid-row">
+            <input id="U9-product-id" type="text" readonly>
+            <button type="button" id="U9-product-copy-uuid">
+              Copy UUID
+            </button>
+          </div>
+        </div>
+
+        <div class="U9-admin-product-field">
+          <label for="U9-product-name">Name</label>
+          <input id="U9-product-name" type="text" required maxlength="200">
+        </div>
+
+        <div class="U9-admin-product-field">
+          <label for="U9-product-price">Price</label>
+          <input
+            id="U9-product-price"
+            type="number"
+            min="0"
+            step="0.01"
+            required
+          >
+        </div>
+
+        <div class="U9-admin-product-field">
+          <label for="U9-product-profit">Profit</label>
+          <input
+            id="U9-product-profit"
+            type="number"
+            step="0.01"
+          >
+        </div>
+
+        <div class="U9-admin-product-field">
+          <label for="U9-product-description">Description</label>
+          <textarea id="U9-product-description" rows="3"></textarea>
+        </div>
+
+        <div class="U9-admin-product-field">
+          <label for="U9-product-url">Product URL</label>
+          <input id="U9-product-url" type="url">
+        </div>
+
+        <div class="U9-admin-product-field">
+          <label for="U9-product-image-url">Image URL</label>
+          <input id="U9-product-image-url" type="url">
+        </div>
+
+        <div class="U9-admin-product-checkboxes">
+          <label>
+            <input id="U9-product-enabled" type="checkbox">
+            Enabled
+          </label>
+
+          <label>
+            <input id="U9-product-manual-only" type="checkbox">
+            Manual Only
+          </label>
+        </div>
+
+        <div
+          id="U9-admin-product-modal-message"
+          role="status"
+          aria-live="polite"
+        ></div>
+
+        <div class="U9-admin-product-form-actions">
+          <button type="button" id="U9-admin-product-cancel">
+            Cancel
+          </button>
+
+          <button type="submit" id="U9-admin-product-save">
+            Save Changes
+          </button>
+        </div>
+
+      </div>
+    </form>
+  </div>
+</div>
 
 
 <!-- ===============================
