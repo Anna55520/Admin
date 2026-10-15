@@ -195,17 +195,8 @@
     showPageMessage("Loading product data...");
 
     try {
-      const result = await api("update_product", {
-      product_id: product.id,
-      name: nameInput.value.trim(),
-      price: Number(priceInput.value),
-      profit: Number(profitInput.value),
-      description: descriptionInput.value,
-      enabled: enabledInput.checked,
-      manual_only: manualOnlyInput.checked,
-      url: urlInput.value.trim(),
-      image_url: imageUrlInput.value.trim()
-      });
+      // 正确的操作：只获取商品列表，不更新商品
+      const result = await api("products");
 
       if (!Array.isArray(result.products)) {
         throw new Error("The server did not return a product list.");
@@ -213,7 +204,11 @@
 
       products = result.products;
       renderProducts();
-      showPageMessage(`Loaded ${products.length} products.`, "success");
+
+      showPageMessage(
+        `Loaded ${products.length} products.`,
+        "success",
+      );
     } catch (error) {
       console.error("U9 Admin products load error:", error);
 
@@ -226,6 +221,7 @@
       elements["U9-admin-products-refresh"].disabled = false;
     }
   }
+
 
   function openProductModal(productId) {
     const product = products.find((item) => item.id === productId);
