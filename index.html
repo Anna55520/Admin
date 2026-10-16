@@ -186,8 +186,35 @@ Loading user data...
 </section>
 
 
-
-<section id="U9-admin-page-3" class="U9-admin-page"></section>
+<!-- =====================================================
+    PAGE 3 
+===================================================== -->
+<section id="U9-admin-page-3" class="U9-admin-page">
+  <div id="U9-admin-cs" class="U9-admin-cs">
+    <header class="U9-admin-cs-header">
+      <div><p class="U9-admin-cs-eyebrow">CUSTOMER SUPPORT</p><h2>Customer Service</h2><p class="U9-admin-cs-subtitle">Respond to customer-service conversations from the U9 app.</p></div>
+      <div class="U9-admin-cs-header-actions"><span id="U9-admin-cs-identity" class="U9-admin-cs-identity">Verifying admin…</span><button type="button" id="U9-admin-cs-refresh" class="U9-admin-cs-button">Refresh</button></div>
+    </header>
+    <div id="U9-admin-cs-alert" class="U9-admin-cs-alert" role="status" aria-live="polite"></div>
+    <div class="U9-admin-cs-workspace">
+      <aside class="U9-admin-cs-sidebar">
+        <div class="U9-admin-cs-list-head"><h3>Conversations</h3><span id="U9-admin-cs-count" class="U9-admin-cs-count">0</span></div>
+        <div class="U9-admin-cs-filters" role="group" aria-label="Filter conversations">
+          <button type="button" data-cs-filter="all" class="is-active">All</button><button type="button" data-cs-filter="available">Unclaimed</button><button type="button" data-cs-filter="mine">Mine</button><button type="button" data-cs-filter="closed">Closed</button>
+        </div>
+        <div id="U9-admin-cs-conversation-list" class="U9-admin-cs-conversation-list"><div class="U9-admin-cs-empty">Loading conversations…</div></div>
+      </aside>
+      <section class="U9-admin-cs-chat" aria-label="Conversation detail">
+        <div id="U9-admin-cs-chat-empty" class="U9-admin-cs-chat-empty"><div class="U9-admin-cs-empty-icon">✉</div><h3>Select a conversation</h3><p>Choose a customer conversation from the list to read and reply.</p></div>
+        <div id="U9-admin-cs-chat-panel" class="U9-admin-cs-chat-panel" hidden>
+          <header class="U9-admin-cs-chat-header"><div class="U9-admin-cs-customer"><div id="U9-admin-cs-avatar" class="U9-admin-cs-avatar">U</div><div><h3 id="U9-admin-cs-customer-name">Customer</h3><p id="U9-admin-cs-conversation-meta">Conversation</p></div></div><div class="U9-admin-cs-chat-actions"><span id="U9-admin-cs-status" class="U9-admin-cs-status">Open</span><button type="button" id="U9-admin-cs-claim" class="U9-admin-cs-button U9-admin-cs-button-primary">Claim</button><button type="button" id="U9-admin-cs-close" class="U9-admin-cs-button U9-admin-cs-button-danger">Close</button></div></header>
+          <div id="U9-admin-cs-messages" class="U9-admin-cs-messages" aria-live="polite"><div class="U9-admin-cs-empty">Loading messages…</div></div>
+          <form id="U9-admin-cs-reply-form" class="U9-admin-cs-reply-form"><label class="U9-admin-cs-sr-only" for="U9-admin-cs-reply">Reply to customer</label><textarea id="U9-admin-cs-reply" maxlength="5000" rows="2" placeholder="Write a reply…" required></textarea><div class="U9-admin-cs-reply-footer"><span>Enter to send · Shift+Enter for a new line</span><button type="submit" id="U9-admin-cs-send" class="U9-admin-cs-button U9-admin-cs-button-primary">Send reply</button></div></form>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
 
 <section id="U9-admin-page-4" class="U9-admin-page"></section>
 
