@@ -35,10 +35,10 @@
   function current() { return conversations.find(c => String(c.id) === String(selectedId)) || null; }
   function customerName(c) { return (c.customer && (c.customer.username || c.customer.account)) || c.customer_username || (c.user_id ? "Customer " + String(c.user_id).slice(0,8) : "Customer"); }
   function lastText(c) { return c.last_message && c.last_message.content || c.last_message_content || (c.status === "closed" ? "Conversation closed" : "No messages yet"); }
-  function isMine(c) { return !!(admin && c.assigned_admin_id && String(c.assigned_admin_id) === String(admin.id)); }
+  function isMine(c) { return !!(admin && c.assigned_agent_id && String(c.assigned_agent_id) === String(admin.agent_user_id)); }
   function filtered() {
     return conversations.filter(c => {
-      if (filter === "available") return c.status !== "closed" && !c.assigned_admin_id && !c.assigned_agent_id;
+      if (filter === "available") return c.status !== "closed" && !c.assigned_agent_id;
       if (filter === "mine") return isMine(c) && c.status !== "closed";
       if (filter === "closed") return c.status === "closed";
       return true;
@@ -50,7 +50,7 @@
     if (!list.length) { el.innerHTML = '<div class="U9-admin-cs-empty">No conversations in this view.</div>'; return; }
     el.innerHTML = list.map(c => {
       const id = String(c.id || ""); const status = String(c.status || "open");
-      const assigned = c.assigned_admin_username || (c.assigned_admin_id ? (isMine(c) ? "Assigned to you" : "Assigned to another admin") : "Unclaimed");
+      const assigned = c.assigned_agent_username || (c.assigned_agent_id ? (isMine(c) ? "Assigned to you" : "Assigned to another agent") : "Unclaimed");
       return '<button type="button" class="U9-admin-cs-conversation' + (id === String(selectedId) ? ' is-selected' : '') + '" data-cs-open="' + esc(id) + '">' +
         '<span class="U9-admin-cs-conversation-top"><strong>' + esc(customerName(c)) + '</strong><span class="U9-admin-cs-time">' + esc(dateLabel(c.updated_at || c.created_at)) + '</span></span>' +
         '<span class="U9-admin-cs-preview">' + esc(lastText(c)) + '</span>' +
@@ -64,7 +64,7 @@
       const type = m.sender_type || "customer";
       const agent = type === "agent";
       const cls = type === "system" ? "is-system" : agent ? "is-agent" : "is-customer";
-      const who = type === "system" ? "System" : agent ? (m.sender_admin_id && admin && String(m.sender_admin_id) !== String(admin.id) ? "Support" : "You") : "Customer";
+      const who = type === "system" ? "System" : agent ? (m.sender_id && admin && String(m.sender_id) !== String(admin.agent_user_id) ? "Support" : "You") : "Customer";
       return '<article class="U9-admin-cs-message ' + cls + '"><span class="U9-admin-cs-message-meta">' + esc(who) + ' · ' + esc(dateLabel(m.created_at, true)) + '</span><div class="U9-admin-cs-bubble">' + esc(m.content || (m.deleted_at ? "Message deleted" : "")) + '</div></article>';
     }).join("");
     if (scroll) el.scrollTop = el.scrollHeight;
@@ -78,8 +78,8 @@
     $("U9-admin-cs-avatar").textContent = name.trim().charAt(0).toUpperCase() || "U";
     $("U9-admin-cs-conversation-meta").textContent = "Created " + (dateLabel(c.created_at, true) || "date unavailable") + " · ID " + String(c.id).slice(0,8);
     const status = $("U9-admin-cs-status"); status.textContent = c.status || "open"; status.className = "U9-admin-cs-status" + (c.status === "closed" ? " is-closed" : c.status === "assigned" ? " is-assigned" : "");
-    const mine = isMine(c); const claimed = !!c.assigned_admin_id;
-    const claim = $("U9-admin-cs-claim"); claim.hidden = c.status === "closed" || mine; claim.disabled = claimed || !!c.assigned_agent_id || c.status === "closed"; claim.textContent = claimed ? "Assigned" : c.assigned_agent_id ? "U9 agent assigned" : "Claim conversation";
+    const mine = isMine(c); const claimed = !!c.assigned_agent_id;
+    const claim = $("U9-admin-cs-claim"); claim.hidden = c.status === "closed" || mine; claim.disabled = claimed || c.status === "closed"; claim.textContent = claimed ? (mine ? "Claimed by you" : "Assigned") : "Claim conversation";
     $("U9-admin-cs-close").hidden = c.status === "closed" || !mine;
     $("U9-admin-cs-reply").disabled = c.status === "closed" || !mine;
     $("U9-admin-cs-send").disabled = c.status === "closed" || !mine;
@@ -94,7 +94,7 @@
       conversations = Array.isArray(data.conversations) ? data.conversations : [];
       admin = data.admin || admin;
       $("U9-admin-cs-identity").textContent = admin ? "Signed in as " + (admin.username || "admin") : "Admin session verified";
-      if (!keepSelection || !conversations.some(c => String(c.id) === String(selectedId))) { const firstAccessible = conversations.find(c => !c.assigned_admin_id || isMine(c)); selectedId = firstAccessible ? String(firstAccessible.id) : null; }
+      if (!keepSelection || !conversations.some(c => String(c.id) === String(selectedId))) { const firstAccessible = conversations.find(c => !c.assigned_agent_id || isMine(c)); selectedId = firstAccessible ? String(firstAccessible.id) : null; }
       renderList(); renderDetail();
       if (selectedId) await loadMessages(false);
       else { messages = []; renderMessages(false); }
@@ -102,7 +102,7 @@
     } catch (e) {
       console.error("[U9 Page 3] refresh failed", e);
       alertMessage(e.message || "Unable to load customer-service conversations.", "error");
-      if (!conversations.length) $("U9-admin-cs-conversation-list").innerHTML = '<div class="U9-admin-cs-empty">Unable to load conversations. Check your admin session and database migration.</div>';
+      if (!conversations.length) $("U9-admin-cs-conversation-list").innerHTML = '<div class="U9-admin-cs-empty">Unable to load conversations. Check your admin session, agent binding, and database migration.</div>';
     } finally { loading = false; if (btn) btn.disabled = false; }
   }
   async function loadMessages(scroll) {
