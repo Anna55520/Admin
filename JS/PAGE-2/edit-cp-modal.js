@@ -94,9 +94,15 @@
     status(editing ? "Saving product changes..." : "Creating product...");
     try {
       // Backend must implement these actions and validate admin session server-side.
+      // Send the fields in the shape expected by the Edge Function.
+      // Updates use product_id; creates do not need a user_id.
+      const payload = Object.assign({}, product);
+      if (editing) payload.product_id = product.id;
+      delete payload.id;
+
       const result = await window.U9AdminProducts.requestAdmin(
         editing ? "update_product" : "create_product",
-        { id: product.id, product }
+        payload
       );
       status(editing ? "Product updated." : "Product created.", "success");
       document.dispatchEvent(new CustomEvent("u9:products-changed", {
