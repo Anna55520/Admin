@@ -17,14 +17,10 @@
 (function () {
     "use strict";
 
-    const SUPABASE_URL =
-        "https://tvtakmswbzawaweytimx.supabase.co";
-
-    const ADMIN_LOGIN_URL =
-        `${SUPABASE_URL}/functions/v1/admin-login`;
-
-    const ADMIN_ME_URL =
-        `${SUPABASE_URL}/functions/v1/admin-me`;
+    // Use same-origin Vercel proxy routes so browsers store the
+    // HttpOnly admin_session cookie as a first-party cookie.
+    const ADMIN_LOGIN_URL = "/api/admin-login";
+    const ADMIN_ME_URL = "/api/admin-me";
 
     const BUTTON_ID = "U9-admin-login-button";
     const MODAL_ID = "U9-admin-login-modal";
