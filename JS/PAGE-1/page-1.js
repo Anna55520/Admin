@@ -18,7 +18,7 @@
 
 
 const API_URL =
-"https://tvtakmswbzawaweytimx.supabase.co/functions/v1/admin-users-list";
+"/api/admin-users-list";
 
 
 const elements = {};
