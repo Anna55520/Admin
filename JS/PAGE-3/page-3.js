@@ -1,164 +1,74 @@
-/* Page 3 — admin-authenticated customer service inbox. */
-(function () {
-  "use strict";
-  const API = "/api/admin-user-management";
-  const $ = id => document.getElementById(id);
-  let conversations = [];
-  let selectedId = null;
-  let messages = [];
-  let filter = "all";
-  let loading = false;
-  let messageLoading = false;
-  let initialized = false;
-  let admin = null;
-  let lastMessageCount = -1;
-
-  function esc(v) { return String(v == null ? "" : v).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]); }
-  function dateLabel(v, full) {
-    if (!v) return "";
-    const d = new Date(v); if (!Number.isFinite(d.getTime())) return "";
-    const now = new Date();
-    if (!full && d.toDateString() === now.toDateString()) return d.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
-    return d.toLocaleDateString([], {month:"short",day:"numeric"}) + (full ? " · " + d.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"}) : "");
-  }
-  function alertMessage(text, type) {
-    const el = $("U9-admin-cs-alert"); if (!el) return;
-    el.textContent = text || ""; el.className = text ? "U9-admin-cs-alert is-visible" + (type === "error" ? " is-error" : "") : "";
-  }
-  async function request(action, extra) {
-    const response = await fetch(API, {method:"POST",credentials:"include",headers:{"Content-Type":"application/json"},body:JSON.stringify(Object.assign({action},extra||{}))});
-    const raw = await response.text(); let data = {};
-    if (raw) { try { data = JSON.parse(raw); } catch (_) { data = {error:raw}; } }
-    if (!response.ok || data.error || data.success === false) throw new Error(data.error || data.message || ("Request failed (" + response.status + ")"));
-    return data;
-  }
-  function current() { return conversations.find(c => String(c.id) === String(selectedId)) || null; }
-  function customerName(c) { return (c.customer && (c.customer.username || c.customer.account)) || c.customer_username || (c.user_id ? "Customer " + String(c.user_id).slice(0,8) : "Customer"); }
-  function lastText(c) { return c.last_message && c.last_message.content || c.last_message_content || (c.status === "closed" ? "Conversation closed" : "No messages yet"); }
-  function isMine(c) { return !!(admin && c.assigned_agent_id && String(c.assigned_agent_id) === String(admin.agent_user_id)); }
-  function filtered() {
-    return conversations.filter(c => {
-      if (filter === "available") return c.status !== "closed" && !c.assigned_agent_id;
-      if (filter === "mine") return isMine(c) && c.status !== "closed";
-      if (filter === "closed") return c.status === "closed";
-      return true;
-    });
-  }
-  function renderList() {
-    const el = $("U9-admin-cs-conversation-list"); if (!el) return;
-    const list = filtered(); $("U9-admin-cs-count").textContent = String(list.length);
-    if (!list.length) { el.innerHTML = '<div class="U9-admin-cs-empty">No conversations in this view.</div>'; return; }
-    el.innerHTML = list.map(c => {
-      const id = String(c.id || ""); const status = String(c.status || "open");
-      const assigned = c.assigned_agent_username || (c.assigned_agent_id ? (isMine(c) ? "Assigned to you" : "Assigned to another agent") : "Unclaimed");
-      return '<button type="button" class="U9-admin-cs-conversation' + (id === String(selectedId) ? ' is-selected' : '') + '" data-cs-open="' + esc(id) + '">' +
-        '<span class="U9-admin-cs-conversation-top"><strong>' + esc(customerName(c)) + '</strong><span class="U9-admin-cs-time">' + esc(dateLabel(c.updated_at || c.created_at)) + '</span></span>' +
-        '<span class="U9-admin-cs-preview">' + esc(lastText(c)) + '</span>' +
-        '<span class="U9-admin-cs-conversation-bottom"><span>' + esc(assigned) + '</span><span class="U9-admin-cs-pill ' + (status === "closed" ? "is-closed" : status === "assigned" ? "is-assigned" : "is-open") + '">' + esc(status) + '</span></span></button>';
-    }).join("");
-  }
-  function renderMessages(scroll) {
-    const el = $("U9-admin-cs-messages"); if (!el) return;
-    if (!messages.length) { el.innerHTML = '<div class="U9-admin-cs-empty">No messages yet. You can send the first reply below.</div>'; return; }
-    el.innerHTML = messages.map(m => {
-      const type = m.sender_type || "customer";
-      const agent = type === "agent";
-      const cls = type === "system" ? "is-system" : agent ? "is-agent" : "is-customer";
-      const who = type === "system" ? "System" : agent ? (m.sender_id && admin && String(m.sender_id) !== String(admin.agent_user_id) ? "Support" : "You") : "Customer";
-      return '<article class="U9-admin-cs-message ' + cls + '"><span class="U9-admin-cs-message-meta">' + esc(who) + ' · ' + esc(dateLabel(m.created_at, true)) + '</span><div class="U9-admin-cs-bubble">' + esc(m.content || (m.deleted_at ? "Message deleted" : "")) + '</div></article>';
-    }).join("");
-    if (scroll) el.scrollTop = el.scrollHeight;
-  }
-  function renderDetail() {
-    const c = current();
-    $("U9-admin-cs-chat-empty").hidden = !!c;
-    $("U9-admin-cs-chat-panel").hidden = !c;
-    if (!c) return;
-    const name = customerName(c); $("U9-admin-cs-customer-name").textContent = name;
-    $("U9-admin-cs-avatar").textContent = name.trim().charAt(0).toUpperCase() || "U";
-    $("U9-admin-cs-conversation-meta").textContent = "Created " + (dateLabel(c.created_at, true) || "date unavailable") + " · ID " + String(c.id).slice(0,8);
-    const status = $("U9-admin-cs-status"); status.textContent = c.status || "open"; status.className = "U9-admin-cs-status" + (c.status === "closed" ? " is-closed" : c.status === "assigned" ? " is-assigned" : "");
-    const mine = isMine(c); const claimed = !!c.assigned_agent_id;
-    const claim = $("U9-admin-cs-claim"); claim.hidden = c.status === "closed" || mine; claim.disabled = claimed || c.status === "closed"; claim.textContent = claimed ? (mine ? "Claimed by you" : "Assigned") : "Claim conversation";
-    $("U9-admin-cs-close").hidden = c.status === "closed" || !mine;
-    $("U9-admin-cs-reply").disabled = c.status === "closed" || !mine;
-    $("U9-admin-cs-send").disabled = c.status === "closed" || !mine;
-    $("U9-admin-cs-reply").placeholder = c.status === "closed" ? "This conversation is closed." : !mine ? "Claim this conversation before replying." : "Write a reply…";
-    renderMessages(false);
-  }
-  async function refreshConversations(keepSelection) {
-    if (loading) return; loading = true;
-    const btn = $("U9-admin-cs-refresh"); if (btn) btn.disabled = true;
-    try {
-      const data = await request("cs_list_conversations");
-      conversations = Array.isArray(data.conversations) ? data.conversations : [];
-      admin = data.admin || admin;
-      $("U9-admin-cs-identity").textContent = admin ? "Signed in as " + (admin.username || "admin") : "Admin session verified";
-      if (!keepSelection || !conversations.some(c => String(c.id) === String(selectedId))) { const firstAccessible = conversations.find(c => !c.assigned_agent_id || isMine(c)); selectedId = firstAccessible ? String(firstAccessible.id) : null; }
-      renderList(); renderDetail();
-      if (selectedId) await loadMessages(false);
-      else { messages = []; renderMessages(false); }
-      alertMessage("");
-    } catch (e) {
-      console.error("[U9 Page 3] refresh failed", e);
-      alertMessage(e.message || "Unable to load customer-service conversations.", "error");
-      if (!conversations.length) $("U9-admin-cs-conversation-list").innerHTML = '<div class="U9-admin-cs-empty">Unable to load conversations. Check your admin session, agent binding, and database migration.</div>';
-    } finally { loading = false; if (btn) btn.disabled = false; }
-  }
-  async function loadMessages(scroll) {
-    if (!selectedId) return; messageLoading = true;
-    const id = selectedId; $("U9-admin-cs-messages").innerHTML = '<div class="U9-admin-cs-empty">Loading messages…</div>';
-    try {
-      const data = await request("cs_list_messages", {conversation_id:id});
-      if (String(selectedId) !== String(id)) return;
-      messages = Array.isArray(data.messages) ? data.messages : [];
-      renderMessages(scroll || messages.length !== lastMessageCount); lastMessageCount = messages.length;
-      renderList();
-    } catch (e) { console.error("[U9 Page 3] messages failed",e); alertMessage(e.message || "Unable to load messages.","error"); $("U9-admin-cs-messages").innerHTML = '<div class="U9-admin-cs-empty">Unable to load messages.</div>'; }
-    finally { messageLoading = false; }
-  }
-  async function selectConversation(id) {
-    selectedId = String(id); lastMessageCount = -1; renderList(); renderDetail(); await loadMessages(true);
-  }
-  async function claim() {
-    const c = current(); if (!c) return;
-    const btn = $("U9-admin-cs-claim"); btn.disabled = true; alertMessage("");
-    try { await request("cs_claim_conversation", {conversation_id:c.id}); await refreshConversations(true); alertMessage("Conversation claimed."); }
-    catch (e) { alertMessage(e.message || "Unable to claim conversation.","error"); }
-    finally { btn.disabled = false; }
-  }
-  async function sendReply(text) {
-    const c = current(); if (!c || !text.trim()) return;
-    const btn = $("U9-admin-cs-send"); btn.disabled = true;
-    try {
-      const data = await request("cs_send_message", {conversation_id:c.id,content:text.trim()});
-      if (data.message) messages.push(data.message);
-      $("U9-admin-cs-reply").value = ""; renderMessages(true); await refreshConversations(true); alertMessage("");
-    } catch (e) { alertMessage(e.message || "Unable to send reply.","error"); }
-    finally { btn.disabled = false; }
-  }
-  async function closeConversation() {
-    const c = current(); if (!c || !window.confirm("Close this customer-service conversation?")) return;
-    const btn = $("U9-admin-cs-close"); btn.disabled = true;
-    try { await request("cs_close_conversation", {conversation_id:c.id}); await refreshConversations(true); alertMessage("Conversation closed."); }
-    catch (e) { alertMessage(e.message || "Unable to close conversation.","error"); }
-    finally { btn.disabled = false; }
-  }
-  function bind() {
-    $("U9-admin-cs-refresh").addEventListener("click", () => refreshConversations(true));
-    $("U9-admin-cs-conversation-list").addEventListener("click", e => { const b=e.target.closest("[data-cs-open]"); if (b) selectConversation(b.dataset.csOpen); });
-    document.querySelectorAll("[data-cs-filter]").forEach(b => b.addEventListener("click", () => { filter=b.dataset.csFilter; document.querySelectorAll("[data-cs-filter]").forEach(x=>x.classList.toggle("is-active",x===b)); renderList(); }));
-    $("U9-admin-cs-claim").addEventListener("click", claim);
-    $("U9-admin-cs-close").addEventListener("click", closeConversation);
-    $("U9-admin-cs-reply-form").addEventListener("submit", e => { e.preventDefault(); sendReply($("U9-admin-cs-reply").value); });
-    $("U9-admin-cs-reply").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); $("U9-admin-cs-reply-form").requestSubmit(); } });
-    document.addEventListener("click", e => { const nav=e.target.closest('#U9-admin-bottom-nav [data-target="U9-admin-page-3"]'); if (nav) refreshConversations(true); });
-    document.addEventListener("visibilitychange", () => { if (!document.hidden && !$('U9-admin-page-3')?.classList.contains('active')) return; if (!document.hidden) refreshConversations(true); });
-  }
-  function init() {
-    if (initialized) return; initialized = true;
-    if (!$("U9-admin-page-3") || !$("U9-admin-cs-conversation-list")) return;
-    bind(); refreshConversations(false);
-  }
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, {once:true}); else init();
-})();
+/* Page 3 — customer service */
+#U9-admin-page-3 { min-height: 0; }
+.U9-admin-cs { color:#172033; max-width:1500px; margin:0 auto; padding:clamp(14px,2.5vw,30px); }
+.U9-admin-cs * { box-sizing:border-box; }
+.U9-admin-cs-header { display:flex; align-items:center; justify-content:space-between; gap:18px; margin-bottom:20px; }
+.U9-admin-cs-header h2 { margin:3px 0 5px; font-size:clamp(23px,3vw,30px); letter-spacing:-.035em; }
+.U9-admin-cs-eyebrow { margin:0; color:#6574a0; font-size:10px; font-weight:800; letter-spacing:.16em; }
+.U9-admin-cs-subtitle { margin:0; color:#788196; font-size:13px; }
+.U9-admin-cs-header-actions,.U9-admin-cs-chat-actions { display:flex; align-items:center; justify-content:flex-end; gap:8px; flex-wrap:wrap; }
+.U9-admin-cs-identity { color:#68738a; font-size:12px; margin-right:6px; }
+.U9-admin-cs-button { border:1px solid #dce2ee; border-radius:9px; padding:9px 13px; min-height:36px; background:#fff; color:#26324a; font-family:inherit; font-size:12px; font-weight:600; line-height:1.2; cursor:pointer; transition:background .15s,border-color .15s; }
+.U9-admin-cs-button:hover { background:#f4f6fb; border-color:#c6cede; }
+.U9-admin-cs-button:disabled { opacity:.5; cursor:not-allowed; }
+.U9-admin-cs-button-primary { background:#465fe8; border-color:#465fe8; color:#fff; }
+.U9-admin-cs-button-primary:hover { background:#354bd0; border-color:#354bd0; }
+.U9-admin-cs-button-danger { color:#b23b4d; }
+.U9-admin-cs-alert { display:none; margin:0 0 14px; padding:10px 13px; border-radius:9px; font-size:13px; }
+.U9-admin-cs-alert.is-visible { display:block; background:#eef2ff; color:#3449b5; }
+.U9-admin-cs-alert.is-error { background:#fff0f1; color:#a82e43; }
+.U9-admin-cs-workspace { display:grid; grid-template-columns:minmax(260px,340px) minmax(0,1fr); gap:16px; min-height:560px; height:calc(100vh - 245px); max-height:850px; }
+.U9-admin-cs-sidebar,.U9-admin-cs-chat { min-width:0; min-height:0; overflow:hidden; border:1px solid #e4e8f0; border-radius:15px; background:#fff; box-shadow:0 4px 18px rgba(32,48,84,.035); }
+.U9-admin-cs-sidebar { display:flex; flex-direction:column; }
+.U9-admin-cs-list-head { display:flex; align-items:center; justify-content:space-between; padding:18px 16px 12px; }
+.U9-admin-cs-list-head h3 { margin:0; font-size:15px; }
+.U9-admin-cs-count { display:inline-flex; min-width:25px; height:25px; align-items:center; justify-content:center; border-radius:8px; background:#f0f2f9; color:#5d6880; font-size:11px; font-weight:700; }
+.U9-admin-cs-filters { display:flex; gap:4px; padding:0 12px 12px; border-bottom:1px solid #edf0f5; }
+.U9-admin-cs-filters button { border:0; background:transparent; color:#7a8498; padding:7px 8px; border-radius:7px; font-size:11px; cursor:pointer; }
+.U9-admin-cs-filters button.is-active { background:#eef1ff; color:#4056d7; font-weight:700; }
+.U9-admin-cs-conversation-list { overflow:auto; flex:1; }
+.U9-admin-cs-conversation { display:block; width:100%; border:0; border-bottom:1px solid #f0f2f6; padding:14px 15px; text-align:left; background:#fff; cursor:pointer; color:inherit; }
+.U9-admin-cs-conversation:hover { background:#f8f9fd; }
+.U9-admin-cs-conversation.is-selected { background:#f0f3ff; box-shadow:inset 3px 0 #5268ed; }
+.U9-admin-cs-conversation-top,.U9-admin-cs-conversation-bottom { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+.U9-admin-cs-conversation-top strong { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:13px; }
+.U9-admin-cs-time { flex-shrink:0; color:#98a0b1; font-size:10px; }
+.U9-admin-cs-preview { display:block; margin:7px 0 10px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; color:#7d879a; font-size:12px; }
+.U9-admin-cs-conversation-bottom { color:#8a93a5; font-size:10px; }
+.U9-admin-cs-pill { padding:4px 7px; border-radius:20px; background:#f0f2f6; color:#69758b; font-size:10px; font-weight:700; }
+.U9-admin-cs-pill.is-open { background:#fff3df; color:#a46a16; }
+.U9-admin-cs-pill.is-assigned { background:#e9edff; color:#4358ce; }
+.U9-admin-cs-pill.is-closed { background:#e9f7ef; color:#2b8052; }
+.U9-admin-cs-chat { display:flex; flex-direction:column; }
+.U9-admin-cs-chat-empty { display:flex; flex:1; min-height:320px; align-items:center; justify-content:center; flex-direction:column; text-align:center; padding:25px; color:#8992a4; }
+.U9-admin-cs-empty-icon { display:grid; place-items:center; width:54px; height:54px; border-radius:18px; background:#f0f3ff; color:#5368e8; font-size:25px; }
+.U9-admin-cs-chat-empty h3 { margin:16px 0 5px; color:#39445b; font-size:16px; }
+.U9-admin-cs-chat-empty p { max-width:280px; margin:0; font-size:12px; line-height:1.6; }
+.U9-admin-cs-chat-panel[hidden],.U9-admin-cs-chat-empty[hidden] { display:none !important; }
+.U9-admin-cs-chat-panel { display:flex; flex-direction:column; flex:1; min-height:0; }
+.U9-admin-cs-chat-header { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:14px 18px; border-bottom:1px solid #edf0f5; }
+.U9-admin-cs-customer { display:flex; align-items:center; gap:11px; min-width:0; }
+.U9-admin-cs-avatar { display:grid; place-items:center; width:39px; height:39px; flex-shrink:0; border-radius:13px; background:#e9edff; color:#4358ce; font-weight:800; }
+.U9-admin-cs-customer h3 { margin:0 0 4px; font-size:14px; }
+.U9-admin-cs-customer p { margin:0; color:#8992a4; font-size:11px; }
+.U9-admin-cs-status { padding:5px 8px; border-radius:20px; background:#fff3df; color:#a46a16; font-size:10px; font-weight:800; text-transform:capitalize; }
+.U9-admin-cs-status.is-assigned { background:#e9edff; color:#4358ce; }
+.U9-admin-cs-status.is-closed { background:#e9f7ef; color:#2b8052; }
+.U9-admin-cs-messages { display:flex; flex-direction:column; gap:12px; overflow:auto; flex:1; padding:20px clamp(12px,3vw,28px); background:#fafbfe; }
+.U9-admin-cs-message { display:flex; flex-direction:column; align-items:flex-start; max-width:min(78%,620px); gap:5px; }
+.U9-admin-cs-message.is-agent { align-self:flex-end; align-items:flex-end; }
+.U9-admin-cs-message-meta { color:#9099aa; font-size:10px; }
+.U9-admin-cs-bubble { padding:11px 13px; border:1px solid #e8ebf2; border-radius:4px 14px 14px 14px; background:#fff; color:#3a455b; font-size:13px; line-height:1.55; white-space:pre-wrap; overflow-wrap:anywhere; }
+.U9-admin-cs-message.is-agent .U9-admin-cs-bubble { border-color:#dce3ff; border-radius:14px 4px 14px 14px; background:#eaf0ff; color:#2d3f9b; }
+.U9-admin-cs-message.is-system { align-self:center; align-items:center; max-width:100%; }
+.U9-admin-cs-message.is-system .U9-admin-cs-bubble { padding:6px 10px; border:0; background:#f0f2f6; color:#7a8497; font-size:11px; }
+.U9-admin-cs-reply-form { padding:13px 16px 15px; border-top:1px solid #edf0f5; background:#fff; }
+.U9-admin-cs-reply-form textarea { display:block; width:100%; min-height:62px; max-height:180px; resize:vertical; border:1px solid #e0e5ef; border-radius:10px; padding:11px 12px; outline:none; color:#29344b; font-family:inherit; font-size:13px; line-height:1.5; }
+.U9-admin-cs-reply-form textarea:focus { border-color:#8291f4; box-shadow:0 0 0 3px rgba(82,104,237,.1); }
+.U9-admin-cs-reply-form textarea:disabled { background:#f6f7fa; }
+.U9-admin-cs-reply-footer { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:9px; }
+.U9-admin-cs-reply-footer span { color:#a0a7b5; font-size:10px; }
+.U9-admin-cs-empty { padding:24px 14px; text-align:center; color:#9aa2b2; font-size:12px; line-height:1.6; }
+.U9-admin-cs-sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+@media (max-width:850px) { .U9-admin-cs-workspace { grid-template-columns:minmax(210px,270px) minmax(0,1fr); height:calc(100vh - 235px); } .U9-admin-cs-chat-header { align-items:flex-start; flex-direction:column; } .U9-admin-cs-chat-actions { justify-content:flex-start; } }
+@media (max-width:620px) { .U9-admin-cs { padding:12px; } .U9-admin-cs-header { align-items:flex-start; flex-direction:column; } .U9-admin-cs-header-actions { width:100%; justify-content:space-between; } .U9-admin-cs-workspace { display:flex; flex-direction:column; height:auto; max-height:none; min-height:0; } .U9-admin-cs-sidebar { height:330px; flex:none; } .U9-admin-cs-chat { min-height:520px; } .U9-admin-cs-chat-panel { min-height:520px; } .U9-admin-cs-messages { min-height:280px; } .U9-admin-cs-message { max-width:90%; } .U9-admin-cs-filters { flex-wrap:wrap; } }
