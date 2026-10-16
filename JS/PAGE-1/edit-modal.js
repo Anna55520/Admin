@@ -9,8 +9,7 @@
 (function () {
   "use strict";
 
-  const API_URL =
-    "https://tvtakmswbzawaweytimx.supabase.co/functions/v1/admin-user-management";
+  const API_URL = "/api/admin-user-management";
 
   const elements = {};
 
