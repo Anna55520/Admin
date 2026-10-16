@@ -1,7 +1,7 @@
 /* PAGE 2 LIST ONLY. Modal form logic lives in edit-cp-modal.js. */
 (function () {
   "use strict";
-  const API = "https://tvtakmswbzawaweytimx.supabase.co/functions/v1/admin-user-management";
+  const API = "/api/admin-user-management";
   const $ = id => document.getElementById(id);
   let products = [];
   let loading = false;
