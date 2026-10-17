@@ -220,8 +220,208 @@ Loading user data...
 
 <section id="U9-admin-page-5" class="U9-admin-page"></section>
 
-<section id="U9-admin-page-6" class="U9-admin-page"></section>
 
+<section id="U9-admin-page-6" class="U9-admin-page">
+  <header class="p6-page-header">
+    <div>
+      <h1 class="p6-page-title">Platform Maintenance</h1>
+      <p class="p6-page-description">
+        Manage platform availability and maintenance announcements.
+      </p>
+    </div>
+
+    <div
+      id="p6-status-pill"
+      class="p6-status-pill"
+      role="status"
+      aria-live="polite"
+    >
+      <span class="p6-status-dot" aria-hidden="true"></span>
+      <span id="p6-status-text">Loading status...</span>
+    </div>
+  </header>
+
+  <div class="p6-layout">
+    <div class="p6-main-column">
+      <section class="p6-card" aria-labelledby="p6-settings-title">
+        <h2 id="p6-settings-title" class="p6-card-title">
+          Maintenance Settings
+        </h2>
+
+        <p class="p6-card-description">
+          Changes are saved to the platform settings service.
+        </p>
+
+        <form id="p6-settings-form" novalidate>
+          <div class="p6-toggle-row">
+            <div class="p6-toggle-copy">
+              <span class="p6-toggle-title">
+                Enable Platform Maintenance
+              </span>
+              <p class="p6-toggle-description">
+                Turn this on to display the maintenance screen to users.
+              </p>
+            </div>
+
+            <label class="p6-switch">
+              <input
+                id="p6-maintenance-enabled"
+                type="checkbox"
+                aria-label="Enable platform maintenance"
+                disabled
+              />
+              <span class="p6-switch-track" aria-hidden="true"></span>
+            </label>
+          </div>
+
+          <div class="p6-field">
+            <label class="p6-label" for="p6-maintenance-duration">
+              Maintenance Duration (Hours)
+            </label>
+
+            <input
+              id="p6-maintenance-duration"
+              class="p6-input"
+              type="number"
+              min="1"
+              max="720"
+              step="1"
+              value="2"
+              inputmode="numeric"
+              required
+              disabled
+            />
+
+            <p class="p6-help">
+              Enter a whole number between 1 and 720 hours.
+            </p>
+          </div>
+
+          <div class="p6-field">
+            <label class="p6-label" for="p6-maintenance-message">
+              Maintenance Announcement
+            </label>
+
+            <textarea
+              id="p6-maintenance-message"
+              class="p6-textarea"
+              maxlength="1000"
+              rows="4"
+              placeholder="Enter the message displayed to users..."
+              required
+              disabled
+            ></textarea>
+
+            <p id="p6-message-count" class="p6-help">
+              0/1000 characters
+            </p>
+          </div>
+
+          <div class="p6-warning">
+            <strong>Important:</strong>
+            Enabling maintenance may affect users currently using the
+            platform. Confirm your announcement and settings before saving.
+          </div>
+
+          <div class="p6-actions">
+            <button
+              id="p6-save-button"
+              class="p6-button p6-button-primary"
+              type="submit"
+              disabled
+            >
+              Save Settings
+            </button>
+
+            <button
+              id="p6-reset-button"
+              class="p6-button p6-button-secondary"
+              type="button"
+              disabled
+            >
+              Discard Changes
+            </button>
+
+            <button
+              id="p6-refresh-button"
+              class="p6-button p6-button-secondary"
+              type="button"
+            >
+              Refresh
+            </button>
+          </div>
+
+          <div
+            id="p6-feedback"
+            class="p6-feedback"
+            role="status"
+            aria-live="polite"
+          ></div>
+        </form>
+      </section>
+    </div>
+
+    <aside class="p6-side-column">
+      <section class="p6-card" aria-labelledby="p6-guide-title">
+        <h2 id="p6-guide-title" class="p6-card-title">
+          How It Works
+        </h2>
+
+        <p class="p6-card-description">
+          Review these points before changing maintenance settings.
+        </p>
+
+        <ul class="p6-side-list">
+          <li class="p6-side-item">
+            <span class="p6-side-icon" aria-hidden="true">1</span>
+            <div>
+              <strong>Maintenance Status</strong>
+              <p>
+                Enable maintenance to activate the maintenance experience
+                on the user-facing platform.
+              </p>
+            </div>
+          </li>
+
+          <li class="p6-side-item">
+            <span class="p6-side-icon" aria-hidden="true">2</span>
+            <div>
+              <strong>Duration</strong>
+              <p>
+                Set the planned maintenance duration in hours.
+              </p>
+            </div>
+          </li>
+
+          <li class="p6-side-item">
+            <span class="p6-side-icon" aria-hidden="true">3</span>
+            <div>
+              <strong>User Announcement</strong>
+              <p>
+                Write a clear message explaining the maintenance to users.
+              </p>
+            </div>
+          </li>
+
+          <li class="p6-side-item">
+            <span class="p6-side-icon" aria-hidden="true">4</span>
+            <div>
+              <strong>Save and Verify</strong>
+              <p>
+                Save your changes and check the status returned by the
+                settings service.
+              </p>
+            </div>
+          </li>
+        </ul>
+
+        <p id="p6-last-updated" class="p6-last-updated">
+          Last updated: Not available
+        </p>
+      </section>
+    </aside>
+  </div>
+</section>
 
 
 </main>
