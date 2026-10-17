@@ -1,3 +1,4 @@
+
 {
   "rewrites": [
     {
@@ -15,6 +16,10 @@
     {
       "source": "/api/admin-users-list",
       "destination": "https://tvtakmswbzawaweytimx.supabase.co/functions/v1/admin-users-list"
+    },
+    {
+      "source": "/api/admin-platform-settings",
+      "destination": "https://tvtakmswbzawaweytimx.supabase.co/functions/v1/admin-platform-settings"
     }
   ]
 }
