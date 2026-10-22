@@ -630,3 +630,20 @@
     flex-wrap: wrap;
   }
 }
+
+/* Bottom navigation — Page 3 unread indicator */
+#U9-admin-bottom-nav button[data-target="U9-admin-page-3"] {
+  position: relative;
+}
+
+#U9-admin-bottom-nav button[data-target="U9-admin-page-3"].has-unread::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 9px;
+  height: 9px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #e53935;
+}
