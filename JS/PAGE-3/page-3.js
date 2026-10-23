@@ -1,3 +1,4 @@
+
 /* Page 3 — admin-authenticated customer service inbox. */
 (function () {
   "use strict";
@@ -164,11 +165,9 @@
   }
 
   /*
-   * Keep the Page 3 bottom-navigation dot in sync with
-   * the conversation list.
-   *
-   * CSS selector:
-   * #U9-admin-bottom-nav button[data-target="U9-admin-page-3"].has-unread::after
+   * Bottom navigation unread indicator.
+   * Place a small red dot at the top-right corner of the
+   * Page 3 navigation button, overlaying its chat.svg icon.
    */
   function renderNavigationUnread() {
     const navButton = document.querySelector(
@@ -177,17 +176,55 @@
 
     if (!navButton) return;
 
-    navButton.classList.toggle(
-      "has-unread",
-      totalUnread()
-    );
+    const unread = totalUnread();
+
+    navButton.classList.toggle("has-unread", unread);
 
     navButton.setAttribute(
       "aria-label",
-      totalUnread()
+      unread
         ? "Customer service — unread messages"
         : "Customer service"
     );
+
+    let dot = navButton.querySelector(
+      ".U9-admin-nav-unread-dot"
+    );
+
+    if (unread) {
+      if (!dot) {
+        dot = document.createElement("span");
+        dot.className = "U9-admin-nav-unread-dot";
+        dot.setAttribute("aria-hidden", "true");
+        navButton.appendChild(dot);
+      }
+
+      /*
+       * Inline positioning keeps this indicator independent
+       * of the existing SVG and navigation layout styles.
+       */
+      if (window.getComputedStyle(navButton).position === "static") {
+        navButton.style.position = "relative";
+      }
+
+      Object.assign(dot.style, {
+        position: "absolute",
+        top: "2px",
+        right: "2px",
+        width: "9px",
+        height: "9px",
+        minWidth: "9px",
+        minHeight: "9px",
+        borderRadius: "50%",
+        backgroundColor: "#ef4444",
+        border: "2px solid #ffffff",
+        boxSizing: "content-box",
+        zIndex: "10",
+        pointerEvents: "none"
+      });
+    } else if (dot) {
+      dot.remove();
+    }
   }
 
   function filtered() {
@@ -252,19 +289,46 @@
         unread ? "has-unread" : ""
       ].filter(Boolean).join(" ");
 
+      /*
+       * Unread dot is positioned immediately after the time.
+       * It only appears for conversations with unread messages.
+       */
+      const unreadDot = unread
+        ? (
+            '<span class="U9-admin-cs-unread-dot"' +
+            ' aria-label="Unread messages"' +
+            ' title="Unread messages"' +
+            ' style="' +
+              'display:inline-block;' +
+              'width:8px;' +
+              'height:8px;' +
+              'min-width:8px;' +
+              'border-radius:50%;' +
+              'background:#ef4444;' +
+              'margin-left:6px;' +
+              'vertical-align:middle;' +
+              'flex-shrink:0;' +
+            '">' +
+            '</span>'
+          )
+        : "";
+
       return (
         '<button type="button" class="' + classes + '"' +
         ' data-cs-open="' + esc(id) + '"' +
-        (unread
-          ? ' aria-label="' +
-            esc(customerName(c) + ", unread messages") + '"'
-          : '') +
+        (
+          unread
+            ? ' aria-label="' +
+              esc(customerName(c) + ", unread messages") + '"'
+            : ''
+        ) +
         '>' +
 
           '<span class="U9-admin-cs-conversation-top">' +
             '<strong>' + esc(customerName(c)) + '</strong>' +
             '<span class="U9-admin-cs-time">' +
               esc(dateLabel(c.updated_at || c.created_at)) +
+              unreadDot +
             '</span>' +
           '</span>' +
 
@@ -293,19 +357,43 @@
   }
 
   /*
-   * The receipt reads read_at only.
-   * This code never writes to or changes read_at.
+   * Read receipts only reflect the existing customer-side read_at.
+   * This function does not write to or modify read_at.
+   *
+   * Unread: single grey check.
+   * Read: Telegram-inspired blue double check.
    */
   function renderReadReceipt(message) {
     const read = !!message.read_at;
-    const symbol = read ? "✓✓" : "✓";
     const stateClass = read ? "is-read" : "is-unread";
     const label = read ? "Read" : "Sent";
+
+    const symbol = read
+      ? (
+          '<span class="U9-admin-cs-checks" aria-hidden="true">' +
+            '<span>✓</span><span>✓</span>' +
+          '</span>'
+        )
+      : (
+          '<span class="U9-admin-cs-check" aria-hidden="true">✓</span>'
+        );
 
     return (
       '<span class="U9-admin-cs-read-receipt ' +
         stateClass +
-        '" aria-label="' + label + '" title="' + label + '">' +
+        '" aria-label="' + label +
+        '" title="' + label + '"' +
+        ' style="' +
+          'display:inline-flex;' +
+          'align-items:center;' +
+          'justify-content:center;' +
+          'margin-left:5px;' +
+          'font-size:13px;' +
+          'line-height:1;' +
+          'vertical-align:middle;' +
+          'white-space:nowrap;' +
+          'color:' + (read ? "#3390ec" : "#8696a0") + ';' +
+        '">' +
         symbol +
       '</span>'
     );
@@ -374,6 +462,38 @@
         '</article>'
       );
     }).join("");
+
+    /*
+     * Make the two Telegram-style check marks overlap slightly.
+     * This styles only the receipt marks, not the message bubble.
+     */
+    el.querySelectorAll(".U9-admin-cs-checks").forEach(checks => {
+      Object.assign(checks.style, {
+        display: "inline-flex",
+        alignItems: "center",
+        whiteSpace: "nowrap",
+        letterSpacing: "-3px",
+        paddingRight: "3px",
+        fontWeight: "400"
+      });
+
+      Array.from(checks.children).forEach(check => {
+        Object.assign(check.style, {
+          display: "inline-block",
+          fontSize: "13px",
+          lineHeight: "1"
+        });
+      });
+    });
+
+    el.querySelectorAll(".U9-admin-cs-check").forEach(check => {
+      Object.assign(check.style, {
+        display: "inline-block",
+        fontSize: "13px",
+        lineHeight: "1",
+        fontWeight: "400"
+      });
+    });
 
     if (scroll) {
       el.scrollTop = el.scrollHeight;
@@ -473,10 +593,8 @@
 
   /*
    * When a conversation has been successfully opened and its
-   * messages loaded, immediately clear its local unread state.
-   *
-   * The backend must separately persist admin_read_at so the
-   * unread state stays cleared after a refresh.
+   * messages loaded, clear its local unread state.
+   * The backend persists admin_read_at for admin-side unread state.
    */
   function clearLocalUnread(conversationId) {
     const c = conversations.find(
@@ -601,10 +719,9 @@
         : [];
 
       /*
-       * The backend should mark customer messages as read for
-       * the admin by updating admin_read_at after successful
-       * message retrieval. It must not update customer-side
-       * read_at in this admin endpoint.
+       * Backend marks customer messages as read for the admin
+       * using admin_read_at after successful message retrieval.
+       * This admin endpoint must not modify customer-side read_at.
        */
       clearLocalUnread(id);
 
