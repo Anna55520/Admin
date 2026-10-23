@@ -1,3 +1,4 @@
+
 /* Page 3 — customer service */
 #U9-admin-page-3 {
   min-height: 0;
@@ -220,7 +221,7 @@
   box-shadow: inset 3px 0 #5268ed;
 }
 
-/* Do not create a second unread dot on the card edge */
+/* Prevent a duplicate unread dot on the card edge */
 .U9-admin-cs-conversation.has-unread::after {
   content: none;
   display: none;
@@ -258,12 +259,13 @@
   font-size: 10px;
 }
 
-/* Red dot next to the conversation timestamp */
+/* Unread dot next to conversation timestamp */
 .U9-admin-cs-unread-dot {
   display: inline-block;
   width: 8px;
   height: 8px;
   min-width: 8px;
+  min-height: 8px;
   border-radius: 50%;
   margin-left: 6px;
   vertical-align: middle;
@@ -455,10 +457,7 @@
   align-items: flex-end;
 }
 
-/*
- * Message metadata and read receipt share the same row.
- * Example: You · Oct 22 · 08:42 PM ✓✓
- */
+/* Message metadata and read receipt */
 .U9-admin-cs-message-meta {
   display: inline-flex;
   align-items: center;
@@ -515,7 +514,7 @@
   font-size: 11px;
 }
 
-/* Telegram-inspired message receipts */
+/* Message read receipts */
 .U9-admin-cs-read-receipt {
   display: inline-flex;
   flex: 0 0 auto;
@@ -540,7 +539,7 @@
   color: #3390ec;
 }
 
-/* Tightly spaced Telegram-style double checks */
+/* Tightly spaced double checks */
 .U9-admin-cs-checks {
   display: inline-flex;
   align-items: center;
@@ -634,52 +633,83 @@
   border: 0;
 }
 
-/* Bottom navigation — Page 3 unread indicator */
+/* =====================================================
+   Bottom navigation — Page 3 unread dot
+   ===================================================== */
 
-/*
- * The JS wraps chat.svg in .U9-admin-nav-icon-wrap when unread.
- * The dot is positioned relative to that wrapper, not the button.
- */
+/* Keep the button from clipping positioned children */
 #U9-admin-bottom-nav button[data-target="U9-admin-page-3"] {
   position: relative;
+  overflow: visible !important;
 }
 
+/* JS wrapper around chat.svg */
 #U9-admin-bottom-nav
 button[data-target="U9-admin-page-3"]
 .U9-admin-nav-icon-wrap {
-  position: relative;
-  display: inline-flex;
+  position: relative !important;
+  display: inline-flex !important;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+  max-width: none !important;
+  overflow: visible !important;
+  white-space: normal !important;
   line-height: 0;
+  z-index: 2;
 }
 
+/* Keep the SVG image correctly sized */
+#U9-admin-bottom-nav
+button[data-target="U9-admin-page-3"]
+.U9-admin-nav-icon-wrap img {
+  display: block;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  object-fit: contain;
+}
+
+/* Red dot positioned relative to the chat icon */
 #U9-admin-bottom-nav
 button[data-target="U9-admin-page-3"]
 .U9-admin-nav-icon-wrap
 .U9-admin-nav-unread-dot {
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  width: 9px;
-  height: 9px;
-  min-width: 9px;
-  min-height: 9px;
-  padding: 0;
-  border-radius: 50%;
-  background: #ef4444;
-  border: 2px solid #fff;
-  box-sizing: content-box;
-  z-index: 10;
-  pointer-events: none;
+  position: absolute !important;
+  top: -2px !important;
+  right: -4px !important;
+
+  display: block !important;
+  width: 9px !important;
+  height: 9px !important;
+  min-width: 9px !important;
+  min-height: 9px !important;
+  max-width: none !important;
+  max-height: none !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  border: 2px solid #fff !important;
+  border-radius: 50% !important;
+  box-sizing: content-box !important;
+  background: #ef4444 !important;
+
+  overflow: visible !important;
+  white-space: normal !important;
+  text-overflow: clip !important;
+
+  z-index: 99999 !important;
+  pointer-events: none !important;
 }
 
 /* Prevent duplicate pseudo-element indicators */
 #U9-admin-bottom-nav
 button[data-target="U9-admin-page-3"].has-unread::after {
-  content: none;
-  display: none;
+  content: none !important;
+  display: none !important;
 }
 
 /* Responsive layout: tablets */
@@ -748,7 +778,7 @@ button[data-target="U9-admin-page-3"].has-unread::after {
     flex-wrap: wrap;
   }
 
-  /* Preserve room for the timestamp and unread dot on small screens */
+  /* Preserve room for timestamp and unread dot */
   .U9-admin-cs-conversation {
     padding-right: 12px;
   }
@@ -759,5 +789,30 @@ button[data-target="U9-admin-page-3"].has-unread::after {
 
   .U9-admin-cs-time {
     font-size: 10px;
+  }
+
+  /* Mobile chat icon and unread dot */
+  #U9-admin-bottom-nav
+  button[data-target="U9-admin-page-3"]
+  .U9-admin-nav-icon-wrap {
+    flex-basis: 22px;
+    width: 22px;
+    height: 22px;
+  }
+
+  #U9-admin-bottom-nav
+  button[data-target="U9-admin-page-3"]
+  .U9-admin-nav-icon-wrap img {
+    width: 22px;
+    height: 22px;
+    flex-basis: 22px;
+  }
+
+  #U9-admin-bottom-nav
+  button[data-target="U9-admin-page-3"]
+  .U9-admin-nav-icon-wrap
+  .U9-admin-nav-unread-dot {
+    top: -2px !important;
+    right: -4px !important;
   }
 }
