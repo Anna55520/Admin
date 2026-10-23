@@ -1,4 +1,3 @@
-
 /* Page 3 — customer service */
 #U9-admin-page-3 {
   min-height: 0;
@@ -221,13 +220,10 @@
   box-shadow: inset 3px 0 #5268ed;
 }
 
-/*
- * Conversation unread indicator:
- * The red dot is now rendered by JS immediately after the time.
- * Remove the previous right-edge ::after dot to avoid duplicates.
- */
+/* Do not create a second unread dot on the card edge */
 .U9-admin-cs-conversation.has-unread::after {
   content: none;
+  display: none;
 }
 
 /* Conversation top row */
@@ -255,6 +251,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: flex-end;
+  gap: 0;
   flex-shrink: 0;
   white-space: nowrap;
   color: #98a0b1;
@@ -458,9 +455,29 @@
   align-items: flex-end;
 }
 
+/*
+ * Message metadata and read receipt share the same row.
+ * Example: You · Oct 22 · 08:42 PM ✓✓
+ */
 .U9-admin-cs-message-meta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 0;
+  max-width: 100%;
   color: #9099aa;
   font-size: 10px;
+  line-height: 1.4;
+}
+
+.U9-admin-cs-message.is-agent .U9-admin-cs-message-meta {
+  justify-content: flex-end;
+}
+
+.U9-admin-cs-message-meta-text {
+  display: inline;
+  min-width: 0;
 }
 
 /* Message bubbles */
@@ -498,17 +515,15 @@
   font-size: 11px;
 }
 
-/*
- * Telegram-inspired message receipts.
- * The JS renders one check for sent messages and two for read messages.
- */
+/* Telegram-inspired message receipts */
 .U9-admin-cs-read-receipt {
   display: inline-flex;
+  flex: 0 0 auto;
   align-items: center;
   justify-content: center;
-  gap: 0;
-  margin-top: 1px;
-  margin-right: 2px;
+  margin: 0 0 0 5px;
+  padding: 0;
+  font-family: Arial, sans-serif;
   font-size: 13px;
   font-weight: 400;
   line-height: 1;
@@ -620,17 +635,51 @@
 }
 
 /* Bottom navigation — Page 3 unread indicator */
+
+/*
+ * The JS wraps chat.svg in .U9-admin-nav-icon-wrap when unread.
+ * The dot is positioned relative to that wrapper, not the button.
+ */
 #U9-admin-bottom-nav button[data-target="U9-admin-page-3"] {
   position: relative;
 }
 
-/*
- * The JS creates .U9-admin-nav-unread-dot and positions it
- * relative to the actual Page 3 navigation button.
- * Disable the older ::after dot to prevent duplicate indicators.
- */
-#U9-admin-bottom-nav button[data-target="U9-admin-page-3"].has-unread::after {
+#U9-admin-bottom-nav
+button[data-target="U9-admin-page-3"]
+.U9-admin-nav-icon-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+#U9-admin-bottom-nav
+button[data-target="U9-admin-page-3"]
+.U9-admin-nav-icon-wrap
+.U9-admin-nav-unread-dot {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 9px;
+  height: 9px;
+  min-width: 9px;
+  min-height: 9px;
+  padding: 0;
+  border-radius: 50%;
+  background: #ef4444;
+  border: 2px solid #fff;
+  box-sizing: content-box;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Prevent duplicate pseudo-element indicators */
+#U9-admin-bottom-nav
+button[data-target="U9-admin-page-3"].has-unread::after {
   content: none;
+  display: none;
 }
 
 /* Responsive layout: tablets */
@@ -699,7 +748,7 @@
     flex-wrap: wrap;
   }
 
-  /* Preserve room for the timestamp and unread dot on small screens. */
+  /* Preserve room for the timestamp and unread dot on small screens */
   .U9-admin-cs-conversation {
     padding-right: 12px;
   }
