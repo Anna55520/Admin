@@ -1,4 +1,3 @@
-
 /* Page 3 — admin-authenticated customer service inbox. */
 (function () {
   "use strict";
@@ -166,8 +165,8 @@
 
   /*
    * Bottom navigation unread indicator.
-   * Place a small red dot at the top-right corner of the
-   * Page 3 navigation button, overlaying its chat.svg icon.
+   * Position the dot relative to the chat.svg image itself,
+   * not relative to the entire Page 3 button.
    */
   function renderNavigationUnread() {
     const navButton = document.querySelector(
@@ -187,34 +186,65 @@
         : "Customer service"
     );
 
+    let iconWrap = navButton.querySelector(
+      ".U9-admin-nav-icon-wrap"
+    );
+
+    let icon = iconWrap
+      ? iconWrap.querySelector("img")
+      : navButton.querySelector("img");
+
     let dot = navButton.querySelector(
       ".U9-admin-nav-unread-dot"
     );
 
     if (unread) {
+      /*
+       * Create a wrapper around chat.svg so the unread dot
+       * can be positioned against the icon's own top-right.
+       */
+      if (icon && !iconWrap) {
+        iconWrap = document.createElement("span");
+        iconWrap.className = "U9-admin-nav-icon-wrap";
+
+        Object.assign(iconWrap.style, {
+          position: "relative",
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexShrink: "0",
+          lineHeight: "0"
+        });
+
+        icon.parentNode.insertBefore(iconWrap, icon);
+        iconWrap.appendChild(icon);
+      }
+
       if (!dot) {
         dot = document.createElement("span");
         dot.className = "U9-admin-nav-unread-dot";
         dot.setAttribute("aria-hidden", "true");
-        navButton.appendChild(dot);
       }
 
       /*
-       * Inline positioning keeps this indicator independent
-       * of the existing SVG and navigation layout styles.
+       * Append the dot to the icon wrapper.
+       * It is no longer positioned against the whole button.
        */
-      if (window.getComputedStyle(navButton).position === "static") {
-        navButton.style.position = "relative";
+      const dotParent = iconWrap || navButton;
+
+      if (dot.parentNode !== dotParent) {
+        dotParent.appendChild(dot);
       }
 
       Object.assign(dot.style, {
         position: "absolute",
-        top: "2px",
-        right: "2px",
+        top: "-4px",
+        right: "-4px",
         width: "9px",
         height: "9px",
         minWidth: "9px",
         minHeight: "9px",
+        padding: "0",
         borderRadius: "50%",
         backgroundColor: "#ef4444",
         border: "2px solid #ffffff",
@@ -222,8 +252,19 @@
         zIndex: "10",
         pointerEvents: "none"
       });
-    } else if (dot) {
-      dot.remove();
+    } else {
+      if (dot) {
+        dot.remove();
+      }
+
+      /*
+       * Restore the original nav markup when there are no
+       * unread conversations.
+       */
+      if (iconWrap && icon) {
+        iconWrap.parentNode.insertBefore(icon, iconWrap);
+        iconWrap.remove();
+      }
     }
   }
 
@@ -290,26 +331,15 @@
       ].filter(Boolean).join(" ");
 
       /*
-       * Unread dot is positioned immediately after the time.
-       * It only appears for conversations with unread messages.
+       * Keep the conversation-list unread dot directly
+       * beside the latest message time.
        */
       const unreadDot = unread
         ? (
             '<span class="U9-admin-cs-unread-dot"' +
             ' aria-label="Unread messages"' +
             ' title="Unread messages"' +
-            ' style="' +
-              'display:inline-block;' +
-              'width:8px;' +
-              'height:8px;' +
-              'min-width:8px;' +
-              'border-radius:50%;' +
-              'background:#ef4444;' +
-              'margin-left:6px;' +
-              'vertical-align:middle;' +
-              'flex-shrink:0;' +
-            '">' +
-            '</span>'
+            '></span>'
           )
         : "";
 
@@ -357,7 +387,7 @@
   }
 
   /*
-   * Read receipts only reflect the existing customer-side read_at.
+   * Read receipts reflect the existing customer-side read_at.
    * This function does not write to or modify read_at.
    *
    * Unread: single grey check.
@@ -382,18 +412,7 @@
       '<span class="U9-admin-cs-read-receipt ' +
         stateClass +
         '" aria-label="' + label +
-        '" title="' + label + '"' +
-        ' style="' +
-          'display:inline-flex;' +
-          'align-items:center;' +
-          'justify-content:center;' +
-          'margin-left:5px;' +
-          'font-size:13px;' +
-          'line-height:1;' +
-          'vertical-align:middle;' +
-          'white-space:nowrap;' +
-          'color:' + (read ? "#3390ec" : "#8696a0") + ';' +
-        '">' +
+        '" title="' + label + '">' +
         symbol +
       '</span>'
     );
@@ -440,32 +459,34 @@
         m.content ||
         (m.deleted_at ? "Message deleted" : "");
 
+      /*
+       * The receipt is now inside the metadata line, immediately
+       * after the timestamp. It is no longer rendered below
+       * the message bubble.
+       */
       return (
         '<article class="U9-admin-cs-message ' + cls + '">' +
 
           '<span class="U9-admin-cs-message-meta">' +
-            esc(who) +
-            ' · ' +
-            esc(dateLabel(m.created_at, true)) +
+            '<span class="U9-admin-cs-message-meta-text">' +
+              esc(who) +
+              ' · ' +
+              esc(dateLabel(m.created_at, true)) +
+            '</span>' +
+            (agentMessage ? renderReadReceipt(m) : '') +
           '</span>' +
 
           '<div class="U9-admin-cs-bubble">' +
             esc(content) +
           '</div>' +
 
-          /*
-           * Only agent/admin messages get sent/read receipts.
-           * Customer read_at is not modified here.
-           */
-          (agentMessage ? renderReadReceipt(m) : '') +
-
         '</article>'
       );
     }).join("");
 
     /*
-     * Make the two Telegram-style check marks overlap slightly.
-     * This styles only the receipt marks, not the message bubble.
+     * Style only the receipt marks.
+     * The read_at logic and message content are unchanged.
      */
     el.querySelectorAll(".U9-admin-cs-checks").forEach(checks => {
       Object.assign(checks.style, {
