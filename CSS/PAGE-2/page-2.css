@@ -22,7 +22,10 @@
 #U9-admin-page-2 .U9-admin-products-table tbody tr:nth-child(even){background:#f3f4f6}
 #U9-admin-page-2 .U9-admin-products-table tbody tr:hover{background:#e5e7eb}
 #U9-admin-page-2 .U9-admin-products-table td{color:#444;overflow-wrap:anywhere}
-#U9-admin-page-2 .U9-admin-products-table td.product-name-cell{min-width:150px;max-width:250px;font-weight:600;color:#1e293b;text-align:left;white-space:normal;line-height:1.4}
+#U9-admin-page-2 .U9-admin-products-table th.product-name-heading,#U9-admin-page-2 .U9-admin-products-table td.product-name-cell{text-align:center;vertical-align:middle}
+#U9-admin-page-2 .U9-admin-products-table td.product-name-cell{min-width:150px;max-width:250px;font-weight:600;color:#1e293b;white-space:normal;line-height:1.4}
+#U9-admin-page-2 .U9-admin-products-table .product-sequence-cell{width:64px;min-width:64px;text-align:center;vertical-align:middle;font-variant-numeric:tabular-nums}
+#U9-admin-page-2 .U9-admin-products-table td.product-name-cell .product-name-text{margin-inline:auto;text-align:center}
 #U9-admin-page-2 .product-name-text{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}
 #U9-admin-page-2 .U9-admin-products-table td.product-number-cell{white-space:nowrap;font-variant-numeric:tabular-nums}
 #U9-admin-page-2 .U9-admin-products-table td.product-uuid-cell,#U9-admin-page-2 .U9-admin-products-table th.product-uuid-cell{position:sticky;right:76px;z-index:3;min-width:112px;width:112px;text-align:center;white-space:normal}
