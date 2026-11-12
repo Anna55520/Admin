@@ -64,9 +64,10 @@
     const body = $("U9-admin-products-tbody");
     if (!body) return;
     if (!products.length) { tableMessage("No products found."); return; }
-    body.innerHTML = products.map(p => {
+    body.innerHTML = products.map((p, index) => {
       const id = String(p.id || p.uuid || "");
       return "<tr>" +
+        '<td class="product-sequence-cell">' + (index + 1) + "</td>" +
         '<td class="product-name-cell"><span class="product-name-text">' + esc(p.name || "") + "</span></td>" +
         '<td class="product-number-cell">' + esc(amount(p.price)) + "</td>" +
         '<td class="product-number-cell">' + esc(amount(p.profit)) + "</td>" +
