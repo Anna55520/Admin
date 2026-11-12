@@ -67,7 +67,7 @@
     body.innerHTML = products.map(p => {
       const id = String(p.id || p.uuid || "");
       return "<tr>" +
-        '<td class="product-name-cell">' + esc(p.name || "") + "</td>" +
+        '<td class="product-name-cell"><span class="product-name-text">' + esc(p.name || "") + "</span></td>" +
         '<td class="product-number-cell">' + esc(amount(p.price)) + "</td>" +
         '<td class="product-number-cell">' + esc(amount(p.profit)) + "</td>" +
         "<td>" + flag(p.enabled) + "</td>" +
